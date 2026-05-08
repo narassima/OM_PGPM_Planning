@@ -7,6 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     setupListeners();
     loadComponentState();
+
+    if (typeof initExportDropdown === 'function') {
+        initExportDropdown(() => {
+            if (!currentMPSData) return null;
+            const d = currentMPSData;
+            const csvData = [["Week", "Forecast", "Customer Orders", "Projected On-Hand", "MPS", "ATP"]];
+            for (let i = 0; i < d.periods; i++) {
+                csvData.push([
+                    i+1, d.f[i], d.co[i], d.poh[i], (d.mps[i] || ""), (d.atp[i] !== "" ? d.atp[i] : "")
+                ]);
+            }
+            return csvData;
+        });
+    }
 });
 
 function populateComponentSelector() {

@@ -8,6 +8,22 @@ document.addEventListener('DOMContentLoaded', () => {
     setupChart();
     setupListeners();
     loadComponentState();
+
+    if (typeof initExportDropdown === 'function') {
+        initExportDropdown(() => {
+            if (!currentAppData) return null;
+            const d = currentAppData;
+            const csvData = [["Period", "Demand", "Reg Prod", "Subcontract", "Inventory", "Hires/Fires", "Total Cost ($)"]];
+            for (let i = 0; i < d.periods; i++) {
+                csvData.push([
+                    `P${i+1}`, d.demand[i], d.production[i], d.subcontract[i], d.inventory[i], 
+                    (d.hires[i] > 0 ? `+${d.hires[i]}H` : (d.fires[i] > 0 ? `-${d.fires[i]}F` : "-")),
+                    d.costs.total[i]
+                ]);
+            }
+            return csvData;
+        });
+    }
 });
 
 function populateComponentSelector() {

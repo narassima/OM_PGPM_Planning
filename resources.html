@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Production Planner - Resource Bank</title>
+    <title>Production Planner - Resource Bank (Extended)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .resource-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; transition: all 0.2s ease; height: 100%; display: flex; flex-direction: column; }
+        .resource-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; transition: all 0.2s ease; height: 100%; display: flex; flex-direction: column; }
         .resource-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
-        .resource-card h3 { margin-top: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; color: var(--text-primary); font-size: 1.05rem; }
-        .resource-card p { color: var(--text-secondary); margin-bottom: 16px; font-size: 0.85rem; line-height: 1.5; flex-grow: 1; }
-        .resource-card a { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-blue); text-decoration: none; font-weight: 600; font-size: 0.85rem; }
+        .resource-card h3 { margin-top: 0; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; color: var(--text-primary); font-size: 0.95rem; }
+        .resource-card p { color: var(--text-secondary); margin-bottom: 12px; font-size: 0.8rem; line-height: 1.4; flex-grow: 1; }
+        .resource-card a { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-blue); text-decoration: none; font-weight: 600; font-size: 0.8rem; }
         .resource-card a:hover { text-decoration: underline; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     </style>
 </head>
 <body>
     <div id="app-container">
-        <nav id="sidebar">
-            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
+                <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>Production Planner</h2>
+                <p>Interactive Learning</p>
+            </div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
@@ -48,105 +52,169 @@
                     <button class="tab-btn" data-tab="journals">Journals</button>
                 </div>
 
-                <!-- TAB: MATERIALS -->
+                <!-- TAB: MATERIALS (20+ Links) -->
                 <div id="tab-materials" class="tab-content active">
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card"><h3><i data-lucide="book-open"></i> Stevenson OM</h3><p>Operations Management (14th Ed) - The foundational textbook.</p><a href="https://www.mheducation.com/highered/product/operations-management-stevenson/M9781260238891.html" target="_blank">View Publisher</a></div>
-                        <div class="resource-card"><h3><i data-lucide="video"></i> MIT OCW</h3><p>Free MIT Sloan lecture materials on OM and Supply Chain.</p><a href="https://ocw.mit.edu/search/?q=operations+management" target="_blank">Explore MIT</a></div>
-                        <div class="resource-card"><h3><i data-lucide="globe"></i> ASCM Dictionary</h3><p>The APICS standard dictionary for Supply Chain metrics.</p><a href="https://www.ascm.org/learning-development/apics-dictionary/" target="_blank">Access Dictionary</a></div>
-                        <div class="resource-card"><h3><i data-lucide="cpu"></i> PuLP Solver</h3><p>Python library for solving linear programming (Capacity/APP).</p><a href="https://coin-or.github.io/pulp/" target="_blank">View Docs</a></div>
-                        <div class="resource-card"><h3><i data-lucide="settings"></i> AnyLogic</h3><p>Multi-method simulation for manufacturing and logistics.</p><a href="https://www.anylogic.com/" target="_blank">Explore</a></div>
-                        <div class="resource-card"><h3><i data-lucide="database"></i> Odoo MRP</h3><p>Open-source ERP sandbox for practicing MRP logic.</p><a href="https://www.odoo.com/app/manufacturing" target="_blank">Try MRP</a></div>
-                        <div class="resource-card"><h3><i data-lucide="truck"></i> SCOR Model</h3><p>Supply Chain Operations Reference model standard.</p><a href="https://www.ascm.org/corporate-transformation/standards-tools/scor/" target="_blank">Learn SCOR</a></div>
-                        <div class="resource-card"><h3><i data-lucide="box"></i> Arena</h3><p>Rockwell Automation's process simulation software.</p><a href="https://www.arenasimulation.com/" target="_blank">Explore</a></div>
-                        <div class="resource-card"><h3><i data-lucide="file-spreadsheet"></i> POMS Templates</h3><p>Excel templates for capacity, forecasting, and inventory.</p><a href="https://poms.org/" target="_blank">Access Templates</a></div>
-                        <div class="resource-card"><h3><i data-lucide="book"></i> The Goal</h3><p>Eliyahu Goldratt's classic on Theory of Constraints.</p><a href="https://en.wikipedia.org/wiki/The_Goal_(novel)" target="_blank">About Book</a></div>
-                        <div class="resource-card"><h3><i data-lucide="briefcase"></i> Lean Six Sigma</h3><p>IASSC official guide to Six Sigma DMAIC methodologies.</p><a href="https://iassc.org/" target="_blank">IASSC Guide</a></div>
-                        <div class="resource-card"><h3><i data-lucide="activity"></i> Little's Law</h3><p>Interactive calculators for WIP and throughput logic.</p><a href="https://www.littleslaw.com/" target="_blank">Try Calc</a></div>
-                        <div class="resource-card"><h3><i data-lucide="map"></i> Value Stream</h3><p>Lucidchart templates for VSM in Lean operations.</p><a href="https://www.lucidchart.com/pages/examples/value-stream-mapping" target="_blank">Start Mapping</a></div>
-                        <div class="resource-card"><h3><i data-lucide="bar-chart-2"></i> Tableau Public</h3><p>Explore supply chain and operational dashboards.</p><a href="https://public.tableau.com/en-us/s/gallery" target="_blank">Explore</a></div>
-                        <div class="resource-card"><h3><i data-lucide="server"></i> Simio</h3><p>Advanced 3D simulation and digital twin software.</p><a href="https://www.simio.com/" target="_blank">Learn Simio</a></div>
+                    <div class="grid-4">
+                        <div class="resource-card"><h3><i data-lucide="book"></i> Stevenson OM</h3><p>Foundational Operations Management textbook (14th Ed).</p><a href="https://www.mheducation.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3><i data-lucide="video"></i> MIT OCW OM</h3><p>Sloan School's complete lecture series on Operations.</p><a href="https://ocw.mit.edu" target="_blank">Explore</a></div>
+                        <div class="resource-card"><h3><i data-lucide="globe"></i> ASCM Dictionary</h3><p>The global standard for Supply Chain terminology.</p><a href="https://www.ascm.org" target="_blank">Access</a></div>
+                        <div class="resource-card"><h3><i data-lucide="cpu"></i> PuLP Python</h3><p>Linear programming library for Capacity & APP optimization.</p><a href="https://coin-or.github.io/pulp/" target="_blank">Docs</a></div>
+                        <div class="resource-card"><h3><i data-lucide="settings"></i> AnyLogic</h3><p>Advanced simulation for manufacturing and logistics.</p><a href="https://www.anylogic.com" target="_blank">Visit</a></div>
+                        <div class="resource-card"><h3><i data-lucide="database"></i> Odoo ERP</h3><p>Open-source MRP and inventory management sandbox.</p><a href="https://www.odoo.com" target="_blank">Try ERP</a></div>
+                        <div class="resource-card"><h3><i data-lucide="truck"></i> SCOR Model</h3><p>ASCM standard for supply chain process reference.</p><a href="https://www.ascm.org" target="_blank">Learn</a></div>
+                        <div class="resource-card"><h3><i data-lucide="box"></i> Arena Sim</h3><p>Rockwell process simulation software for IE.</p><a href="https://www.arenasimulation.com" target="_blank">Visit</a></div>
+                        <div class="resource-card"><h3><i data-lucide="file-spreadsheet"></i> POMS Templates</h3><p>Operations management templates for Excel.</p><a href="https://poms.org" target="_blank">Get Templates</a></div>
+                        <div class="resource-card"><h3><i data-lucide="book-open"></i> The Goal</h3><p>Goldratt's classic on Theory of Constraints.</p><a href="https://en.wikipedia.org/wiki/The_Goal_(novel)" target="_blank">Read Summary</a></div>
+                        <div class="resource-card"><h3><i data-lucide="activity"></i> Little's Law</h3><p>Interactive tool for WIP and Lead Time calculations.</p><a href="https://www.littleslaw.com" target="_blank">Calculate</a></div>
+                        <div class="resource-card"><h3><i data-lucide="map"></i> VSM Mapper</h3><p>Lucidchart templates for Value Stream Mapping.</p><a href="https://www.lucidchart.com" target="_blank">Map Process</a></div>
+                        <div class="resource-card"><h3><i data-lucide="bar-chart-2"></i> Tableau Public</h3><p>Supply chain visualization and dashboard gallery.</p><a href="https://public.tableau.com" target="_blank">Explore</a></div>
+                        <div class="resource-card"><h3><i data-lucide="server"></i> Simio Sim</h3><p>3D simulation and Digital Twin software for Industry 4.0.</p><a href="https://www.simio.com" target="_blank">Visit</a></div>
+                        <div class="resource-card"><h3><i data-lucide="briefcase"></i> Lean Six Sigma</h3><p>IASSC official methodologies and certification guides.</p><a href="https://iassc.org" target="_blank">Learn</a></div>
+                        <div class="resource-card"><h3><i data-lucide="code"></i> SciPy Optimize</h3><p>Python scientific library for production scheduling.</p><a href="https://scipy.org" target="_blank">Docs</a></div>
+                        <div class="resource-card"><h3><i data-lucide="layers"></i> FlexSim</h3><p>3D discrete-event simulation for factory planning.</p><a href="https://www.flexsim.com" target="_blank">Explore</a></div>
+                        <div class="resource-card"><h3><i data-lucide="monitor"></i> NetSuite MRP</h3><p>Cloud-based ERP for material requirements planning.</p><a href="https://www.netsuite.com" target="_blank">Demo</a></div>
+                        <div class="resource-card"><h3><i data-lucide="link"></i> Blockchain SC</h3><p>IBM's guide to blockchain for transparent operations.</p><a href="https://www.ibm.com/blockchain" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3><i data-lucide="users"></i> APICS CPIM</h3><p>Official body of knowledge for inventory management.</p><a href="https://www.ascm.org" target="_blank">Certification</a></div>
+                        <div class="resource-card"><h3><i data-lucide="pie-chart"></i> MiniTab</h3><p>Statistical software for quality control and Six Sigma.</p><a href="https://www.minitab.com" target="_blank">Visit</a></div>
                     </div>
                 </div>
 
-                <!-- TAB: NEWS -->
+                <!-- TAB: NEWS (20+ Links) -->
                 <div id="tab-news" class="tab-content">
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card"><h3><i data-lucide="newspaper"></i> Supply Chain Dive</h3><p>Daily news and deep dives into the supply chain sector.</p><a href="https://www.supplychaindive.com/" target="_blank">Read Articles</a></div>
-                        <div class="resource-card"><h3><i data-lucide="trending-up"></i> WSJ Logistics</h3><p>The Wall Street Journal's logistics section.</p><a href="https://www.wsj.com/news/logistics" target="_blank">View WSJ</a></div>
-                        <div class="resource-card"><h3><i data-lucide="mic"></i> Let's Talk SC</h3><p>Podcast on SC innovations and diversity.</p><a href="https://letstalksupplychain.com/" target="_blank">Listen</a></div>
-                        <div class="resource-card"><h3><i data-lucide="radio"></i> SC Now</h3><p>Interviews with leaders on digital transformation.</p><a href="https://supplychainnow.com/" target="_blank">Listen</a></div>
-                        <div class="resource-card"><h3><i data-lucide="globe"></i> Bloomberg SC</h3><p>Coverage of global disruptions and economy.</p><a href="https://www.bloomberg.com/supply-chain" target="_blank">Read</a></div>
-                        <div class="resource-card"><h3><i data-lucide="truck"></i> FreightWaves</h3><p>Leading source of data for freight and logistics.</p><a href="https://www.freightwaves.com/" target="_blank">Explore</a></div>
-                        <div class="resource-card"><h3><i data-lucide="box"></i> SC Brain</h3><p>Intelligence portal for SC executives.</p><a href="https://www.supplychainbrain.com/" target="_blank">Visit Site</a></div>
-                        <div class="resource-card"><h3><i data-lucide="headphones"></i> Logistics Podcast</h3><p>Podcast focusing on 3PL and SC tech.</p><a href="https://www.thelogisticsoflogistics.com/" target="_blank">Listen</a></div>
-                        <div class="resource-card"><h3><i data-lucide="file-text"></i> Inbound Logistics</h3><p>Educational magazine with case studies.</p><a href="https://www.inboundlogistics.com/" target="_blank">Read</a></div>
-                        <div class="resource-card"><h3><i data-lucide="rss"></i> SCMR News</h3><p>Insights for operational executives.</p><a href="https://www.scmr.com/" target="_blank">Visit SCMR</a></div>
-                        <div class="resource-card"><h3><i data-lucide="play-circle"></i> MIT SCM YouTube</h3><p>Videos from the MIT Center for Logistics.</p><a href="https://www.youtube.com/c/MITSupplyChainManagement" target="_blank">Watch</a></div>
-                        <div class="resource-card"><h3><i data-lucide="activity"></i> Logistics Mgmt</h3><p>Features covering warehousing and equipment.</p><a href="https://www.logisticsmgmt.com/" target="_blank">Read</a></div>
-                        <div class="resource-card"><h3><i data-lucide="package"></i> SC 24/7</h3><p>Aggregated hub for white papers and reports.</p><a href="https://www.supplychain247.com/" target="_blank">Explore</a></div>
-                        <div class="resource-card"><h3><i data-lucide="mic"></i> ASCM Insights</h3><p>Official podcast of the ASCM.</p><a href="https://www.ascm.org/insights/" target="_blank">Listen</a></div>
-                        <div class="resource-card"><h3><i data-lucide="shield"></i> Risk Pulse</h3><p>Updates on geopolitical and environmental risks.</p><a href="https://www.dhl.com/" target="_blank">View Risk</a></div>
+                    <div class="grid-4">
+                        <div class="resource-card"><h3>Supply Chain Dive</h3><p>Daily news on transportation and logistics.</p><a href="https://www.supplychaindive.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>WSJ Logistics</h3><p>The Wall Street Journal's logistics section.</p><a href="https://www.wsj.com/news/logistics" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Bloomberg SC</h3><p>Global coverage of manufacturing disruptions.</p><a href="https://www.bloomberg.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>FreightWaves</h3><p>Freight market intelligence and pricing data.</p><a href="https://www.freightwaves.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>SC Brain</h3><p>Portal for supply chain management news.</p><a href="https://www.supplychainbrain.com" target="_blank">Visit</a></div>
+                        <div class="resource-card"><h3>Inbound Logistics</h3><p>Magazines for demand-driven operations.</p><a href="https://www.inboundlogistics.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Logistics Mgmt</h3><p>Coverage of warehousing and transportation.</p><a href="https://www.logisticsmgmt.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>SC Now Podcast</h3><p>Leaders discussing digital transformation.</p><a href="https://supplychainnow.com" target="_blank">Listen</a></div>
+                        <div class="resource-card"><h3>Let's Talk SC</h3><p>Innovations and diversity in logistics.</p><a href="https://letstalksupplychain.com" target="_blank">Listen</a></div>
+                        <div class="resource-card"><h3>SCMR News</h3><p>Insights for operational executives.</p><a href="https://www.scmr.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>DC Velocity</h3><p>Logistics and supply chain strategy hub.</p><a href="https://www.dcvelocity.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Transport Topics</h3><p>News for the trucking and freight industries.</p><a href="https://www.ttnews.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Sourcing Journal</h3><p>Strategic news for global apparel and retail SC.</p><a href="https://sourcingjournal.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Retail Dive</h3><p>Trends in retail inventory and delivery.</p><a href="https://www.retaildive.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>IndustryWeek</h3><p>News and insights for manufacturing leaders.</p><a href="https://www.industryweek.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Manufacturing.net</h3><p>Global news on manufacturing technology.</p><a href="https://www.manufacturing.net" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>AutomationWorld</h3><p>Latest in industrial automation and control.</p><a href="https://www.automationworld.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>ProLogis Research</h3><p>Quarterly reports on industrial real estate.</p><a href="https://www.prologis.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>DHL Trend Radar</h3><p>Interactive feed of logistics tech trends.</p><a href="https://www.dhl.com" target="_blank">Explore</a></div>
+                        <div class="resource-card"><h3>Maersk Insights</h3><p>Thought leadership on container shipping.</p><a href="https://www.maersk.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>FedEx Newsroom</h3><p>Updates on global trade and express logistics.</p><a href="https://newsroom.fedex.com" target="_blank">Read</a></div>
                     </div>
                 </div>
 
-                <!-- TAB: PAPERS -->
+                <!-- TAB: PAPERS (20+ Links) -->
                 <div id="tab-papers" class="tab-content">
-                    <p style="margin-bottom:20px;color:var(--text-secondary);font-size:0.9rem;">Unified collection of research covering supply chain, job shop scheduling, and simulation modeling.</p>
                     <h3 style="margin-bottom:14px;font-size:1.1rem;color:var(--accent-forest);">Research Publications</h3>
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">SimLean-TRIZ Framework (2025)</h3><p style="font-size:0.8rem;">Thenarasu, M., Narassima, M.S. et al. &mdash; Digital Twins in manufacturing.</p><a href="https://www.mdpi.com/journal/modelling" target="_blank">View Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Closed-Loop SC Inventory (2025)</h3><p style="font-size:0.8rem;">Thenarasu, M. et al. &mdash; DES analysis for inventory policies.</p><a href="https://www.tandfonline.com/journals/tmse20" target="_blank">View Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Assembly Line Simulation (2023)</h3><p style="font-size:0.8rem;">Thenarasu, M. et al. &mdash; Lean approaches in assembly.</p><a href="https://journals.sagepub.com/home/pib" target="_blank">View Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Mould Shop Productivity (2024)</h3><p style="font-size:0.8rem;">Thenarasu, M. et al. &mdash; Continuous improvement via simulation.</p><a href="https://www.tandfonline.com/journals/tsys20" target="_blank">View Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Cardiology Dept simulation (2022)</h3><p style="font-size:0.8rem;">Thenarasu, M. et al. &mdash; Hospital performance optimization.</p><a href="https://www.inderscience.com/jhome.php?jcode=ijaip" target="_blank">View Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Bullwhip Effect (1997)</h3><p style="font-size:0.8rem;">Lee, Padmanabhan & Whang &mdash; Demand amplification.</p><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.43.4.546" target="_blank">Read Paper</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Toyota Production System (1977)</h3><p style="font-size:0.8rem;">Sugimori et al. &mdash; Foundation of JIT/Lean.</p><a href="https://www.tandfonline.com/doi/abs/10.1080/00207547708943149" target="_blank">Read Paper</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3 style="font-size:0.9rem;">Theory of Constraints (1990)</h3><p style="font-size:0.8rem;">Goldratt &mdash; Managing bottlenecks.</p><a href="https://www.sciencedirect.com/science/article/pii/0925527394900124" target="_blank">Read Paper</a></div>
+                    <div class="grid-4">
+                        <!-- Featured Authors -->
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>SimLean-TRIZ (2025)</h3><p>Thenarasu & Narassima - Digital Twin framework.</p><a href="https://www.mdpi.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>CLSC Inventory (2025)</h3><p>Thenarasu et al. - Closed-loop supply chain sim.</p><a href="https://www.tandfonline.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>Assembly Simulation (2023)</h3><p>Thenarasu et al. - Productivity in complex assembly.</p><a href="https://journals.sagepub.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>Mould Shop (2024)</h3><p>Thenarasu et al. - Continuous improvement modeling.</p><a href="https://www.tandfonline.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>Cardiology DES (2022)</h3><p>Thenarasu et al. - Hospital performance simulation.</p><a href="https://www.inderscience.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>FJSP Optimization (2024)</h3><p>Thenarasu et al. - Scheduling via simulation.</p><a href="https://www.tandfonline.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>Job Shop Dispatch (2022)</h3><p>Narassima et al. - Algorithm for setup minimization.</p><a href="https://www.inderscience.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>SC Resilience Index</h3><p>Narassima et al. - Fuzzy logic index for resilience.</p><a href="https://scholar.google.com" target="_blank">Scholar</a></div>
+                        
+                        <!-- Classics -->
+                        <div class="resource-card"><h3>Bullwhip Effect (1997)</h3><p>Lee et al. - Quantifying demand amplification.</p><a href="https://pubsonline.informs.org" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Toyota TPS (1977)</h3><p>Sugimori et al. - Foundation of JIT/Lean.</p><a href="https://www.tandfonline.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>TOC Basics (1990)</h3><p>Goldratt - Principles of managing bottlenecks.</p><a href="https://www.sciencedirect.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Lean Thinking (1996)</h3><p>Womack & Jones - Banish waste, create wealth.</p><a href="https://www.sciencedirect.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>SC Resilience (2005)</h3><p>Sheffi & Rice - View of the resilient enterprise.</p><a href="https://sloanreview.mit.edu" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>EOQ Classic (1913)</h3><p>Harris - How many parts to make at once.</p><a href="https://pubsonline.informs.org" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Digital SC (2018)</h3><p>Buyukozkan - Framework for digital transformation.</p><a href="https://www.sciencedirect.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>JIT in US (1982)</h3><p>Schonberger - Japanese mfg techniques.</p><a href="https://www.sciencedirect.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Mass Customization</h3><p>Pine (1993) - Frontiers of business competition.</p><a href="https://hbr.org" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>VMI Systems (1996)</h3><p>Waller et al. - Impact of Vendor Managed Inventory.</p><a href="https://www.sciencedirect.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>SC Risk Mgmt (2004)</h3><p>Christopher & Peck - Building resilient SC.</p><a href="https://www.tandfonline.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Industry 4.0 (2016)</h3><p>Lasi et al. - Concept and foundations.</p><a href="https://link.springer.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Warehouse Mgmt</h3><p>Gu et al. (2007) - Research in warehouse design.</p><a href="https://www.sciencedirect.com" target="_blank">Read</a></div>
                     </div>
                 </div>
 
-                <!-- TAB: CASES -->
+                <!-- TAB: CASES (20+ Links) -->
                 <div id="tab-cases" class="tab-content">
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card"><h3>Lego: Nearshoring (2024)</h3><p>Agile capacity planning and carbon reduction.</p><a href="https://www.lego.com" target="_blank">Read News</a></div>
-                        <div class="resource-card"><h3>IKEA: Circular SC (2024)</h3><p>Sustainable BOM and reverse logistics design.</p><a href="https://www.ikea.com" target="_blank">Read Case</a></div>
-                        <div class="resource-card"><h3>Maersk: Digital Twin (2023)</h3><p>Real-time network planning and re-routing.</p><a href="https://www.maersk.com" target="_blank">Read Maersk</a></div>
-                        <div class="resource-card"><h3>Tesla: Giga Capacity (2024)</h3><p>Vertical integration and bottleneck management.</p><a href="https://www.tesla.com" target="_blank">Tesla Impact</a></div>
-                        <div class="resource-card"><h3>Red Sea Crisis (2024)</h3><p>Impact of global rerouting on MPS timelines.</p><a href="https://www.supplychaindive.com" target="_blank">Read Article</a></div>
-                        <div class="resource-card"><h3>Walmart: AI Forecasting (2024)</h3><p>Reducing out-of-stock events by 30% using Gen-AI.</p><a href="https://corporate.walmart.com" target="_blank">Read Case</a></div>
+                    <div class="grid-4">
+                        <div class="resource-card"><h3>Lego: Regional Mfg</h3><p>Opening factories in Vietnam and US (2024).</p><a href="https://www.lego.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>IKEA: Circularity</h3><p>Furniture buy-back and reuse strategy (2024).</p><a href="https://www.ikea.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Maersk: Net Zero</h3><p>Decarbonizing ocean freight by 2040.</p><a href="https://www.maersk.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Tesla: Vertical Integ</h3><p>Manufacturing chips and batteries in-house.</p><a href="https://www.tesla.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Red Sea: Rerouting</h3><p>Impact of Suez disruptions on JIT (2024).</p><a href="https://www.supplychaindive.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Walmart: Gen-AI</h3><p>AI-driven inventory forecasting success (2024).</p><a href="https://corporate.walmart.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Apple: SC Shift</h3><p>Moving production from China to India/Vietnam.</p><a href="https://www.bloomberg.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Toyota: Chip Crisis</h3><p>How JIT evolved after the 2021-23 shortages.</p><a href="https://www.wsj.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Zara: Fast Fashion</h3><p>Responsive SC as a competitive advantage.</p><a href="https://hbr.org" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Dell: Build-to-Order</h3><p>The classic case of negative cash conversion cycle.</p><a href="https://www.dell.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Amazon: Robot Docs</h3><p>Automation in fulfillment centers (Proteus 2024).</p><a href="https://www.aboutamazon.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>FedEx: Data-First</h3><p>Utilizing fdx data platform for small businesses.</p><a href="https://www.fedex.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Nike: ERP Failure</h3><p>Lessons from the $400M demand software glitch.</p><a href="https://www.cio.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Ford: Rouge Complex</h3><p>The history and future of integrated mfg.</p><a href="https://www.ford.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Coca-Cola: Local SC</h3><p>Manufacturing close to the point of consumption.</p><a href="https://www.coca-cola.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>IKEA: Flat Pack</h3><p>Revolutionizing logistics through product design.</p><a href="https://www.ikea.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>P&G: Sync SC</h3><p>Real-time data sharing with retailers.</p><a href="https://www.pg.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Siemens: Digital Twin</h3><p>The "Amberg" factory as a model of 4.0.</p><a href="https://www.siemens.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>BMW: iFactory</h3><p>Flexible assembly for EV and ICE on one line.</p><a href="https://www.bmwgroup.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Airbus: A350 SC</h3><p>Managing a global multi-tier aerospace SC.</p><a href="https://www.airbus.com" target="_blank">Read</a></div>
+                        <div class="resource-card"><h3>Patagonia: Repair</h3><p>Circular economy and product longevity.</p><a href="https://www.patagonia.com" target="_blank">Read</a></div>
                     </div>
                 </div>
 
-                <!-- TAB: REPORTS -->
+                <!-- TAB: REPORTS (20+ Links) -->
                 <div id="tab-reports" class="tab-content">
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card"><h3>McKinsey Operations</h3><p>Future of manufacturing and Industry 4.0.</p><a href="https://www.mckinsey.com" target="_blank">View Reports</a></div>
-                        <div class="resource-card"><h3>Gartner Supply Chain</h3><p>Annual Top 25 Supply Chains reports.</p><a href="https://www.gartner.com" target="_blank">View Reports</a></div>
-                        <div class="resource-card"><h3>BCG Operations</h3><p>Digital SC and manufacturing insights.</p><a href="https://www.bcg.com" target="_blank">Explore BCG</a></div>
-                        <div class="resource-card"><h3>Deloitte SC</h3><p>Digital networks and smart factory initiatives.</p><a href="https://www2.deloitte.com" target="_blank">Read Deloitte</a></div>
-                        <div class="resource-card"><h3>Bain & Company</h3><p>Insights on advanced manufacturing.</p><a href="https://www.bain.com" target="_blank">View Insights</a></div>
-                        <div class="resource-card"><h3>KPMG SC</h3><p>Global risks and predictive logistics models.</p><a href="https://kpmg.com" target="_blank">Read KPMG</a></div>
-                        <div class="resource-card"><h3>PwC Operations</h3><p>ESG in supply chain and procurement transformation.</p><a href="https://www.pwc.com" target="_blank">Explore PwC</a></div>
-                        <div class="resource-card"><h3>DHL Trend Radar</h3><p>Interactive radar of logistics tech trends.</p><a href="https://www.dhl.com" target="_blank">View Radar</a></div>
-                        <div class="resource-card"><h3>World Bank LPI</h3><p>Logistics Performance Index rankings.</p><a href="https://lpi.worldbank.org/" target="_blank">View LPI</a></div>
-                        <div class="resource-card"><h3>Capgemini Research</h3><p>Intelligent SC and sustainable manufacturing.</p><a href="https://www.capgemini.com" target="_blank">Read Reports</a></div>
-                        <div class="resource-card"><h3>Accenture SC</h3><p>Building customer-centric SC networks.</p><a href="https://www.accenture.com" target="_blank">Explore</a></div>
-                        <div class="resource-card"><h3>WEF Future of Mfg</h3><p>World Economic Forum manufacturing reports.</p><a href="https://www.weforum.org" target="_blank">View WEF</a></div>
+                    <div class="grid-4">
+                        <div class="resource-card"><h3>McKinsey Ops</h3><p>Insights on Industry 4.0 and agility.</p><a href="https://www.mckinsey.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>Gartner Top 25</h3><p>Annual ranking of global supply chains.</p><a href="https://www.gartner.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>BCG Digital SC</h3><p>Reports on SC 4.0 and automation.</p><a href="https://www.bcg.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>Deloitte Factory</h3><p>The future of the Smart Factory.</p><a href="https://www2.deloitte.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>Bain SC Strategy</h3><p>Resilience and efficiency in operations.</p><a href="https://www.bain.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>KPMG Risk Index</h3><p>Quarterly supply chain risk analysis.</p><a href="https://kpmg.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>PwC ESG Report</h3><p>Sustainability in global sourcing.</p><a href="https://www.pwc.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>DHL Radar</h3><p>Deep-dives into future logistics tech.</p><a href="https://www.dhl.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>World Bank LPI</h3><p>Trade logistics performance rankings.</p><a href="https://lpi.worldbank.org" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>Capgemini Inst.</h3><p>Sustainable operations research.</p><a href="https://www.capgemini.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>Accenture Tech</h3><p>AI in procurement and production.</p><a href="https://www.accenture.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>WEF Mfg Report</h3><p>Global manufacturing competitiveness.</p><a href="https://www.weforum.org" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>IBM IBV Reports</h3><p>Blockchain and AI for SC visibility.</p><a href="https://www.ibm.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>CIPS Knowledge</h3><p>Procurement and sourcing benchmarks.</p><a href="https://www.cips.org" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>Gartner Magic Quad</h3><p>Evaluating WMS and ERP vendors.</p><a href="https://www.gartner.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>EY SC 3.0</h3><p>Evolving from digital to autonomous.</p><a href="https://www.ey.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>AlixPartners</h3><p>Disruption and turnaround in mfg.</p><a href="https://www.alixpartners.com" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>MHI Annual Report</h3><p>Innovations in material handling.</p><a href="https://www.mhi.org" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>UN SDG SC</h3><p>United Nations sustainable SC goals.</p><a href="https://sdgs.un.org" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>MIT CTL Briefs</h3><p>Working papers from MIT Center for Logistics.</p><a href="https://ctl.mit.edu" target="_blank">View</a></div>
+                        <div class="resource-card"><h3>S&P Global SC</h3><p>Economic indicators for global trade.</p><a href="https://www.spglobal.com" target="_blank">View</a></div>
                     </div>
                 </div>
 
-                <!-- TAB: JOURNALS -->
+                <!-- TAB: JOURNALS (20+ Links) -->
                 <div id="tab-journals" class="tab-content">
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="border-left:4px solid var(--accent-blue);"><h3>JOM</h3><p>Journal of Operations Management. FT-50.</p><a href="https://onlinelibrary.wiley.com" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>Management Science</h3><p>INFORMS leading journal. FT-50.</p><a href="https://pubsonline.informs.org" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-emerald);"><h3>MSOM</h3><p>Manufacturing & Service OM. FT-50.</p><a href="https://pubsonline.informs.org" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-rose);"><h3>Operations Research</h3><p>Classic INFORMS journal.</p><a href="https://pubsonline.informs.org" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-amber);"><h3>IJPE</h3><p>Int'l Journal of Production Economics.</p><a href="https://www.journals.elsevier.com" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-blue);"><h3>SCM: An Int'l Journal</h3><p>Global SC theory and practice.</p><a href="https://www.emerald.com" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>EJOR</h3><p>European Journal of Operational Research.</p><a href="https://www.journals.elsevier.com" target="_blank">Visit Journal</a></div>
-                        <div class="resource-card" style="border-left:4px solid var(--accent-emerald);"><h3>IJPR</h3><p>Int'l Journal of Production Research.</p><a href="https://www.tandfonline.com" target="_blank">Visit Journal</a></div>
+                    <div class="grid-4">
+                        <div class="resource-card" style="border-left:4px solid var(--accent-blue);"><h3>JOM</h3><p>Journal of Operations Management (FT50).</p><a href="https://onlinelibrary.wiley.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>Mgmt Science</h3><p>Flagship INFORMS journal (FT50).</p><a href="https://pubsonline.informs.org" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-emerald);"><h3>MSOM</h3><p>Mfg & Service Ops Management (FT50).</p><a href="https://pubsonline.informs.org" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-rose);"><h3>Ops Research</h3><p>Theory and applications (FT50).</p><a href="https://pubsonline.informs.org" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-amber);"><h3>IJPE</h3><p>Int'l Journal of Prod. Economics.</p><a href="https://www.journals.elsevier.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-blue);"><h3>SCM: Int'l Journal</h3><p>Emerald's lead SC journal.</p><a href="https://www.emerald.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-forest);"><h3>EJOR</h3><p>European Journal of Operational Research.</p><a href="https://www.journals.elsevier.com" target="_blank">Journal</a></div>
+                        <div class="resource-card" style="border-left:4px solid var(--accent-emerald);"><h3>IJPR</h3><p>Int'l Journal of Prod. Research.</p><a href="https://www.tandfonline.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Decision Sciences</h3><p>Focus on decision-making in firms.</p><a href="https://onlinelibrary.wiley.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Production & Ops Mgmt</h3><p>POMS official journal (FT50).</p><a href="https://onlinelibrary.wiley.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Harvard Bus. Review</h3><p>Applied management research (FT50).</p><a href="https://hbr.org" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>MIT Sloan Mgmt Rev</h3><p>Intersections of mgmt & tech (FT50).</p><a href="https://sloanreview.mit.edu" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>J. SC Management</h3><p>The first journal in the field.</p><a href="https://onlinelibrary.wiley.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Journal of Business Log</h3><p>CSCMP official academic journal.</p><a href="https://onlinelibrary.wiley.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Computers & IE</h3><p>Intersection of computing and IE.</p><a href="https://www.journals.elsevier.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Omega</h3><p>The International Journal of Mgmt Science.</p><a href="https://www.journals.elsevier.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Interface</h3><p>INFORMS journal on practice of OR/MS.</p><a href="https://pubsonline.informs.org" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Academy of Mgmt J.</h3><p>Top-tier management research (FT50).</p><a href="https://aom.org" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Logistics</h3><p>MDPI open access logistics research.</p><a href="https://www.mdpi.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Sustainability</h3><p>Focus on green SC and circularity.</p><a href="https://www.mdpi.com" target="_blank">Journal</a></div>
+                        <div class="resource-card"><h3>Expert Systems</h3><p>AI applications in operations.</p><a href="https://www.journals.elsevier.com" target="_blank">Journal</a></div>
                     </div>
                 </div>
 
@@ -166,3 +234,4 @@
     </script>
 </body>
 </html>
+

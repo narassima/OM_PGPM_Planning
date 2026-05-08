@@ -19,6 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setupListeners();
     renderBuilder();
     calculateBOM();
+
+    if (typeof initExportDropdown === 'function') {
+        initExportDropdown(() => {
+            if (!currentBOMData) return null;
+            const csvData = [["Component", "Level", "Parent", "Qty per Parent", "Total Qty Needed", "Total Cost"]];
+            Object.keys(currentBOMData).forEach(id => {
+                const d = currentBOMData[id];
+                csvData.push([
+                    id, d.level, (d.parent || "-"), d.qtyPerParent, d.totalQty, (d.level === 0 ? "-" : d.totalCost)
+                ]);
+            });
+            return csvData;
+        });
+    }
 });
 
 function loadBOM() {

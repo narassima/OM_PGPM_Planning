@@ -8,6 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     setupListeners();
     renderSetup();
+
+    if (typeof initExportDropdown === 'function') {
+        initExportDropdown(() => {
+            if (!currentViewItem || !mrpResults[currentViewItem]) return null;
+            const res = mrpResults[currentViewItem];
+            const periods = res.gr.length;
+            const csvData = [["Week", "Gross Req", "Sch Receipts", "Proj On-Hand", "Net Req", "PORc", "PORl"]];
+            for (let i = 0; i < periods; i++) {
+                csvData.push([
+                    i+1, res.gr[i], res.sr[i], res.poh[i], (res.nr[i] || ""), (res.porc[i] || ""), (res.porl[i] || "")
+                ]);
+            }
+            return csvData;
+        });
+    }
 });
 
 const DEFAULT_BOM = [

@@ -6,6 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
     setupChart();
     setupListeners();
     calculateCapacity();
+    
+    // Initialize Export
+    if (typeof initExportDropdown === 'function') {
+        initExportDropdown(() => {
+            if (!currentCapData) return null;
+            const d = currentCapData;
+            return [
+                ["Metric", "Value"],
+                ["Shifts per Day", d.shifts],
+                ["Hours per Shift", d.hours],
+                ["Days per Week", d.days],
+                ["Output Rate (Units/Hr)", d.rate],
+                ["Design Capacity (Units/Wk)", d.design],
+                ["Effective Capacity (Units/Wk)", d.effective.toFixed(0)],
+                ["Actual Output (Units/Wk)", d.actual],
+                ["Utilization (%)", d.util.toFixed(1)],
+                ["Efficiency (%)", d.eff.toFixed(1)]
+            ];
+        });
+    }
 });
 
 function setupTabs() {

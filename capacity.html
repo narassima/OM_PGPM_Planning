@@ -3,25 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpsPlanner Workspace - Capacity Planning</title>
-    
+    <title>Production Planner - Capacity Planning</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
 </head>
 <body>
     <div id="app-container">
-        <!-- Sidebar Navigation -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <h2>Production Planner</h2>
-                <p>Interactive Learning</p>
-            </div>
-                        <ul class="nav-links">
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
+            <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html" class="active"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
                 <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
@@ -35,145 +29,58 @@
                 <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
             </ul>
         </nav>
-
-        <!-- Main Content Area -->
         <main id="main-content">
             <header>
-                <div class="header-title">
-                    <h1 id="page-title">Capacity Planning</h1>
-                </div>
+                <div class="header-title"><h1>Capacity Planning</h1></div>
+                <div class="header-actions"></div>
             </header>
-
             <div id="content-area">
                 <div class="module-container">
                     <div class="tabs">
                         <button class="tab-btn active" data-tab="learn">Learn</button>
                         <button class="tab-btn" data-tab="explore">Explore</button>
                     </div>
-
                     <div id="tab-learn" class="tab-content active">
-                        <div class="card" style="background: linear-gradient(135deg, var(--primary-bg), #ffffff);">
-                            <div class="card-title" style="color: var(--accent-blue); font-size: 1.5rem; margin-bottom: 16px;"><i data-lucide="book-open" style="width: 24px; height: 24px;"></i> Capacity Planning</div>
-                            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 24px;">Strategic Capacity Planning represents the critical first step in operations management. It establishes the overall level of productive resources required to meet long-term anticipated demand. By carefully calculating design capacity, effective capacity, and system utilization, organizations can determine the optimal scale of their facilities, preventing costly bottlenecks, underutilized capital, and lost market share.</p>
-                            
-                            <div class="grid-2">
-                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
-                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="maximize" style="color: var(--accent-blue);"></i> Design Capacity</h4>
-                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The maximum theoretical output of a system under ideal conditions. It assumes continuous operation with no interruptions.</p>
-                                </div>
-                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
-                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="minimize" style="color: var(--accent-forest);"></i> Effective Capacity</h4>
-                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The expected output given realistic operating constraints. It accounts for planned maintenance, setup times, and breaks.</p>
-                                </div>
-                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
-                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="activity" style="color: var(--accent-green);"></i> Actual Output</h4>
-                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The rate of output actually achieved. It cannot exceed effective capacity and often suffers from unplanned downtime or defects.</p>
-                                </div>
-                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
-                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="percent" style="color: var(--accent-red);"></i> Key Metrics</h4>
-                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">
-                                        <strong>Utilization:</strong> Actual Output / Design Capacity<br>
-                                        <strong>Efficiency:</strong> Actual Output / Effective Capacity
-                                    </p>
-                                </div>
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="book-open"></i> Strategic Capacity Planning</div>
+                            <p>Strategic capacity planning establishes the overall level of productive resources required to meet long-term demand.</p>
+                            <div class="grid-2" style="margin-top:20px;">
+                                <div class="stat-card"><h4>Design Capacity</h4><p>Theoretical maximum output under ideal conditions.</p></div>
+                                <div class="stat-card"><h4>Effective Capacity</h4><p>Realistic expected output given constraints.</p></div>
                             </div>
                         </div>
                     </div>
-
                     <div id="tab-explore" class="tab-content">
                         <div class="grid-2">
                             <div class="card">
                                 <div class="card-title"><i data-lucide="sliders"></i> Operational Inputs</div>
-                                
-                                <h4 style="margin-bottom: 12px; font-size: 0.95rem; color: var(--text-secondary);">1. Baseline Design Parameters</h4>
-                                <div class="grid-2" style="margin-bottom: 16px;">
-                                    <div class="form-group">
-                                        <label>Shifts per Day</label>
-                                        <input type="number" id="cap-shifts" class="form-control" value="2" min="1" max="3">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Hours per Shift</label>
-                                        <input type="number" id="cap-hours" class="form-control" value="8" min="4" max="12">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Days per Week</label>
-                                        <input type="number" id="cap-days" class="form-control" value="5" min="1" max="7">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Ideal Output Rate (Units/Hr)</label>
-                                        <input type="number" id="cap-rate" class="form-control" value="50" min="1">
-                                    </div>
-                                </div>
-                                
-                                <h4 style="margin-bottom: 12px; font-size: 0.95rem; color: var(--text-secondary);">2. Capacity Loss Factors (OEE Model)</h4>
-                                <div class="grid-2">
-                                    <div class="form-group">
-                                        <label>Planned Maintenance (Hrs/Wk)</label>
-                                        <input type="number" id="cap-maint" class="form-control" value="4" min="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Setup Time (Hrs/Wk)</label>
-                                        <input type="number" id="cap-setup" class="form-control" value="6" min="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Unplanned Downtime (%)</label>
-                                        <input type="number" id="cap-down" class="form-control" value="5" min="0" max="100">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Defect Rate (%)</label>
-                                        <input type="number" id="cap-defect" class="form-control" value="2" min="0" max="100">
-                                    </div>
-                                </div>
-
-                                <hr style="margin: 16px 0; border-color: var(--border-color);">
-                                
-                                <div class="form-group">
-                                    <label>Actual Good Output (Units/Week)</label>
-                                    <input type="number" id="cap-actual" class="form-control" value="2800" style="font-weight: bold; color: var(--accent-blue);">
-                                </div>
-                                <button class="btn btn-primary" id="btn-calc-cap" style="width: 100%;">Calculate Metrics</button>
+                                <div class="form-group"><label>Shifts/Day</label><input type="number" id="cap-shifts" class="form-control" value="2"></div>
+                                <div class="form-group"><label>Hrs/Shift</label><input type="number" id="cap-hours" class="form-control" value="8"></div>
+                                <div class="form-group"><label>Days/Week</label><input type="number" id="cap-days" class="form-control" value="5"></div>
+                                <div class="form-group"><label>Rate (Units/Hr)</label><input type="number" id="cap-rate" class="form-control" value="50"></div>
+                                <div class="form-group"><label>Maintenance (Hrs/Wk)</label><input type="number" id="cap-maint" class="form-control" value="4"></div>
+                                <div class="form-group"><label>Setup (Hrs/Wk)</label><input type="number" id="cap-setup" class="form-control" value="6"></div>
+                                <div class="form-group"><label>Downtime (%)</label><input type="number" id="cap-down" class="form-control" value="5"></div>
+                                <div class="form-group"><label>Defects (%)</label><input type="number" id="cap-defect" class="form-control" value="2"></div>
+                                <div class="form-group"><label>Actual Good Output</label><input type="number" id="cap-actual" class="form-control" value="2800"></div>
+                                <button class="btn btn-primary" id="btn-calc-cap" style="width:100%">Calculate Metrics</button>
                             </div>
-                            
                             <div class="card">
-                                <div class="card-title"><i data-lucide="pie-chart"></i> Weekly Capacity Metrics</div>
-                                <div class="chart-container">
-                                    <canvas id="capacityChart"></canvas>
-                                </div>
-                                <div style="margin-top: 24px; text-align: center; cursor: pointer;" onclick="showStepModal()">
-                                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Click here for Step-by-Step Breakdown</p>
-                                    <div style="font-size: 1.2rem;">Utilization: <strong id="res-utilization" style="color: var(--accent-blue);">0%</strong></div>
-                                    <div style="font-size: 1.2rem; margin-top: 8px;">Efficiency: <strong id="res-efficiency" style="color: var(--accent-green);">0%</strong></div>
+                                <div class="card-title"><i data-lucide="pie-chart"></i> Results</div>
+                                <div class="chart-container"><canvas id="capacityChart"></canvas></div>
+                                <div style="margin-top:20px; text-align:center;">
+                                    <div>Utilization: <strong id="res-utilization">0%</strong></div>
+                                    <div>Efficiency: <strong id="res-efficiency">0%</strong></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </main>
     </div>
-
-    <!-- Step-by-Step Modal -->
-    <div class="modal-overlay" id="stepModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title"><i data-lucide="help-circle"></i> Capacity Calculations Breakdown</div>
-                <button class="modal-close" onclick="document.getElementById('stepModal').classList.remove('active')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="step-content" id="stepModalContent">
-                <!-- Content injected here -->
-            </div>
-        </div>
-    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
+    <script src="js/export.js"></script>
     <script src="js/capacity.js"></script>
     <script>lucide.createIcons();</script>
 </body>
 </html>
-
-
