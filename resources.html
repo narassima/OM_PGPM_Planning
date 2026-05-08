@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
@@ -253,30 +253,23 @@
                 </div>
 
                 <div id="tab-papers" class="tab-content">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3 style="margin: 0;">Live ArXiv Feed: Operations Management & Supply Chain</h3>
-                        <span style="font-size: 0.8rem; background: var(--accent-blue-light); color: var(--accent-blue); padding: 4px 8px; border-radius: 4px; font-weight: bold;">LIVE</span>
-                    </div>
-                    <div id="papers-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                        <i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 2s linear infinite;"></i>
-                        <p>Fetching latest research...</p>
-                    </div>
-                    <div id="dynamic-papers-grid" class="grid-3" style="display: none; gap: 16px;">
-                        <!-- Dynamically populated from js/resources.js -->
-                    </div>
-                    <hr style="margin: 24px 0; border-color: var(--border-color);">
-                    <h3 style="margin-bottom: 16px;">Standard Journals</h3>
-                    <div class="grid-2">
-                        <div class="resource-card">
-                            <h3><i data-lucide="file-text" style="color: var(--accent-purple);"></i> Journal of Operations Management</h3>
-                            <p>A leading academic journal publishing rigorous, relevant, and original research in operations management.</p>
-                            <a href="https://onlinelibrary.wiley.com/journal/18731317" target="_blank">View Journal <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
-                        </div>
-                        <div class="resource-card">
-                            <h3><i data-lucide="graduation-cap" style="color: var(--accent-red);"></i> MSOM Journal</h3>
-                            <p>Manufacturing & Service Operations Management (INFORMS) journal covering analytical models for OM problems.</p>
-                            <a href="https://pubsonline.informs.org/journal/msom" target="_blank">View Journal <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
-                        </div>
+                    <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 0.9rem;">15 seminal academic papers in Operations Management and Supply Chain, curated from FT-50 and INFORMS journals.</p>
+                    <div class="grid-3" style="gap: 16px;">
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Bullwhip Effect (1997)</h3><p style="font-size:0.79rem;">Lee, Padmanabhan &amp; Whang - Quantifying demand amplification. <em>Management Science</em>.</p><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.43.4.546" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Supply Chain Resilience (2005)</h3><p style="font-size:0.79rem;">Sheffi &amp; Rice - A supply chain view of the resilient enterprise. <em>MIT Sloan Management Review</em>.</p><a href="https://sloanreview.mit.edu/article/a-supply-chain-view-of-the-resilient-enterprise/" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Toyota Production System (1977)</h3><p style="font-size:0.79rem;">Sugimori et al. - Original paper on TPS and Just-In-Time. <em>Int'l Journal of Production Research</em>.</p><a href="https://www.tandfonline.com/doi/abs/10.1080/00207547708943149" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #dc2626;"><h3 style="font-size:0.88rem;">Newsvendor Contracting (2001)</h3><p style="font-size:0.79rem;">Cachon &amp; Lariviere - Contracting to assure supply. <em>Management Science, INFORMS</em>.</p><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.47.7.943.9806" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #d97706;"><h3 style="font-size:0.88rem;">Lean Thinking (1996)</h3><p style="font-size:0.79rem;">Womack &amp; Jones - Banish Waste and Create Wealth in your Corporation. <em>Journal of OM</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/S0272696397818027" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #0891b2;"><h3 style="font-size:0.88rem;">Theory of Constraints (1990)</h3><p style="font-size:0.79rem;">Goldratt - What is this thing called Theory of Constraints? <em>North River Press</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/0925527394900124" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">EOQ Classic (1913/1990)</h3><p style="font-size:0.79rem;">Harris (1913) - How Many Parts to Make at Once. Reprinted in <em>Operations Research</em>, INFORMS.</p><a href="https://pubsonline.informs.org/doi/10.1287/opre.38.6.947" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Six Sigma Implementation (2002)</h3><p style="font-size:0.79rem;">Antony &amp; Banuelas - Key ingredients for effective Six Sigma. <em>Measuring Business Excellence</em>.</p><a href="https://www.emerald.com/insight/content/doi/10.1108/13683040210451679/full/html" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Inventory Pooling (1979)</h3><p style="font-size:0.79rem;">Eppen - Effects of centralization on multi-location newsboy problem. <em>Management Science</em>.</p><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.25.5.498" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #dc2626;"><h3 style="font-size:0.88rem;">Sustainable Supply Chains (2008)</h3><p style="font-size:0.79rem;">Seuring &amp; Muller - Literature review to conceptual framework. <em>Journal of Cleaner Production</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/S0959652608000614" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #d97706;"><h3 style="font-size:0.88rem;">Digital Supply Chains (2018)</h3><p style="font-size:0.79rem;">Buyukozkan &amp; Gocer - Digital SC framework. <em>Computers in Industry</em>, Elsevier.</p><a href="https://www.sciencedirect.com/science/article/pii/S0166361517305031" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #0891b2;"><h3 style="font-size:0.88rem;">Revenue Management (2004)</h3><p style="font-size:0.79rem;">Talluri &amp; van Ryzin - Theory and Practice of Revenue Management. <em>Springer</em>.</p><a href="https://link.springer.com/book/9781402077012" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Demand Forecasting M4 (2020)</h3><p style="font-size:0.79rem;">Makridakis et al. - M4 Competition results and findings. <em>International Journal of Forecasting</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/S0169207019301128" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Vendor-Managed Inventory (1999)</h3><p style="font-size:0.79rem;">Waller et al. - VMI in the retail supply chain. <em>Journal of Business Logistics</em>.</p><a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/j.2158-1592.1999.tb00252.x" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">MRP-II Evolution (1984)</h3><p style="font-size:0.79rem;">Wight - Manufacturing Resource Planning: MRPII. <em>Int'l Journal of Production Research</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/0272696386900044" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
                     </div>
                 </div>
 
@@ -374,6 +367,20 @@
                     </div>
                 </div>
 
+                <div id="tab-journals" class="tab-content">
+                    <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 0.95rem;">Top peer-reviewed journals for Operations Management and Supply Chain research — all FT-50 ranked or INFORMS listed.</p>
+                    <div class="grid-3" style="gap: 16px;">
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-blue);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-blue);"></i> Journal of Operations Management</h3><p style="font-size:0.82rem;">The flagship journal of the Decision Sciences Institute. FT-50 ranked. Covers empirical and analytical OM research.</p><a href="https://onlinelibrary.wiley.com/journal/18731317" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-purple);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-purple);"></i> Management Science (INFORMS)</h3><p style="font-size:0.82rem;">One of the world's leading journals covering all aspects of management science and analytics. FT-50.</p><a href="https://pubsonline.informs.org/journal/mnsc" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-green);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-green);"></i> Manufacturing & Service OM (MSOM)</h3><p style="font-size:0.82rem;">INFORMS journal dedicated to analytical and empirical OM models for manufacturing and services.</p><a href="https://pubsonline.informs.org/journal/msom" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-red);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-red);"></i> Operations Research (INFORMS)</h3><p style="font-size:0.82rem;">The oldest INFORMS journal, publishing original research in the theory and applications of OR.</p><a href="https://pubsonline.informs.org/journal/opre" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-amber);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-amber);"></i> International Journal of Prod. Econ.</h3><p style="font-size:0.82rem;">Covers quantitative and qualitative research relating to production, manufacturing systems, and logistics.</p><a href="https://www.journals.elsevier.com/international-journal-of-production-economics" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-blue);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-blue);"></i> Supply Chain Management: An Int'l Journal</h3><p style="font-size:0.82rem;">Emerald journal focused on theory and practice of supply chain management globally.</p><a href="https://www.emerald.com/insight/publication/issn/1359-8546" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-purple);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-purple);"></i> European Journal of Oper. Research</h3><p style="font-size:0.82rem;">World's largest OR journal by volume. Covers a wide range of quantitative planning methods.</p><a href="https://www.journals.elsevier.com/european-journal-of-operational-research" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-green);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-green);"></i> International Journal of Prod. Research</h3><p style="font-size:0.82rem;">Taylor & Francis journal covering production technology, planning, control, and logistics.</p><a href="https://www.tandfonline.com/journals/tprs20" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -389,10 +396,7 @@
                 e.target.classList.add('active');
                 document.getElementById('tab-' + e.target.getAttribute('data-tab')).classList.add('active');
                 
-                // If they click papers tab, fetch papers if not already fetched
-                if (e.target.getAttribute('data-tab') === 'papers' && window.fetchArxivPapers) {
-                    window.fetchArxivPapers();
-                }
+                // Papers tab — static content, no fetch needed
                 
                 // If they click cases tab, fetch live cases
                 if (e.target.getAttribute('data-tab') === 'cases' && window.fetchLiveCases) {
