@@ -10,12 +10,24 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSetup();
 });
 
+const DEFAULT_BOM = [
+    { id: 'Chair', level: 0, qty: 1, parent: null, unitCost: 0, leadTime: 1 },
+    { id: 'Seat Assembly', level: 1, qty: 1, parent: 'Chair', unitCost: 15, leadTime: 2 },
+    { id: 'Seat Cushion', level: 2, qty: 1, parent: 'Seat Assembly', unitCost: 10, leadTime: 1 },
+    { id: 'Seat Frame', level: 2, qty: 1, parent: 'Seat Assembly', unitCost: 5, leadTime: 3 },
+    { id: 'Back Assembly', level: 1, qty: 1, parent: 'Chair', unitCost: 20, leadTime: 2 },
+    { id: 'Back Cushion', level: 2, qty: 1, parent: 'Back Assembly', unitCost: 12, leadTime: 1 },
+    { id: 'Back Frame', level: 2, qty: 1, parent: 'Back Assembly', unitCost: 8, leadTime: 3 },
+    { id: 'Legs', level: 1, qty: 4, parent: 'Chair', unitCost: 5, leadTime: 2 },
+    { id: 'Rubber Caps', level: 2, qty: 1, parent: 'Legs', unitCost: 1, leadTime: 1 }
+];
+
 function loadBOM() {
     const saved = localStorage.getItem('om_custom_bom');
     if (saved) {
         bomData = JSON.parse(saved);
     } else {
-        bomData = []; // Require user to build BOM if empty
+        bomData = JSON.parse(JSON.stringify(DEFAULT_BOM));
     }
 }
 

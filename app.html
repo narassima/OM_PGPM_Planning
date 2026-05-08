@@ -45,13 +45,6 @@
                     <h1 id="page-title">Aggregate Production Planning</h1>
                 </div>
                 <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
-                    <div style="background: var(--primary-bg); padding: 4px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
-                        <label style="font-size: 0.9rem; font-weight: 500; margin: 0;"><i data-lucide="box" style="width: 16px; height: 16px;"></i> Component Line:</label>
-                        <select id="app-component-selector" class="form-control" style="padding: 4px 8px; font-weight: bold; color: var(--accent-blue);">
-                            <option value="Chair">Chair (Default)</option>
-                            <!-- Dynamically populated from BOM -->
-                        </select>
-                    </div>
                     <button class="btn btn-secondary" onclick="exportToPDF('Aggregate Production Planning', 'content-area')"><i data-lucide="file-text"></i> Export PDF</button>
                     <button class="btn btn-secondary" onclick="exportToExcel('Aggregate Production Planning', 'content-area')"><i data-lucide="file-spreadsheet"></i> Export Excel</button>
                 </div>
@@ -91,6 +84,13 @@
                         <div class="grid-2">
                             <div class="card">
                                 <div class="card-title"><i data-lucide="settings"></i> Inputs & Constraints</div>
+                                <div class="form-group" style="margin-bottom: 16px;">
+                                    <label>Component Line</label>
+                                    <select id="app-component-selector" class="form-control" style="font-weight: bold; color: var(--accent-blue);">
+                                        <option value="Chair">Chair (Default)</option>
+                                        <!-- Dynamically populated from BOM -->
+                                    </select>
+                                </div>
                                 <div class="grid-2">
                                     <div class="form-group">
                                         <label>Strategy</label>
@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="grid-3">
                                     <div class="form-group">
-                                        <label>Reg Cost ($)</label>
+                                        <label>Regular Production Cost ($)</label>
                                         <input type="number" id="cost-reg" class="form-control" value="10">
                                     </div>
                                     <div class="form-group">
@@ -135,10 +135,10 @@
                                         <input type="number" id="app-units-worker" class="form-control" value="20">
                                     </div>
                                     <div class="form-group">
-                                        <label>Initial Workers & Inv</label>
+                                        <label>Initial Workers & Inventory</label>
                                         <div style="display: flex; gap: 8px;">
                                             <input type="number" id="app-init-workers" class="form-control" placeholder="Workers" value="10">
-                                            <input type="number" id="app-init-inv" class="form-control" placeholder="Inv" value="50">
+                                            <input type="number" id="app-init-inv" class="form-control" placeholder="Inventory" value="50">
                                         </div>
                                     </div>
                                 </div>

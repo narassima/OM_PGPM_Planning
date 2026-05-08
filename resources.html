@@ -144,7 +144,7 @@
                         <i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 2s linear infinite;"></i>
                         <p>Fetching latest research...</p>
                     </div>
-                    <div id="dynamic-papers-grid" class="grid-2" style="display: none;">
+                    <div id="dynamic-papers-grid" class="grid-3" style="display: none; gap: 16px;">
                         <!-- Dynamically populated from js/resources.js -->
                     </div>
                     <hr style="margin: 24px 0; border-color: var(--border-color);">
@@ -164,43 +164,16 @@
                 </div>
 
                 <div id="tab-cases" class="tab-content">
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="truck" style="color: var(--accent-blue);"></i> Apple's Global Supply Chain</h3>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Oct 2023</div>
-                            <p style="font-size: 0.85rem;">An analysis of how Apple maintains its incredibly tight inventory turns and global supplier network.</p>
-                            <a href="https://www.supplychaindive.com/news/apple-supply-chain-strategy-tim-cook/640105/" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="scissors" style="color: var(--accent-green);"></i> Zara: Fast Fashion</h3>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: May 2022</div>
-                            <p style="font-size: 0.85rem;">How Inditex uses near-shoring and vertical integration to beat competitors to market.</p>
-                            <a href="https://mitsloan.mit.edu/ideas-made-to-matter/how-zaras-agile-supply-chain-handles-pandemic" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="settings" style="color: var(--accent-red);"></i> Toyota Production System</h3>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Jan 2021</div>
-                            <p style="font-size: 0.85rem;">The classic foundation of Lean Manufacturing, JIT, and continuous improvement (Kaizen).</p>
-                            <a href="https://global.toyota/en/company/vision-and-philosophy/production-system/" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="shopping-cart" style="color: var(--accent-purple);"></i> Amazon Fulfillment</h3>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Aug 2023</div>
-                            <p style="font-size: 0.85rem;">Examining the robotics and predictive analytics driving Amazon's warehouse efficiency.</p>
-                            <a href="https://www.aboutamazon.com/news/operations/how-amazon-robotics-works" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="cpu" style="color: var(--text-primary);"></i> TSMC Chip Shortage</h3>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Nov 2022</div>
-                            <p style="font-size: 0.85rem;">Capacity planning challenges during the global semiconductor bullwhip effect.</p>
-                            <a href="https://hbr.org/2021/02/why-were-in-the-midst-of-a-global-semiconductor-shortage" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="package" style="color: var(--accent-blue);"></i> FedEx Hub-and-Spoke</h3>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Feb 2020</div>
-                            <p style="font-size: 0.85rem;">The network design that revolutionized overnight delivery operations.</p>
-                            <a href="https://www.fedex.com/en-us/about/history.html" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0;">Live RSS Feed: Supply Chain & Operations News</h3>
+                        <span style="font-size: 0.8rem; background: var(--accent-blue-light); color: var(--accent-blue); padding: 4px 8px; border-radius: 4px; font-weight: bold;">LIVE</span>
+                    </div>
+                    <div id="cases-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 2s linear infinite;"></i>
+                        <p>Fetching latest industry news and cases...</p>
+                    </div>
+                    <div id="dynamic-cases-grid" class="grid-3" style="display: none; gap: 16px;">
+                        <!-- Dynamically populated from js/resources.js -->
                     </div>
                 </div>
 
@@ -237,6 +210,11 @@
                 // If they click papers tab, fetch papers if not already fetched
                 if (e.target.getAttribute('data-tab') === 'papers' && window.fetchArxivPapers) {
                     window.fetchArxivPapers();
+                }
+                
+                // If they click cases tab, fetch live cases
+                if (e.target.getAttribute('data-tab') === 'cases' && window.fetchLiveCases) {
+                    window.fetchLiveCases();
                 }
             });
         });

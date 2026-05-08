@@ -24,9 +24,9 @@ window.fetchArxivPapers = async function() {
             // Use cached data
             papersHTML = cachedData;
         } else {
-            // Fetch 6 recent papers matching Operations Management OR Supply Chain
+            // Fetch 15 recent papers matching Operations Management OR Supply Chain
             const query = 'all:"supply chain" OR all:"operations management"';
-            const url = `https://export.arxiv.org/api/query?search_query=${encodeURIComponent(query)}&start=0&max_results=6&sortBy=submittedDate&sortOrder=descending`;
+            const url = `https://export.arxiv.org/api/query?search_query=${encodeURIComponent(query)}&start=0&max_results=15&sortBy=submittedDate&sortOrder=descending`;
             
             const response = await fetch(url);
             const text = await response.text();
@@ -84,6 +84,91 @@ window.fetchArxivPapers = async function() {
     } catch (err) {
         console.error("Error fetching ArXiv papers:", err);
         loadingDiv.innerHTML = `<p style="color: var(--accent-red);"><i data-lucide="alert-triangle"></i> Failed to load live papers. Please check your internet connection.</p>`;
+        lucide.createIcons();
+    }
+}
+
+let casesFetched = false;
+
+window.fetchLiveCases = async function() {
+    if (casesFetched) return;
+    
+    const loadingDiv = document.getElementById('cases-loading');
+    const gridDiv = document.getElementById('dynamic-cases-grid');
+    
+    try {
+        loadingDiv.style.display = 'block';
+        gridDiv.style.display = 'none';
+        
+        const cacheKey = 'om_rss_cases_cache';
+        const cacheTimeKey = 'om_rss_cases_cache_time';
+        const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in ms
+        
+        const now = Date.now();
+        const cachedData = localStorage.getItem(cacheKey);
+        const cachedTime = localStorage.getItem(cacheTimeKey);
+        
+        let casesHTML = '';
+
+        if (cachedData && cachedTime && (now - parseInt(cachedTime)) < CACHE_DURATION) {
+            // Use cached data
+            casesHTML = cachedData;
+        } else {
+            // Fetch 15 items via rss2json
+            const rssUrl = "https://www.supplychaindive.com/feeds/news/";
+            const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=&count=15`;
+            
+            const response = await fetch(url);
+            const json = await response.json();
+            
+            if (json.status !== 'ok') throw new Error("RSS to JSON API failed");
+            
+            const icons = ['truck', 'package', 'settings', 'scissors', 'cpu', 'shopping-cart'];
+            const colors = ['var(--accent-blue)', 'var(--accent-green)', 'var(--accent-purple)', 'var(--accent-red)'];
+            
+            for (let i = 0; i < json.items.length; i++) {
+                const item = json.items[i];
+                const title = item.title;
+                
+                // create a snippet from content if description is empty
+                let summary = item.description.replace(/<[^>]+>/g, '').substring(0, 120).trim();
+                if(summary.length === 0) summary = item.content.replace(/<[^>]+>/g, '').substring(0, 120).trim();
+                if(summary.length > 0) summary += '...';
+                
+                const link = item.link;
+                const author = item.author || 'Editorial';
+                
+                // Extract date
+                const published = new Date(item.pubDate);
+                const dateStr = published.toLocaleDateString();
+                
+                const icon = icons[i % icons.length];
+                const color = colors[i % colors.length];
+
+                casesHTML += `
+                    <div class="resource-card" style="padding: 16px;">
+                        <h3 style="font-size: 1.1rem; line-height: 1.4; margin-bottom: 8px;"><i data-lucide="${icon}" style="color: ${color};"></i> ${title}</h3>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: ${dateStr} by ${author}</div>
+                        <p style="font-size: 0.85rem;">${summary}</p>
+                        <a href="${link}" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                    </div>
+                `;
+            }
+            
+            // Save to cache
+            localStorage.setItem(cacheKey, casesHTML);
+            localStorage.setItem(cacheTimeKey, now.toString());
+        }
+        
+        gridDiv.innerHTML = casesHTML;
+        lucide.createIcons();
+        loadingDiv.style.display = 'none';
+        gridDiv.style.display = 'grid';
+        casesFetched = true;
+        
+    } catch (err) {
+        console.error("Error fetching Live Cases:", err);
+        loadingDiv.innerHTML = `<p style="color: var(--accent-red);"><i data-lucide="alert-triangle"></i> Failed to load live cases. Please check your internet connection.</p>`;
         lucide.createIcons();
     }
 }

@@ -38,15 +38,6 @@
                 <div class="header-title">
                     <h1 id="page-title">Master Production Schedule</h1>
                 </div>
-                <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
-                    <div style="background: var(--primary-bg); padding: 4px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
-                        <label style="font-size: 0.9rem; font-weight: 500; margin: 0;"><i data-lucide="box" style="width: 16px; height: 16px;"></i> Component Line:</label>
-                        <select id="mps-component-selector" class="form-control" style="padding: 4px 8px; font-weight: bold; color: var(--accent-blue);">
-                            <option value="Chair">Chair (Default)</option>
-                            <!-- Dynamically populated from BOM -->
-                        </select>
-                    </div>
-                </div>
             </header>
 
             <div id="content-area">
@@ -79,6 +70,13 @@
                         <div class="card">
                             <div class="card-title"><i data-lucide="grid"></i> Interactive MPS Grid</div>
                             <div style="margin-bottom: 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Component Line</label>
+                                    <select id="mps-component-selector" class="form-control" style="font-weight: bold; color: var(--accent-blue); width: auto;">
+                                        <option value="Chair">Chair (Default)</option>
+                                        <!-- Dynamically populated from BOM -->
+                                    </select>
+                                </div>
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label>Starting On-Hand Inventory</label>
                                     <input type="number" id="mps-onhand" class="form-control" value="64" style="width: 120px;">

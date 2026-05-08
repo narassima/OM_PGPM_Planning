@@ -14,14 +14,16 @@ function populateComponentSelector() {
     const selector = document.getElementById('app-component-selector');
     if (!selector) return;
     
-    let bom = JSON.parse(localStorage.getItem('om_bomData'));
+    const saved = localStorage.getItem('om_custom_bom');
+    let bom = saved ? JSON.parse(saved) : null;
+    
     selector.innerHTML = '';
     
     if (bom && bom.length > 0) {
         bom.forEach(comp => {
             const opt = document.createElement('option');
-            opt.value = comp.name;
-            opt.innerText = comp.name;
+            opt.value = comp.id;
+            opt.innerText = comp.id;
             selector.appendChild(opt);
         });
     } else {
