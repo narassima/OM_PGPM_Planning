@@ -42,35 +42,39 @@
 
             <div id="content-area">
                 <div class="module-container">
-                    <div class="card" style="background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-green-light));">
-                        <h2 style="color: var(--accent-blue); font-size: 2rem; margin-bottom: 16px;">Welcome to OM Professor</h2>
-                        <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 800px;">
-                            This interactive learning application is based on <strong>William J. Stevenson - Operations Management Ed 14</strong>. 
-                            Explore concepts, solve dynamic problems, and evaluate your understanding of core OM principles.
-                        </p>
+                    <div class="card" style="background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-green-light)); padding: 0; overflow: hidden; display: flex; flex-direction: row; align-items: center;">
+                        <div style="padding: 40px; flex: 1;">
+                            <h2 style="color: var(--accent-blue); font-size: 2.2rem; margin-bottom: 16px;">Welcome to OM Professor</h2>
+                            <p style="font-size: 1.15rem; color: var(--text-secondary); line-height: 1.6; text-align: justify; margin: 0;">
+                                This professional-grade learning platform is modeled after the pedagogical structure of <strong>William J. Stevenson's Operations Management (14th Edition)</strong>. Designed specifically for business and engineering students, this application offers a comprehensive, interactive journey through the core pillars of operations planning. From high-level strategic capacity decisions to granular material requirements, you can explore theoretical concepts, dynamically solve multi-component problems, and evaluate your mastery using our built-in testing engine.
+                            </p>
+                        </div>
+                        <div style="flex: 0 0 45%; max-width: 45%; height: 100%;">
+                            <img src="img/banner.png" alt="High-tech manufacturing facility and supply chain logistics" style="width: 100%; height: 100%; object-fit: cover; border-left: 4px solid #fff;">
+                        </div>
                     </div>
 
-                    <h3 style="margin: 24px 0 16px;">Learning Modules</h3>
+                    <h3 style="margin: 32px 0 16px; font-size: 1.4rem; color: var(--text-primary);">Learning Modules</h3>
                     <div class="grid-3">
-                        <div class="card" style="cursor: pointer;" onclick="window.location.href='capacity.html'">
-                            <div class="card-title"><i data-lucide="bar-chart-2"></i> Capacity Planning</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Design vs. Effective capacity, utilization, and bottleneck analysis.</p>
+                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #f0fdf4); border: 1px solid #bbf7d0; transition: transform 0.2s;" onclick="window.location.href='capacity.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="card-title" style="color: #166534;"><i data-lucide="bar-chart-2" style="color: #22c55e;"></i> Capacity Planning</div>
+                            <p style="color: #166534; font-size: 0.95rem; line-height: 1.4;">Design vs. Effective capacity, utilization, and bottleneck analysis.</p>
                         </div>
-                        <div class="card" style="cursor: pointer;" onclick="window.location.href='app.html'">
-                            <div class="card-title"><i data-lucide="calendar"></i> Aggregate Planning</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Chase vs. Level strategies, demand matching, and cost computations.</p>
+                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #eff6ff); border: 1px solid #bfdbfe; transition: transform 0.2s;" onclick="window.location.href='app.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="card-title" style="color: #1e3a8a;"><i data-lucide="calendar" style="color: #3b82f6;"></i> Aggregate Planning</div>
+                            <p style="color: #1e3a8a; font-size: 0.95rem; line-height: 1.4;">Chase vs. Level strategies, demand matching, and cost computations.</p>
                         </div>
-                        <div class="card" style="cursor: pointer;" onclick="window.location.href='mps.html'">
-                            <div class="card-title"><i data-lucide="layers"></i> Master Prod. Schedule</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Disaggregation and Available-To-Promise (ATP) inventory calculations.</p>
+                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #faf5ff); border: 1px solid #e9d5ff; transition: transform 0.2s;" onclick="window.location.href='mps.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="card-title" style="color: #581c87;"><i data-lucide="layers" style="color: #a855f7;"></i> Master Prod. Schedule</div>
+                            <p style="color: #581c87; font-size: 0.95rem; line-height: 1.4;">Disaggregation and Available-To-Promise (ATP) inventory calculations.</p>
                         </div>
-                        <div class="card" style="cursor: pointer;" onclick="window.location.href='mrp.html'">
-                            <div class="card-title"><i data-lucide="package"></i> MRP</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Gross requirements, netting, and planned order releases.</p>
+                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #fef2f2); border: 1px solid #fecaca; transition: transform 0.2s;" onclick="window.location.href='mrp.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="card-title" style="color: #991b1b;"><i data-lucide="package" style="color: #ef4444;"></i> MRP</div>
+                            <p style="color: #991b1b; font-size: 0.95rem; line-height: 1.4;">Gross requirements, netting, and planned order releases.</p>
                         </div>
-                        <div class="card" style="cursor: pointer;" onclick="window.location.href='bom.html'">
-                            <div class="card-title"><i data-lucide="git-merge"></i> Bill of Materials</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Product structure trees and low-level coding.</p>
+                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #fff7ed); border: 1px solid #fed7aa; transition: transform 0.2s;" onclick="window.location.href='bom.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="card-title" style="color: #9a3412;"><i data-lucide="git-merge" style="color: #f97316;"></i> Bill of Materials</div>
+                            <p style="color: #9a3412; font-size: 0.95rem; line-height: 1.4;">Product structure trees and low-level coding.</p>
                         </div>
                     </div>
                 </div>

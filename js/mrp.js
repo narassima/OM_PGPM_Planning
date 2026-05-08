@@ -82,6 +82,19 @@ function renderSetup() {
         `;
     });
     tbody.innerHTML = html;
+    
+    // Populate selectors immediately
+    const selectors = ['mrp-view-selector', 'mrp-manual-selector'];
+    selectors.forEach(selId => {
+        const sel = document.getElementById(selId);
+        if (sel) {
+            sel.innerHTML = '';
+            bomData.forEach(item => {
+                sel.innerHTML += `<option value="${item.id}">${item.id} (L${item.level})</option>`;
+            });
+        }
+    });
+    
     lucide.createIcons();
 }
 
