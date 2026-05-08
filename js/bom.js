@@ -140,30 +140,103 @@ function removeComponent(index) {
 
 function renderVisualTree() {
     const container = document.getElementById('bom-visual-tree');
+    container.innerHTML = '';
+    
     if (bomData.length === 0) {
-        container.innerHTML = "No components defined.";
+        container.innerHTML = "<p style='padding: 24px;'>No components defined.</p>";
         return;
     }
 
-    const buildTreeHTML = (parentId, prefix) => {
+    // Prepare hierarchical data
+    const rootItem = bomData.find(b => b.level === 0);
+    if (!rootItem) return;
+
+    function buildHierarchy(parentId) {
         const children = bomData.filter(b => b.parent === parentId);
-        let html = '';
-        children.forEach((child, index) => {
-            const isLast = index === children.length - 1;
-            const branch = isLast ? '└── ' : '├── ';
-            const newPrefix = prefix + (isLast ? '    ' : '│   ');
-            html += `<div style="${child.level > 1 ? 'color: var(--text-secondary);' : ''}">${prefix}${branch}[${child.level}] ${child.id} (${child.qty}) - $${child.unitCost}</div>`;
-            html += buildTreeHTML(child.id, newPrefix);
-        });
-        return html;
+        if (children.length === 0) return null;
+        return children.map(c => ({
+            name: c.id,
+            qty: c.qty,
+            lt: c.leadTime,
+            cost: c.unitCost,
+            children: buildHierarchy(c.id)
+        }));
+    }
+
+    const treeData = {
+        name: rootItem.id,
+        qty: rootItem.qty,
+        lt: rootItem.leadTime,
+        cost: rootItem.unitCost,
+        children: buildHierarchy(rootItem.id)
     };
 
-    const root = bomData.find(b => b.level === 0);
-    if (root) {
-        let html = `<div style="font-weight: bold; color: var(--accent-blue);">[0] ${root.id} (1)</div>`;
-        html += buildTreeHTML(root.id, '');
-        container.innerHTML = html;
-    }
+    // D3 Setup
+    const width = container.clientWidth || 800;
+    const height = container.clientHeight || 500;
+    const margin = {top: 40, right: 90, bottom: 50, left: 90};
+
+    const svg = d3.select("#bom-visual-tree")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const treeLayout = d3.tree().size([width - margin.left - margin.right, height - margin.top - margin.bottom]);
+    const root = d3.hierarchy(treeData);
+    treeLayout(root);
+
+    // Draw Links
+    svg.selectAll(".link")
+        .data(root.links())
+        .enter()
+        .append("path")
+        .attr("class", "link")
+        .attr("fill", "none")
+        .attr("stroke", "var(--border-color)")
+        .attr("stroke-width", 2)
+        .attr("d", d3.linkVertical()
+            .x(d => d.x)
+            .y(d => d.y)
+        );
+
+    // Draw Nodes
+    const nodes = svg.selectAll(".node")
+        .data(root.descendants())
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
+    // Node Box
+    nodes.append("rect")
+        .attr("x", -60)
+        .attr("y", -25)
+        .attr("width", 120)
+        .attr("height", 50)
+        .attr("rx", 8)
+        .attr("fill", d => d.depth === 0 ? "var(--accent-blue)" : "var(--primary-bg)")
+        .attr("stroke", d => d.depth === 0 ? "var(--accent-blue)" : "var(--border-color)")
+        .attr("stroke-width", 2)
+        .style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))");
+
+    // Node Text (Name)
+    nodes.append("text")
+        .attr("dy", "-5")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "bold")
+        .style("fill", d => d.depth === 0 ? "#fff" : "var(--text-primary)")
+        .text(d => d.data.name);
+
+    // Node Text (Details)
+    nodes.append("text")
+        .attr("dy", "12")
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .style("fill", d => d.depth === 0 ? "rgba(255,255,255,0.8)" : "var(--text-secondary)")
+        .text(d => `Qty: ${d.data.qty} | LT: ${d.data.lt}w`);
 }
 
 function calculateBOM() {
