@@ -1,282 +1,177 @@
-<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'><title>OpsPlanner - End-to-End Planner</title><link rel='preconnect' href='https://fonts.googleapis.com'><link rel='preconnect' href='https://fonts.gstatic.com' crossorigin><link href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'><script src='https://unpkg.com/lucide@latest'></script><link rel='stylesheet' href='styles/index.css'></head><body>
-<div id="app-container"><nav id="sidebar"><div class="sidebar-header"><h2>OpsPlanner Workspace</h2><p>Interactive Learning</p></div><ul class="nav-links"><li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li><li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li><li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li><li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li><li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li><li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li><li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li><li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li><li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li><li><a href="integration.html" class="active"><i data-lucide="link-2"></i> End-to-End Planner</a></li></ul></nav>
-<main id="main-content"><header><div class="header-title"><h1>End-to-End Operations Planner</h1></div><div class="header-actions"><span style="font-size:0.8rem;color:var(--text-secondary);background:var(--accent-blue-light);padding:4px 12px;border-radius:20px;font-weight:700;">Chair Manufacturing Scenario</span></div></header><div id="content-area"><div class="module-container">
-<div class="concept-box"><strong>&#128218; What is the End-to-End Planning Chain?</strong> In real manufacturing, planning flows top-down: <strong>BOM</strong> defines what to build, <strong>Capacity</strong> defines how much you can produce, <strong>APP</strong> sets a 12-month workforce &amp; inventory strategy, <strong>MPS</strong> disaggregates APP into weekly item schedules, and <strong>MRP</strong> explodes those schedules into component purchase orders. Every module hands off a key output to the next.</div>
-<div class="stage-stepper" id="stageStepper">
-<div class="stage-step active-step" onclick="goToStage(0)" id="step-0"><div class="stage-step-num">1</div><div class="stage-step-label">BOM</div></div>
-<div class="stage-connector"></div>
-<div class="stage-step" onclick="goToStage(1)" id="step-1"><div class="stage-step-num">2</div><div class="stage-step-label">Capacity</div></div>
-<div class="stage-connector"></div>
-<div class="stage-step" onclick="goToStage(2)" id="step-2"><div class="stage-step-num">3</div><div class="stage-step-label">APP</div></div>
-<div class="stage-connector"></div>
-<div class="stage-step" onclick="goToStage(3)" id="step-3"><div class="stage-step-num">4</div><div class="stage-step-label">MPS</div></div>
-<div class="stage-connector"></div>
-<div class="stage-step" onclick="goToStage(4)" id="step-4"><div class="stage-step-num">5</div><div class="stage-step-label">MRP</div></div>
-</div>
-<!-- STAGE 0: BOM -->
-<div class="stage-panel active" id="panel-0">
-<div class="stage-card" style="border-left-color:#f97316;">
-<div class="card-title" style="font-size:1.15rem;"><i data-lucide="git-merge" style="color:#f97316;width:22px;height:22px;"></i> Stage 1: Bill of Materials (BOM)</div>
-<p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.7;">The BOM is the foundation of the entire planning chain. It defines the <strong>product structure</strong> — every component, sub-assembly, quantity per parent, lead time, and unit cost needed to produce one finished Chair. Before any planning can begin, the BOM must be fully defined so that MRP can later <em>explode</em> end-item demand into component-level requirements.</p>
-<div class="grid-2">
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;color:var(--text-primary);">&#127358; Chair BOM Structure (Default)</h4>
-<table><thead><tr><th>Component</th><th>Level</th><th>Qty/Parent</th><th>Lead Time</th><th>Unit Cost</th></tr></thead>
-<tbody>
-<tr><td><strong>Chair (End Item)</strong></td><td>0</td><td>1</td><td>1 wk</td><td>Rolled-up</td></tr>
-<tr><td style="padding-left:24px;">Seat Assembly</td><td>1</td><td>1</td><td>2 wks</td><td>$15</td></tr>
-<tr><td style="padding-left:40px;">Seat Cushion</td><td>2</td><td>1</td><td>1 wk</td><td>$8</td></tr>
-<tr><td style="padding-left:40px;">Seat Frame</td><td>2</td><td>1</td><td>1 wk</td><td>$7</td></tr>
-<tr><td style="padding-left:24px;">Back Assembly</td><td>1</td><td>1</td><td>2 wks</td><td>$12</td></tr>
-<tr><td style="padding-left:40px;">Back Panel</td><td>2</td><td>1</td><td>1 wk</td><td>$9</td></tr>
-<tr><td style="padding-left:40px;">Back Frame</td><td>2</td><td>1</td><td>1 wk</td><td>$3</td></tr>
-<tr><td style="padding-left:24px;">Leg Assembly</td><td>1</td><td>1</td><td>1 wk</td><td>$20</td></tr>
-<tr><td style="padding-left:40px;">Leg (x4)</td><td>2</td><td>4</td><td>1 wk</td><td>$4 each</td></tr>
-</tbody></table>
-</div>
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;color:var(--text-primary);">&#128200; Key BOM Outputs to Carry Forward</h4>
-<div class="result-highlight" style="margin-bottom:12px;">
-<div class="key-metric">3 Levels</div><div class="key-label">Product structure depth (0 = End Item)</div>
-</div>
-<div class="result-highlight" style="margin-bottom:12px;background:linear-gradient(135deg,#fff7ed,#fffbeb);border-color:rgba(249,115,22,0.2);">
-<div class="key-metric" style="color:#f97316;">$55</div><div class="key-label">Total rolled-up cost per Chair</div>
-</div>
-<div class="result-highlight" style="background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-color:rgba(5,150,105,0.2);">
-<div class="key-metric" style="color:#059669;">2 wks</div><div class="key-label">Maximum cumulative lead time (drives MRP offset)</div>
-</div>
-<div class="handoff-card" style="margin-top:16px;">
-<div class="handoff-arrow">&#8594;</div>
-<div><strong>Feeds Into:</strong> MRP uses this BOM to explode Chair MPS quantities into gross requirements for Seat Assembly, Back Assembly, and Leg Assembly — offset by their lead times.</div>
-</div>
-</div>
-</div>
-</div>
-<div class="stage-nav-btns"><span></span><button class="btn btn-primary" onclick="goToStage(1)"><i data-lucide="arrow-right"></i> Next: Capacity Planning</button></div>
-</div>
-<!-- STAGE 1: CAPACITY -->
-<div class="stage-panel" id="panel-1">
-<div class="stage-card" style="border-left-color:#2563eb;">
-<div class="card-title" style="font-size:1.15rem;"><i data-lucide="bar-chart-2" style="color:#2563eb;width:22px;height:22px;"></i> Stage 2: Capacity Planning</div>
-<p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.7;">Before committing to any production plan, we must know our factory's <strong>true output ceiling</strong>. Design Capacity is the theoretical max; Effective Capacity accounts for scheduled downtime, setups, and breaks; and Actual Output further reduces this by quality losses and unplanned stoppages. These constraints directly bound what the APP is allowed to promise.</p>
-<div class="grid-2">
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#127981; Chair Factory — Capacity Parameters</h4>
-<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-<tbody>
-<tr><td>Shifts per Day</td><td>2</td></tr>
-<tr><td>Hours per Shift</td><td>8</td></tr>
-<tr><td>Working Days / Month</td><td>25</td></tr>
-<tr><td>Cycle Time per Chair</td><td>0.5 hrs</td></tr>
-<tr><td>Design Capacity</td><td><strong>800 chairs/month</strong></td></tr>
-<tr><td>Efficiency Factor</td><td>90%</td></tr>
-<tr><td>Utilization Factor</td><td>85%</td></tr>
-<tr><td>Effective Capacity</td><td><strong>720 chairs/month</strong></td></tr>
-<tr><td>Actual Output (OEE ~80%)</td><td><strong>576 chairs/month</strong></td></tr>
-</tbody></table>
-<div style="background:#eff6ff;border-radius:8px;padding:12px;margin-top:12px;font-size:0.82rem;color:#1e40af;">
-<strong>Formulae:</strong><br>
-Design Capacity = (Shifts × Hours/Shift × Days) ÷ Cycle Time<br>
-Effective Capacity = Design × Efficiency × Utilization<br>
-Actual Output = Effective Capacity × OEE%
-</div>
-</div>
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#128200; Key Capacity Outputs to Carry Forward</h4>
-<div class="result-highlight" style="margin-bottom:12px;">
-<div class="key-metric">720</div><div class="key-label">Effective Capacity (chairs/month) — the APP ceiling</div>
-</div>
-<div class="result-highlight" style="margin-bottom:12px;background:linear-gradient(135deg,#eff6ff,#f0f9ff);border-color:rgba(37,99,235,0.2);">
-<div class="key-metric" style="color:#2563eb;">80%</div><div class="key-label">System Efficiency (Actual ÷ Design)</div>
-</div>
-<div class="result-highlight" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border-color:rgba(220,38,38,0.2);">
-<div class="key-metric" style="color:#dc2626;">144</div><div class="key-label">Capacity Cushion (chairs/month) lost to inefficiencies</div>
-</div>
-<div class="handoff-card" style="margin-top:16px;">
-<div class="handoff-arrow">&#8594;</div>
-<div><strong>Feeds Into:</strong> The Effective Capacity of <strong>720 chairs/month</strong> becomes the maximum Regular Production constraint in the APP. Any demand above this requires overtime, subcontracting, or inventory build-up.</div>
-</div>
-</div>
-</div>
-</div>
-<div class="stage-nav-btns">
-<button class="btn btn-secondary" onclick="goToStage(0)"><i data-lucide="arrow-left"></i> Back: BOM</button>
-<button class="btn btn-primary" onclick="goToStage(2)"><i data-lucide="arrow-right"></i> Next: Aggregate Planning</button>
-</div>
-</div>
-<!-- STAGE 2: APP -->
-<div class="stage-panel" id="panel-2">
-<div class="stage-card" style="border-left-color:#7c3aed;">
-<div class="card-title" style="font-size:1.15rem;"><i data-lucide="calendar" style="color:#7c3aed;width:22px;height:22px;"></i> Stage 3: Aggregate Production Planning (APP)</div>
-<p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.7;">APP translates the capacity ceiling into a 12-month production strategy. The firm must decide how to match supply with demand — by hiring/firing workers (Chase), holding steady production and using inventory as a buffer (Level), or using a Mix of both with overtime/subcontracting options. The APP output is a <strong>monthly production quantity</strong> that will be disaggregated by MPS.</p>
-<div class="grid-2">
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#128203; 12-Month Demand Forecast (Chairs)</h4>
-<table><thead><tr><th>Month</th><th>Forecast</th><th>Strategy</th><th>Production</th><th>End Inv.</th></tr></thead>
-<tbody>
-<tr><td>Jan</td><td>400</td><td>Level</td><td>500</td><td>100</td></tr>
-<tr><td>Feb</td><td>450</td><td>Level</td><td>500</td><td>150</td></tr>
-<tr><td>Mar</td><td>550</td><td>Level</td><td>500</td><td>100</td></tr>
-<tr><td>Apr</td><td>650</td><td>Mix+OT</td><td>680</td><td>130</td></tr>
-<tr><td>May</td><td>700</td><td>Chase</td><td>700</td><td>130</td></tr>
-<tr><td>Jun</td><td>720</td><td>Chase</td><td>720</td><td>130</td></tr>
-<tr><td>Jul</td><td>680</td><td>Chase</td><td>680</td><td>130</td></tr>
-<tr><td>Aug</td><td>600</td><td>Level</td><td>500</td><td>30</td></tr>
-<tr><td>Sep</td><td>500</td><td>Level</td><td>500</td><td>30</td></tr>
-<tr><td>Oct</td><td>450</td><td>Level</td><td>500</td><td>80</td></tr>
-<tr><td>Nov</td><td>480</td><td>Level</td><td>500</td><td>100</td></tr>
-<tr><td>Dec</td><td>520</td><td>Level</td><td>500</td><td>80</td></tr>
-</tbody></table>
-</div>
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#128200; Key APP Outputs to Carry Forward</h4>
-<div class="result-highlight" style="margin-bottom:12px;">
-<div class="key-metric">6,280</div><div class="key-label">Total planned production (chairs/year)</div>
-</div>
-<div class="result-highlight" style="margin-bottom:12px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:rgba(124,58,237,0.2);">
-<div class="key-metric" style="color:#7c3aed;">500</div><div class="key-label">Average monthly level production (chairs)</div>
-</div>
-<div class="result-highlight" style="background:linear-gradient(135deg,#fff7ed,#fffbeb);border-color:rgba(217,119,6,0.2);">
-<div class="key-metric" style="color:#d97706;">80</div><div class="key-label">Avg. closing inventory buffer (chairs)</div>
-</div>
-<div class="handoff-card" style="margin-top:12px;">
-<div class="handoff-arrow">&#8594;</div>
-<div><strong>Feeds Into:</strong> The monthly production quantities (e.g., <strong>500 chairs in Jan</strong>) are handed to MPS, which disaggregates them into <em>weekly</em> lot-sized batches for each specific product variant.</div>
-</div>
-<div style="background:#f5f3ff;border-radius:8px;padding:10px;margin-top:12px;font-size:0.8rem;color:#5b21b6;">
-<strong>&#9888; Capacity Check:</strong> Max production (720 in June) = Effective Capacity limit. No period exceeds our factory ceiling.
-</div>
-</div>
-</div>
-</div>
-<div class="stage-nav-btns">
-<button class="btn btn-secondary" onclick="goToStage(1)"><i data-lucide="arrow-left"></i> Back: Capacity</button>
-<button class="btn btn-primary" onclick="goToStage(3)"><i data-lucide="arrow-right"></i> Next: MPS</button>
-</div>
-</div>
-<!-- STAGE 3: MPS -->
-<div class="stage-panel" id="panel-3">
-<div class="stage-card" style="border-left-color:#a855f7;">
-<div class="card-title" style="font-size:1.15rem;"><i data-lucide="layers" style="color:#a855f7;width:22px;height:22px;"></i> Stage 4: Master Production Schedule (MPS)</div>
-<p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.7;">MPS disaggregates the APP monthly bucket into <strong>weekly end-item schedules</strong>. For January (APP = 500 chairs), we split across ~4.3 weeks. The MPS must track Projected On-Hand (POH) and Available-to-Promise (ATP) inventory to simultaneously satisfy firm customer orders and reserve capacity for forecasted demand — all while keeping POH above zero.</p>
-<div class="grid-2">
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#128203; MPS Grid — Chair (Jan, Wks 1–8) | Lot Size: 130 | On-Hand: 64</h4>
-<div style="overflow-x:auto;">
-<table><thead>
-<tr><th>Row</th><th>Wk 1</th><th>Wk 2</th><th>Wk 3</th><th>Wk 4</th><th>Wk 5</th><th>Wk 6</th><th>Wk 7</th><th>Wk 8</th></tr>
-</thead><tbody>
-<tr><td><strong>Forecast</strong></td><td>30</td><td>30</td><td>30</td><td>30</td><td>40</td><td>40</td><td>40</td><td>40</td></tr>
-<tr><td><strong>Cust. Orders</strong></td><td>33</td><td>20</td><td>10</td><td>4</td><td>2</td><td>0</td><td>0</td><td>0</td></tr>
-<tr><td style="color:#2563eb;"><strong>MPS</strong></td><td>0</td><td>130</td><td>0</td><td>130</td><td>0</td><td>130</td><td>0</td><td>130</td></tr>
-<tr><td style="color:#059669;"><strong>POH</strong></td><td>31</td><td>141</td><td>111</td><td>207</td><td>167</td><td>257</td><td>217</td><td>307</td></tr>
-<tr><td style="color:#7c3aed;"><strong>ATP</strong></td><td>11</td><td>106</td><td>—</td><td>124</td><td>—</td><td>130</td><td>—</td><td>130</td></tr>
-</tbody></table>
-</div>
-<div style="background:#f8fafc;border-radius:8px;padding:12px;margin-top:12px;font-size:0.8rem;color:var(--text-secondary);line-height:1.7;">
-<strong>POH</strong> = Prior POH + MPS - MAX(Forecast, Orders)<br>
-<strong>ATP (Wk1)</strong> = On-Hand + MPS - Sum of orders until next MPS<br>
-<strong>ATP (later)</strong> = MPS - Sum of orders until next MPS
-</div>
-</div>
-<div>
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#128200; Key MPS Outputs to Carry Forward</h4>
-<div class="result-highlight" style="margin-bottom:12px;">
-<div class="key-metric">130</div><div class="key-label">MPS Lot Size (chairs/batch, every 2 weeks)</div>
-</div>
-<div class="result-highlight" style="margin-bottom:12px;background:linear-gradient(135deg,#faf5ff,#f5f3ff);border-color:rgba(168,85,247,0.2);">
-<div class="key-metric" style="color:#a855f7;">Weeks 2,4,6,8</div><div class="key-label">Planned MPS release dates for Chair</div>
-</div>
-<div class="result-highlight" style="background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-color:rgba(5,150,105,0.2);">
-<div class="key-metric" style="color:#059669;">106</div><div class="key-label">Max ATP in Week 2 — available for new orders</div>
-</div>
-<div class="handoff-card" style="margin-top:12px;">
-<div class="handoff-arrow">&#8594;</div>
-<div><strong>Feeds Into:</strong> MRP takes the MPS planned order releases (130 units in Weeks 2, 4, 6, 8) as <em>Gross Requirements</em> for Level-1 components, offset backward by each component's lead time.</div>
-</div>
-</div>
-</div>
-</div>
-<div class="stage-nav-btns">
-<button class="btn btn-secondary" onclick="goToStage(2)"><i data-lucide="arrow-left"></i> Back: APP</button>
-<button class="btn btn-primary" onclick="goToStage(4)"><i data-lucide="arrow-right"></i> Next: MRP</button>
-</div>
-</div>
-<!-- STAGE 4: MRP -->
-<div class="stage-panel" id="panel-4">
-<div class="stage-card" style="border-left-color:#ef4444;">
-<div class="card-title" style="font-size:1.15rem;"><i data-lucide="package" style="color:#ef4444;width:22px;height:22px;"></i> Stage 5: Material Requirements Planning (MRP)</div>
-<p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.7;">MRP is the final execution layer. It takes MPS releases and the BOM to compute <em>exactly when</em> to order each sub-component. For each item, it nets Gross Requirements against available inventory (Scheduled Receipts + On-Hand) and offsets Planned Order Releases backward by the lead time. The result is a time-phased procurement and production schedule for every component in the BOM.</p>
-
-<div class="concept-box">
-<strong>&#128218; MRP Explosion Logic:</strong> MPS releases 130 Chairs in Wk 2. BOM says each Chair needs 1 Seat Assembly (LT=2wks), 1 Back Assembly (LT=2wks), and 1 Leg Assembly (LT=1wk). So MRP schedules a Planned Order Release of 130 units for Seat &amp; Back Assembly in <strong>Wk 0 (now)</strong>, and Leg Assembly in <strong>Wk 1</strong>.
-</div>
-
-<h4 style="margin-bottom:12px;font-size:0.9rem;">&#128203; MRP Records — Level 1 Components (for MPS release of 130 units in Wk 2)</h4>
-<div style="overflow-x:auto;">
-<table><thead>
-<tr><th>Component</th><th>Row</th><th>Wk 1</th><th>Wk 2</th><th>Wk 3</th><th>Wk 4</th><th>Wk 5</th><th>Wk 6</th></tr>
-</thead><tbody>
-<tr><td rowspan="4" style="font-weight:700;color:#f97316;vertical-align:middle;">Seat Assy<br><small style="color:var(--text-secondary);font-weight:400;">LT=2wk, OH=20</small></td>
-<td>Gross Req.</td><td>130</td><td></td><td>130</td><td></td><td>130</td><td></td></tr>
-<tr><td>Sched. Rec.</td><td>50</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>Proj. OH</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-<tr style="background:#eff6ff;"><td><strong>POR</strong></td><td style="color:#2563eb;font-weight:700;">60</td><td></td><td style="color:#2563eb;font-weight:700;">130</td><td></td><td style="color:#2563eb;font-weight:700;">130</td><td></td></tr>
-
-<tr style="border-top:2px solid var(--border-color);"><td rowspan="4" style="font-weight:700;color:#7c3aed;vertical-align:middle;">Back Assy<br><small style="color:var(--text-secondary);font-weight:400;">LT=2wk, OH=15</small></td>
-<td>Gross Req.</td><td>130</td><td></td><td>130</td><td></td><td>130</td><td></td></tr>
-<tr><td>Sched. Rec.</td><td>40</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>Proj. OH</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-<tr style="background:#f5f3ff;"><td><strong>POR</strong></td><td style="color:#7c3aed;font-weight:700;">75</td><td></td><td style="color:#7c3aed;font-weight:700;">130</td><td></td><td style="color:#7c3aed;font-weight:700;">130</td><td></td></tr>
-
-<tr style="border-top:2px solid var(--border-color);"><td rowspan="4" style="font-weight:700;color:#059669;vertical-align:middle;">Leg Assy<br><small style="color:var(--text-secondary);font-weight:400;">LT=1wk, OH=30</small></td>
-<td>Gross Req.</td><td></td><td>130</td><td></td><td>130</td><td></td><td>130</td></tr>
-<tr><td>Sched. Rec.</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>Proj. OH</td><td>30</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-<tr style="background:#f0fdf4;"><td><strong>POR</strong></td><td style="color:#059669;font-weight:700;">100</td><td></td><td style="color:#059669;font-weight:700;">130</td><td></td><td style="color:#059669;font-weight:700;">130</td><td></td></tr>
-</tbody></table>
-</div>
-<p style="font-size:0.75rem;color:var(--text-secondary);margin-top:6px;"><strong>POR</strong> = Planned Order Release &nbsp;|&nbsp; <strong>OH</strong> = On-Hand &nbsp;|&nbsp; Net Req. = Gross Req. - Sched. Rec. - On-Hand</p>
-
-<div class="grid-2" style="margin-top:18px;">
-<div class="result-highlight">
-<div class="key-metric">60</div><div class="key-label">Seat Assembly — POR this week (urgent!)</div>
-</div>
-<div class="result-highlight" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:rgba(124,58,237,0.2);">
-<div class="key-metric" style="color:#7c3aed;">75</div><div class="key-label">Back Assembly — POR this week (urgent!)</div>
-</div>
-</div>
-<div class="handoff-card" style="margin-top:16px;background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border-color:var(--accent-green);">
-<div class="handoff-arrow" style="color:var(--accent-green);">&#10003;</div>
-<div><strong>Planning Chain Complete!</strong> MRP outputs feed directly into <strong>purchasing orders</strong> for raw materials and <strong>shop-floor work orders</strong> for sub-assemblies. The entire chain — from BOM structure through capacity constraints, through monthly APP, weekly MPS, and finally time-phased MRP — is now fully connected.</div>
-</div>
-</div>
-<div class="stage-nav-btns">
-<button class="btn btn-secondary" onclick="goToStage(3)"><i data-lucide="arrow-left"></i> Back: MPS</button>
-<button class="btn btn-primary" onclick="goToStage(0)" style="background:linear-gradient(135deg,#059669,#0891b2);"><i data-lucide="refresh-cw"></i> Restart from BOM</button>
-</div>
-</div>
-</div></div></div></main></div>
-<script>
-let currentStage = 0;
-const totalStages = 5;
-
-function goToStage(n) {
-    document.querySelectorAll('.stage-panel').forEach(function(p, i) {
-        p.classList.toggle('active', i === n);
-    });
-    document.querySelectorAll('.stage-step').forEach(function(s, i) {
-        s.classList.remove('active-step', 'completed-step');
-        if (i < n) s.classList.add('completed-step');
-        else if (i === n) s.classList.add('active-step');
-    });
-    currentStage = n;
-    document.getElementById('content-area').scrollTop = 0;
-    lucide.createIcons();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    lucide.createIcons();
-});
-</script>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpsPlanner - Production Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+    <style>
+        .input-inline { width: 60px; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.85rem; text-align: center; }
+        .highlight-val { font-weight: 800; color: var(--accent-blue); }
+        .handoff-summary { background: var(--accent-indigo-light); border-left: 4px solid var(--accent-indigo); padding: 12px 16px; margin-top: 15px; border-radius: 0 8px 8px 0; font-size: 0.85rem; }
+        .sync-btn { background: var(--accent-emerald); color: white; padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .sync-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OpsPlanner Workspace</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+                <li><a href="integration.html" class="active"><i data-lucide="link-2"></i> Production Planner</a></li>
+            </ul>
+        </nav>
+        <main id="main-content">
+            <header>
+                <div class="header-title"><h1>Production Planner</h1></div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="resetAll()"><i data-lucide="rotate-ccw"></i> Reset Planner</button>
+                </div>
+            </header>
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="concept-box">
+                        <strong><i data-lucide="info"></i> Interactive Planning:</strong> This planner connects all modules. Changes in Stage 1 (BOM) or Stage 2 (Capacity) will update Stage 3, 4, and 5.
+                    </div>
+                    <div class="stage-stepper" id="stageStepper">
+                        <div class="stage-step active-step" onclick="goToStage(0)" id="step-0"><div class="stage-step-num">1</div><div class="stage-step-label">BOM</div></div>
+                        <div class="stage-connector"></div>
+                        <div class="stage-step" onclick="goToStage(1)" id="step-1"><div class="stage-step-num">2</div><div class="stage-step-label">Capacity</div></div>
+                        <div class="stage-connector"></div>
+                        <div class="stage-step" onclick="goToStage(2)" id="step-2"><div class="stage-step-num">3</div><div class="stage-step-label">APP</div></div>
+                        <div class="stage-connector"></div>
+                        <div class="stage-step" onclick="goToStage(3)" id="step-3"><div class="stage-step-num">4</div><div class="stage-step-label">MPS</div></div>
+                        <div class="stage-connector"></div>
+                        <div class="stage-step" onclick="goToStage(4)" id="step-4"><div class="stage-step-num">5</div><div class="stage-step-label">MRP</div></div>
+                    </div>
+                    <!-- PANELS -->
+                    <div class="stage-panel active" id="panel-0">
+                        <div class="stage-card" style="border-left-color: var(--accent-amber);">
+                            <div class="card-title"><i data-lucide="git-merge" style="color: var(--accent-amber);"></i> Stage 1: Define Bill of Materials</div>
+                            <div class="grid-2">
+                                <div>
+                                    <table>
+                                        <thead><tr><th>Component</th><th>Qty</th><th>Unit Cost ($)</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>Seat Assy</td><td>1</td><td><input type="number" class="input-inline" value="15" id="cost-seat" onchange="updateAll()"></td></tr>
+                                            <tr><td>Back Assy</td><td>1</td><td><input type="number" class="input-inline" value="12" id="cost-back" onchange="updateAll()"></td></tr>
+                                            <tr><td>Leg Assy</td><td>1</td><td><input type="number" class="input-inline" value="20" id="cost-legs" onchange="updateAll()"></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="result-highlight">
+                                    <div class="key-label">Material Cost</div>
+                                    <div class="key-metric" id="total-bom-cost"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stage-nav-btns"><span></span><button class="btn btn-primary" onclick="goToStage(1)">Next <i data-lucide="arrow-right"></i></button></div>
+                    </div>
+                    <div class="stage-panel" id="panel-1">
+                        <div class="stage-card" style="border-left-color: var(--accent-blue);">
+                            <div class="card-title"><i data-lucide="bar-chart-2" style="color: var(--accent-blue);"></i> Stage 2: Resource Capacity</div>
+                            <div class="grid-2">
+                                <div>
+                                    <label>Hrs/Shift</label><input type="number" class="form-control" value="8" id="cap-hours" oninput="updateAll()">
+                                    <label>Shifts/Day</label><input type="number" class="form-control" value="2" id="cap-shifts" oninput="updateAll()">
+                                    <label>Cycle Time</label><input type="number" step="0.1" class="form-control" value="0.5" id="cap-cycle" oninput="updateAll()">
+                                </div>
+                                <div class="result-highlight" style="background: var(--accent-blue-light);">
+                                    <div class="key-label">Effective Capacity</div>
+                                    <div class="key-metric" id="total-capacity">800</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(0)">Back</button><button class="btn btn-primary" onclick="goToStage(2)">Next</button></div>
+                    </div>
+                    <div class="stage-panel" id="panel-2">
+                        <div class="stage-card" style="border-left-color: var(--accent-indigo);">
+                            <div class="card-title"><i data-lucide="calendar" style="color: var(--accent-indigo);"></i> Stage 3: Aggregate Plan</div>
+                            <table>
+                                <thead><tr><th>Month</th><th>Forecast</th><th>Planned Prod</th></tr></thead>
+                                <tbody>
+                                    <tr><td>M1</td><td>400</td><td><input type="number" class="input-inline" value="450" id="app-p1" oninput="updateAll()"></td></tr>
+                                    <tr><td>M2</td><td>500</td><td><input type="number" class="input-inline" value="500" id="app-p2" oninput="updateAll()"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(1)">Back</button><button class="btn btn-primary" onclick="goToStage(3)">Next</button></div>
+                    </div>
+                    <div class="stage-panel" id="panel-3">
+                        <div class="stage-card" style="border-left-color: var(--accent-emerald);">
+                            <div class="card-title"><i data-lucide="layers" style="color: var(--accent-emerald);"></i> Stage 4: Master Schedule</div>
+                            <table>
+                                <thead><tr><th>Week</th><th>MPS Qty</th></tr></thead>
+                                <tbody>
+                                    <tr><td>W1</td><td><input type="number" class="input-inline" value="110" id="mps-w1" oninput="updateAll()"></td></tr>
+                                    <tr><td>W2</td><td><input type="number" class="input-inline" value="120" id="mps-w2" oninput="updateAll()"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(2)">Back</button><button class="btn btn-primary" onclick="goToStage(4)">Next</button></div>
+                    </div>
+                    <div class="stage-panel" id="panel-4">
+                        <div class="stage-card" style="border-left-color: var(--accent-rose);">
+                            <div class="card-title"><i data-lucide="package" style="color: var(--accent-rose);"></i> Stage 5: MRP Explosion</div>
+                            <table id="mrp-results-table">
+                                <thead><tr><th>Component</th><th>Gross Req.</th><th>Lead Time</th></tr></thead>
+                                <tbody id="mrp-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(3)">Back</button><button class="btn btn-primary" onclick="resetAll()">Complete</button></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        let currentStage = 0;
+        function goToStage(n) {
+            document.querySelectorAll('.stage-panel').forEach((p, i) => p.classList.toggle('active', i === n));
+            document.querySelectorAll('.stage-step').forEach((s, i) => {
+                s.classList.remove('active-step', 'completed-step');
+                if (i < n) s.classList.add('completed-step'); else if (i === n) s.classList.add('active-step');
+            });
+            currentStage = n;
+            document.getElementById('content-area').scrollTop = 0;
+            lucide.createIcons();
+        }
+        function updateAll() {
+            const seat = parseFloat(document.getElementById('cost-seat').value) || 0;
+            const back = parseFloat(document.getElementById('cost-back').value) || 0;
+            const legs = parseFloat(document.getElementById('cost-legs').value) || 0;
+            document.getElementById('total-bom-cost').innerText = '$' + (seat + back + legs);
+            const hrs = parseFloat(document.getElementById('cap-hours').value) || 0;
+            const shifts = parseFloat(document.getElementById('cap-shifts').value) || 0;
+            const cycle = parseFloat(document.getElementById('cap-cycle').value) || 0.1;
+            document.getElementById('total-capacity').innerText = Math.floor((hrs * shifts * 25) / cycle);
+            const mpsW1 = parseInt(document.getElementById('mps-w1').value) || 0;
+            const tbody = document.getElementById('mrp-table-body');
+            tbody.innerHTML = '';
+            ['Seat Assy', 'Back Assy', 'Leg Assy'].forEach(c => {
+                const row = document.createElement('tr');
+                row.innerHTML = <td>\</td><td>\</td><td>\</td>;
+                tbody.appendChild(row);
+            });
+        }
+        function resetAll() { if(confirm('Reset all?')) location.reload(); }
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); updateAll(); });
+    </script>
+</body>
+</html>
