@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OM Professor - Aggregate Planning</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OM Professor</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html" class="active"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Aggregate Production Planning</h1>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
+                    <div style="background: var(--primary-bg); padding: 4px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.9rem; font-weight: 500; margin: 0;"><i data-lucide="box" style="width: 16px; height: 16px;"></i> Component Line:</label>
+                        <select id="app-component-selector" class="form-control" style="padding: 4px 8px; font-weight: bold; color: var(--accent-blue);">
+                            <option value="Chair">Chair (Default)</option>
+                            <!-- Dynamically populated from BOM -->
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportToPDF('Aggregate Production Planning', 'content-area')"><i data-lucide="file-text"></i> Export PDF</button>
+                    <button class="btn btn-secondary" onclick="exportToExcel('Aggregate Production Planning', 'content-area')"><i data-lucide="file-spreadsheet"></i> Export Excel</button>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="learn">Learn</button>
+                        <button class="tab-btn" data-tab="solve">Solve (Auto)</button>
+                        <button class="tab-btn" data-tab="manual">Solve (Manual)</button>
+                    </div>
+
+                    <div id="tab-learn" class="tab-content active">
+                        <div class="card" style="background: linear-gradient(135deg, var(--primary-bg), #ffffff);">
+                            <div class="card-title" style="color: var(--accent-blue); font-size: 1.5rem; margin-bottom: 16px;"><i data-lucide="book-open" style="width: 24px; height: 24px;"></i> Aggregate Production Planning (APP)</div>
+                            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 24px;">APP is intermediate-range capacity planning, usually covering 2 to 12 months. The goal is to achieve a production plan that will effectively utilize the organization's resources to match expected demand while minimizing total costs.</p>
+                            
+                            <div class="grid-3">
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="bar-chart" style="color: var(--accent-blue);"></i> Level Strategy</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Maintains a steady rate of regular-time output. Variations in demand are met by utilizing inventories, backlogs, and occasional subcontracting. Best for expensive hiring/firing.</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="trending-up" style="color: var(--accent-green);"></i> Chase Strategy</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Matches capacity directly to demand. Output is set exactly to the expected demand for that period by constantly hiring and firing workers. Best for high inventory holding costs.</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="settings" style="color: var(--accent-purple);"></i> Mixed Strategy</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">A customized combination of approaches. It attempts to find the optimal mathematical balance between carrying inventory, subcontracting, and adjusting the workforce.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-solve" class="tab-content">
+                        <div class="grid-2">
+                            <div class="card">
+                                <div class="card-title"><i data-lucide="settings"></i> Inputs & Constraints</div>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label>Strategy</label>
+                                        <select id="app-strategy" class="form-control">
+                                            <option value="level">Level Strategy</option>
+                                            <option value="chase">Chase Strategy</option>
+                                            <option value="custom">Custom (Per-Period)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Time Horizon (Periods)</label>
+                                        <input type="number" id="app-periods" class="form-control" value="6" min="3" max="12">
+                                    </div>
+                                </div>
+                                <div class="grid-3">
+                                    <div class="form-group">
+                                        <label>Reg Cost ($)</label>
+                                        <input type="number" id="cost-reg" class="form-control" value="10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Subcontract Cost ($)</label>
+                                        <input type="number" id="cost-sub" class="form-control" value="25">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Holding Cost ($)</label>
+                                        <input type="number" id="cost-hold" class="form-control" value="2">
+                                    </div>
+                                </div>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label>Hiring Cost ($)</label>
+                                        <input type="number" id="cost-hire" class="form-control" value="300">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Firing Cost ($)</label>
+                                        <input type="number" id="cost-fire" class="form-control" value="500">
+                                    </div>
+                                </div>
+                                <div class="grid-2" style="margin-bottom: 16px;">
+                                    <div class="form-group">
+                                        <label>Units per Worker</label>
+                                        <input type="number" id="app-units-worker" class="form-control" value="20">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Initial Workers & Inv</label>
+                                        <div style="display: flex; gap: 8px;">
+                                            <input type="number" id="app-init-workers" class="form-control" placeholder="Workers" value="10">
+                                            <input type="number" id="app-init-inv" class="form-control" placeholder="Inv" value="50">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="app-custom-strategy-container" style="display: none; background: var(--primary-bg); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+                                    <label style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; display: block;">Per-Period Strategy Configuration</label>
+                                    <div style="overflow-x: auto;">
+                                        <table style="margin: 0; font-size: 0.85rem;">
+                                            <thead id="app-custom-thead"></thead>
+                                            <tbody id="app-custom-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Auto-updates on change. Click cells in the table for step-by-step logic.</p>
+                                <button class="btn btn-primary" id="btn-compute-app" style="width: 100%; justify-content: center;">Recalculate Plan</button>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-title"><i data-lucide="bar-chart"></i> Production vs Demand</div>
+                                <div class="chart-container">
+                                    <canvas id="appChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="table"></i> Detailed Plan (Auto-Solved)</div>
+                            <div style="overflow-x: auto;">
+                                <table id="app-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Period <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--accent-blue); cursor: help;" title="Time bucket for planning"></i></th>
+                                            <th>Demand <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--accent-blue); cursor: help;" title="Expected customer demand for the period"></i></th>
+                                            <th>Production <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--accent-blue); cursor: help;" title="Units produced: (Workers * Units/Worker) + Subcontracted"></i></th>
+                                            <th>Inventory <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--accent-blue); cursor: help;" title="End Inv = Prev Inv + Production - Demand"></i></th>
+                                            <th>Hires/Fires <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--accent-blue); cursor: help;" title="Change in workforce from previous period"></i></th>
+                                            <th>Total Cost <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--accent-blue); cursor: help;" title="Sum of Regular, Subcontract, Hire, Fire, and Hold costs"></i></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="app-tbody">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="text-align: right; margin-top: 16px; font-size: 1.25rem; font-weight: 600;">
+                                Total Plan Cost: <span id="app-total-cost" style="color: var(--accent-blue);">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-manual" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="edit-3"></i> Manual Solve Mode</div>
+                            <p style="margin-bottom: 16px; color: var(--text-secondary);">Fill in the table below based on the current inputs. Click "Verify" to check your answers against the system logic.</p>
+                            
+                            <div id="app-manual-inputs-summary" style="background: var(--primary-bg); padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid var(--accent-blue);">
+                                <!-- Populated dynamically -->
+                            </div>
+
+                            <div style="overflow-x: auto;">
+                                <table id="app-manual-table">
+                                    <thead>
+                                        <tr id="app-manual-thead">
+                                            <th>Metric / Period</th>
+                                            <!-- Dynamically populated periods -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="app-manual-tbody">
+                                        <!-- Dynamically populated manual inputs -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top: 16px; display: flex; gap: 12px;">
+                                <button class="btn btn-primary" id="btn-verify-manual-app"><i data-lucide="check-circle"></i> Verify Answers</button>
+                                <button class="btn btn-secondary" id="btn-clear-manual-app"><i data-lucide="rotate-ccw"></i> Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Step-by-Step Modal -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i data-lucide="help-circle"></i> Step-by-Step Breakdown</div>
+                <button class="modal-close" onclick="document.getElementById('stepModal').classList.remove('active')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="step-content" id="stepModalContent">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils/export.js"></script>
+    <script src="js/app.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OM Professor - Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OM Professor</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="card" style="background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-green-light));">
+                        <h2 style="color: var(--accent-blue); font-size: 2rem; margin-bottom: 16px;">Welcome to OM Professor</h2>
+                        <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 800px;">
+                            This interactive learning application is based on <strong>William J. Stevenson - Operations Management Ed 14</strong>. 
+                            Explore concepts, solve dynamic problems, and evaluate your understanding of core OM principles.
+                        </p>
+                    </div>
+
+                    <h3 style="margin: 24px 0 16px;">Learning Modules</h3>
+                    <div class="grid-3">
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='capacity.html'">
+                            <div class="card-title"><i data-lucide="bar-chart-2"></i> Capacity Planning</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Design vs. Effective capacity, utilization, and bottleneck analysis.</p>
+                        </div>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='app.html'">
+                            <div class="card-title"><i data-lucide="calendar"></i> Aggregate Planning</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Chase vs. Level strategies, demand matching, and cost computations.</p>
+                        </div>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='mps.html'">
+                            <div class="card-title"><i data-lucide="layers"></i> Master Prod. Schedule</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Disaggregation and Available-To-Promise (ATP) inventory calculations.</p>
+                        </div>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='mrp.html'">
+                            <div class="card-title"><i data-lucide="package"></i> MRP</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Gross requirements, netting, and planned order releases.</p>
+                        </div>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='bom.html'">
+                            <div class="card-title"><i data-lucide="git-merge"></i> Bill of Materials</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Product structure trees and low-level coding.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

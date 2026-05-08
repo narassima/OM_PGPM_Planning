@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OM Professor - Material Requirements Planning</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OM Professor</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html" class="active"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Material Requirements Planning</h1>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="learn">Learn</button>
+                        <button class="tab-btn" data-tab="setup">Multi-Item Setup</button>
+                        <button class="tab-btn" data-tab="solve">Solve (Auto)</button>
+                        <button class="tab-btn" data-tab="manual">Solve (Manual)</button>
+                    </div>
+
+                    <div id="tab-learn" class="tab-content active">
+                        <div class="card" style="background: linear-gradient(135deg, var(--primary-bg), #ffffff);">
+                            <div class="card-title" style="color: var(--accent-blue); font-size: 1.5rem; margin-bottom: 16px;"><i data-lucide="book-open" style="width: 24px; height: 24px;"></i> Material Requirements Planning (MRP)</div>
+                            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 24px;">MRP is a computer-based information system that translates the Master Production Schedule (MPS) into time-phased requirements for subassemblies, components, and raw materials.</p>
+                            
+                            <h4 style="margin-top: 24px; margin-bottom: 16px; color: var(--text-primary);">The MRP Netting Logic</h4>
+                            <div class="grid-2">
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="package" style="color: var(--accent-blue);"></i> Gross Requirements</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Total expected demand for an item or raw material in a specific time period. Derived from the MPS or parent items.</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="truck" style="color: var(--accent-green);"></i> Scheduled Receipts</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Open orders already placed with vendors or the factory floor that are scheduled to arrive at the beginning of the period.</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="layers" style="color: var(--accent-purple);"></i> Projected On Hand</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Expected inventory on hand at the beginning of the period.<br><br><strong>POH =</strong> Prev POH + Prev Receipts - Prev Gross Req</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="target" style="color: var(--accent-red);"></i> Net Requirements</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The actual amount needed after accounting for inventory and arriving orders.<br><br><strong>Net =</strong> Gross - POH - Sched Receipts</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-setup" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="settings"></i> Component Configuration</div>
+                            <p style="margin-bottom: 16px; color: var(--text-secondary);">Configure the lot sizing rules and initial inventory for all components defined in your BOM Builder.</p>
+                            
+                            <div style="margin-bottom: 16px;">
+                                <label style="font-weight: 500;">Master Demand for End Item (Level 0)</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                    <input type="number" id="mrp-master-demand" class="form-control" value="100" style="max-width: 200px;">
+                                    <input type="number" id="mrp-master-period" class="form-control" placeholder="Due in Period (e.g., 8)" value="8" style="max-width: 200px;">
+                                    <input type="number" id="mrp-periods" class="form-control" placeholder="Total Horizon" value="8" min="4" max="12" style="max-width: 200px;">
+                                </div>
+                            </div>
+
+                            <div style="overflow-x: auto;">
+                                <table id="mrp-config-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item (Level)</th>
+                                            <th>Lead Time</th>
+                                            <th>Lot Rule</th>
+                                            <th>Fixed Qty</th>
+                                            <th>Initial On-Hand</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mrp-config-tbody">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-primary" id="btn-explode-mrp" style="margin-top: 16px; width: 100%;">Explode BOM & Calculate MRP</button>
+                        </div>
+                    </div>
+
+                    <div id="tab-solve" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="package"></i> Interactive MRP Record</div>
+                            
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label style="font-weight: bold; color: var(--accent-blue);">Select Component to View</label>
+                                <select id="mrp-view-selector" class="form-control" style="font-size: 1.1rem; padding: 12px;">
+                                    <!-- Dynamically populated -->
+                                </select>
+                            </div>
+
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Click highlighted cells to view the step-by-step logic.</p>
+
+                            <div style="overflow-x: auto;">
+                                <table id="mrp-table">
+                                    <thead id="mrp-thead">
+                                    </thead>
+                                    <tbody id="mrp-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-manual" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="edit-3"></i> Manual Solve Mode</div>
+                            <p style="margin-bottom: 16px; color: var(--text-secondary);">Select a component and fill in the MRP record below. Click "Verify" to check your calculations.</p>
+                            
+                            <select id="mrp-manual-selector" class="form-control" style="margin-bottom: 24px; max-width: 300px;">
+                                <!-- Dynamically populated -->
+                            </select>
+
+                            <div style="overflow-x: auto;">
+                                <table id="mrp-manual-table">
+                                    <thead id="mrp-manual-thead">
+                                    </thead>
+                                    <tbody id="mrp-manual-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top: 16px; display: flex; gap: 12px;">
+                                <button class="btn btn-primary" id="btn-verify-manual-mrp"><i data-lucide="check-circle"></i> Verify Answers</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Step-by-Step Modal -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i data-lucide="help-circle"></i> Step-by-Step Breakdown</div>
+                <button class="modal-close" onclick="document.getElementById('stepModal').classList.remove('active')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="step-content" id="stepModalContent">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mrp.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

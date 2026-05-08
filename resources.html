@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OM Professor - Resource Bank</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+    <style>
+        .resource-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+        .resource-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+        .resource-card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+        .resource-card p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .resource-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .resource-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OM Professor</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html" class="active"><i data-lucide="link"></i> Resource Bank</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Resource Bank</h1>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div style="margin-bottom: 24px;">
+                    <p style="font-size: 1.1rem; color: var(--text-secondary);">A curated collection of standard materials, textbooks, research, and industry tools for Operations Management.</p>
+                </div>
+
+                <div class="tabs" style="margin-bottom: 24px;">
+                    <button class="tab-btn active" data-tab="materials">Textbooks & Tools</button>
+                    <button class="tab-btn" data-tab="news">Latest News</button>
+                    <button class="tab-btn" data-tab="papers">Research Papers</button>
+                    <button class="tab-btn" data-tab="cases">Case Studies</button>
+                    <button class="tab-btn" data-tab="reports">Company Reports</button>
+                </div>
+
+                <div id="tab-materials" class="tab-content active">
+                    <div class="grid-2">
+                        <div class="resource-card">
+                            <h3><i data-lucide="book-open" style="color: var(--accent-blue);"></i> Primary Textbook</h3>
+                            <p><strong>Operations Management (14th Edition)</strong> by William J. Stevenson. This application is modeled on the pedagogical structure and examples provided in this standard reference text.</p>
+                            <a href="https://www.mheducation.com/highered/product/operations-management-stevenson/M9781260238891.html" target="_blank">View Publisher Site <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                        
+                        <div class="resource-card">
+                            <h3><i data-lucide="video" style="color: var(--accent-red);"></i> MIT OpenCourseWare</h3>
+                            <p>Free lecture videos and course materials from MIT's Sloan School of Management, specifically courses on Operations Management and Supply Chain.</p>
+                            <a href="https://ocw.mit.edu/search/?q=operations+management" target="_blank">Explore MIT OCW <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+
+                        <div class="resource-card">
+                            <h3><i data-lucide="globe" style="color: var(--accent-green);"></i> ASCM / APICS Dictionary</h3>
+                            <p>The standard dictionary for Supply Chain and Operations terminology. Essential for understanding exact definitions of MRP, MPS, and Capacity Planning terms.</p>
+                            <a href="https://www.ascm.org/learning-development/apics-dictionary/" target="_blank">Access Dictionary <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+
+                        <div class="resource-card">
+                            <h3><i data-lucide="cpu" style="color: var(--accent-purple);"></i> Open Source OM Solvers</h3>
+                            <p>Free, accessible web-based calculators and Python notebooks for solving linear programming and MRP problems without proprietary software.</p>
+                            <a href="https://github.com/topics/operations-management" target="_blank">Explore GitHub Tools <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-news" class="tab-content">
+                    <div class="grid-2">
+                        <div class="resource-card">
+                            <h3><i data-lucide="newspaper" style="color: var(--accent-blue);"></i> Supply Chain Dive</h3>
+                            <p>Daily news, industry trends, and deep dives into the supply chain and operations management sector.</p>
+                            <a href="https://www.supplychaindive.com/" target="_blank">Read Articles <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                        <div class="resource-card">
+                            <h3><i data-lucide="trending-up" style="color: var(--accent-green);"></i> WSJ Logistics Report</h3>
+                            <p>The Wall Street Journal's dedicated section covering global logistics, manufacturing operations, and supply chain disruptions.</p>
+                            <a href="https://www.wsj.com/news/logistics" target="_blank">View WSJ <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-papers" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0;">Live ArXiv Feed: Operations Management & Supply Chain</h3>
+                        <span style="font-size: 0.8rem; background: var(--accent-blue-light); color: var(--accent-blue); padding: 4px 8px; border-radius: 4px; font-weight: bold;">LIVE</span>
+                    </div>
+                    <div id="papers-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 2s linear infinite;"></i>
+                        <p>Fetching latest research...</p>
+                    </div>
+                    <div id="dynamic-papers-grid" class="grid-2" style="display: none;">
+                        <!-- Dynamically populated from js/resources.js -->
+                    </div>
+                    <hr style="margin: 24px 0; border-color: var(--border-color);">
+                    <h3 style="margin-bottom: 16px;">Standard Journals</h3>
+                    <div class="grid-2">
+                        <div class="resource-card">
+                            <h3><i data-lucide="file-text" style="color: var(--accent-purple);"></i> Journal of Operations Management</h3>
+                            <p>A leading academic journal publishing rigorous, relevant, and original research in operations management.</p>
+                            <a href="https://onlinelibrary.wiley.com/journal/18731317" target="_blank">View Journal <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                        <div class="resource-card">
+                            <h3><i data-lucide="graduation-cap" style="color: var(--accent-red);"></i> MSOM Journal</h3>
+                            <p>Manufacturing & Service Operations Management (INFORMS) journal covering analytical models for OM problems.</p>
+                            <a href="https://pubsonline.informs.org/journal/msom" target="_blank">View Journal <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-cases" class="tab-content">
+                    <div class="grid-3" style="gap: 16px;">
+                        <div class="resource-card" style="padding: 16px;">
+                            <h3 style="font-size: 1.1rem;"><i data-lucide="truck" style="color: var(--accent-blue);"></i> Apple's Global Supply Chain</h3>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Oct 2023</div>
+                            <p style="font-size: 0.85rem;">An analysis of how Apple maintains its incredibly tight inventory turns and global supplier network.</p>
+                            <a href="https://www.supplychaindive.com/news/apple-supply-chain-strategy-tim-cook/640105/" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                        </div>
+                        <div class="resource-card" style="padding: 16px;">
+                            <h3 style="font-size: 1.1rem;"><i data-lucide="scissors" style="color: var(--accent-green);"></i> Zara: Fast Fashion</h3>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: May 2022</div>
+                            <p style="font-size: 0.85rem;">How Inditex uses near-shoring and vertical integration to beat competitors to market.</p>
+                            <a href="https://mitsloan.mit.edu/ideas-made-to-matter/how-zaras-agile-supply-chain-handles-pandemic" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                        </div>
+                        <div class="resource-card" style="padding: 16px;">
+                            <h3 style="font-size: 1.1rem;"><i data-lucide="settings" style="color: var(--accent-red);"></i> Toyota Production System</h3>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Jan 2021</div>
+                            <p style="font-size: 0.85rem;">The classic foundation of Lean Manufacturing, JIT, and continuous improvement (Kaizen).</p>
+                            <a href="https://global.toyota/en/company/vision-and-philosophy/production-system/" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                        </div>
+                        <div class="resource-card" style="padding: 16px;">
+                            <h3 style="font-size: 1.1rem;"><i data-lucide="shopping-cart" style="color: var(--accent-purple);"></i> Amazon Fulfillment</h3>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Aug 2023</div>
+                            <p style="font-size: 0.85rem;">Examining the robotics and predictive analytics driving Amazon's warehouse efficiency.</p>
+                            <a href="https://www.aboutamazon.com/news/operations/how-amazon-robotics-works" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                        </div>
+                        <div class="resource-card" style="padding: 16px;">
+                            <h3 style="font-size: 1.1rem;"><i data-lucide="cpu" style="color: var(--text-primary);"></i> TSMC Chip Shortage</h3>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Nov 2022</div>
+                            <p style="font-size: 0.85rem;">Capacity planning challenges during the global semiconductor bullwhip effect.</p>
+                            <a href="https://hbr.org/2021/02/why-were-in-the-midst-of-a-global-semiconductor-shortage" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                        </div>
+                        <div class="resource-card" style="padding: 16px;">
+                            <h3 style="font-size: 1.1rem;"><i data-lucide="package" style="color: var(--accent-blue);"></i> FedEx Hub-and-Spoke</h3>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Published: Feb 2020</div>
+                            <p style="font-size: 0.85rem;">The network design that revolutionized overnight delivery operations.</p>
+                            <a href="https://www.fedex.com/en-us/about/history.html" target="_blank" style="font-size: 0.85rem;">Read Case <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-reports" class="tab-content">
+                    <div class="grid-2">
+                        <div class="resource-card">
+                            <h3><i data-lucide="pie-chart" style="color: var(--accent-purple);"></i> McKinsey Operations Practice</h3>
+                            <p>White papers and industry reports on the future of manufacturing, Industry 4.0, and supply chain resilience.</p>
+                            <a href="https://www.mckinsey.com/capabilities/operations/our-insights" target="_blank">View Reports <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                        <div class="resource-card">
+                            <h3><i data-lucide="bar-chart-2" style="color: var(--accent-blue);"></i> Gartner Supply Chain</h3>
+                            <p>Annual reports on the Top 25 Supply Chains and technological innovations driving operational excellence.</p>
+                            <a href="https://www.gartner.com/en/supply-chain" target="_blank">View Reports <i data-lucide="external-link" style="width: 14px; height: 14px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/resources.js"></script>
+    <script>
+        lucide.createIcons();
+        // Simple tab logic for resources page
+        document.querySelectorAll('.tab-btn').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                document.getElementById('tab-' + e.target.getAttribute('data-tab')).classList.add('active');
+                
+                // If they click papers tab, fetch papers if not already fetched
+                if (e.target.getAttribute('data-tab') === 'papers' && window.fetchArxivPapers) {
+                    window.fetchArxivPapers();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OM Professor - Bill of Materials</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OM Professor</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html" class="active"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Bill of Materials</h1>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="learn">Learn</button>
+                        <button class="tab-btn" data-tab="builder">BOM Builder</button>
+                        <button class="tab-btn" data-tab="explore">Explore Tree & Costs</button>
+                    </div>
+
+                    <div id="tab-learn" class="tab-content active">
+                        <div class="card" style="background: linear-gradient(135deg, var(--primary-bg), #ffffff);">
+                            <div class="card-title" style="color: var(--accent-blue); font-size: 1.5rem; margin-bottom: 16px;"><i data-lucide="book-open" style="width: 24px; height: 24px;"></i> Bill of Materials (BOM)</div>
+                            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 24px;">A BOM is a comprehensive listing of all the raw materials, parts, subassemblies, and assemblies needed to produce one unit of a product. It represents the product structure tree.</p>
+                            
+                            <h4 style="margin-top: 24px; margin-bottom: 16px; color: var(--text-primary);">Key Concepts</h4>
+                            <div class="grid-2">
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="git-merge" style="color: var(--accent-blue);"></i> Product Structure Tree</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">A visual representation of the BOM. The End Item is at Level 0. Assemblies and subassemblies (parents) are made of parts or raw materials (children).</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="arrow-down-circle" style="color: var(--accent-green);"></i> Low-Level Coding</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Restructuring the BOM so that multiple occurrences of a component all coincide with the lowest level at which the component occurs, simplifying MRP calculations.</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="calculator" style="color: var(--accent-purple);"></i> Multiplier Effect</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The total quantity of a component required is its "quantity per parent" multiplied by the total demand for its parent assembly.</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 8px;"><i data-lucide="dollar-sign" style="color: var(--accent-red);"></i> Cost Roll-up</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The process of calculating the total cost of an assembly by iteratively adding up the costs of all its component parts from the bottom level up to Level 0.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-builder" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="edit"></i> Interactive BOM Builder</div>
+                            <p style="margin-bottom: 16px; color: var(--text-secondary);">Define your product structure below. This structure will be used in the MRP module for multi-component explosion.</p>
+                            
+                            <div class="grid-2" style="margin-bottom: 24px;">
+                                <div style="background: var(--primary-bg); padding: 16px; border-radius: 8px;">
+                                    <h4 style="margin-bottom: 12px;">Add New Component</h4>
+                                    <div class="form-group">
+                                        <label>Component Name</label>
+                                        <input type="text" id="bom-add-name" class="form-control" placeholder="e.g., Seat Assembly">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Parent Item</label>
+                                        <select id="bom-add-parent" class="form-control">
+                                            <!-- Dynamically populated -->
+                                        </select>
+                                    </div>
+                                    <div class="grid-3">
+                                        <div class="form-group">
+                                            <label>Qty per Parent</label>
+                                            <input type="number" id="bom-add-qty" class="form-control" value="1" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Lead Time (wks)</label>
+                                            <input type="number" id="bom-add-lt" class="form-control" value="1" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Unit Cost ($)</label>
+                                            <input type="number" id="bom-add-cost" class="form-control" value="0" min="0">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" id="btn-add-component" style="width: 100%;">Add Component</button>
+                                </div>
+
+                                <div>
+                                    <h4 style="margin-bottom: 12px;">Current Components List</h4>
+                                    <div style="overflow-x: auto; max-height: 400px; border: 1px solid var(--border-color); border-radius: 8px;">
+                                        <table id="bom-builder-table" style="margin-bottom: 0;">
+                                            <thead style="position: sticky; top: 0; z-index: 1;">
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Parent</th>
+                                                    <th>Qty</th>
+                                                    <th>LT</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bom-builder-tbody">
+                                                <!-- Dynamically populated -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <button class="btn btn-secondary" id="btn-reset-bom" style="margin-top: 12px; width: 100%;">Reset to Default Chair BOM</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-explore" class="tab-content">
+                        <div class="grid-2">
+                            <div class="card">
+                                <div class="card-title"><i data-lucide="git-merge"></i> Structure Multiplier & Cost</div>
+                                <p style="margin-bottom: 16px; color: var(--text-secondary);">Enter the required demand for the End Item. Click on the "Total Cost" cells for a step-by-step breakdown of the roll-up calculation.</p>
+                                
+                                <div class="form-group">
+                                    <label>Demand for End Item (Level 0)</label>
+                                    <input type="number" id="bom-demand" class="form-control" value="100" style="font-size: 1.2rem; font-weight: bold; color: var(--accent-blue);">
+                                </div>
+
+                                <table style="margin-top: 24px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Level</th>
+                                            <th>Qty per Parent</th>
+                                            <th>Total Qty</th>
+                                            <th>Total Cost ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bom-tbody">
+                                        <!-- Computed rows -->
+                                    </tbody>
+                                </table>
+                                <div style="text-align: right; margin-top: 16px; font-size: 1.25rem; font-weight: 600;">
+                                    Total Manufacturing Cost: <span id="bom-total-cost" style="color: var(--accent-purple);">$0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-title"><i data-lucide="share-2"></i> Visual Tree</div>
+                                <div id="bom-visual-tree" style="background: var(--primary-bg); padding: 24px; border-radius: 8px; font-family: monospace; line-height: 2; overflow-x: auto; white-space: pre;">
+                                    <!-- Dynamically generated tree -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Step-by-Step Modal -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i data-lucide="help-circle"></i> Step-by-Step Breakdown</div>
+                <button class="modal-close" onclick="document.getElementById('stepModal').classList.remove('active')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="step-content" id="stepModalContent">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/bom.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

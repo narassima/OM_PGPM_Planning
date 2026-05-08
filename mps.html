@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OM Professor - Master Production Schedule</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OM Professor</h2>
+                <p>Interactive Learning</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html" class="active"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Master Production Schedule</h1>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
+                    <div style="background: var(--primary-bg); padding: 4px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.9rem; font-weight: 500; margin: 0;"><i data-lucide="box" style="width: 16px; height: 16px;"></i> Component Line:</label>
+                        <select id="mps-component-selector" class="form-control" style="padding: 4px 8px; font-weight: bold; color: var(--accent-blue);">
+                            <option value="Chair">Chair (Default)</option>
+                            <!-- Dynamically populated from BOM -->
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="learn">Learn</button>
+                        <button class="tab-btn" data-tab="solve">Solve (Auto)</button>
+                        <button class="tab-btn" data-tab="manual">Solve (Manual)</button>
+                    </div>
+
+                    <div id="tab-learn" class="tab-content active">
+                        <div class="card" style="background: linear-gradient(135deg, var(--primary-bg), #ffffff);">
+                            <div class="card-title" style="color: var(--accent-blue); font-size: 1.5rem; margin-bottom: 16px;"><i data-lucide="book-open" style="width: 24px; height: 24px;"></i> Master Production Schedule (MPS)</div>
+                            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 24px;">The MPS is the result of disaggregating an aggregate plan. It indicates the exact quantity and timing of specific end products for a scheduled horizon, serving as the primary input for MRP.</p>
+                            
+                            <div class="grid-2">
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="layers" style="color: var(--accent-blue);"></i> Projected On Hand (POH)</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Inventory expected to be available at the end of each period.<br><br><strong>POH =</strong> Starting Inventory + MPS - MAX(Forecast, Customer Orders)</p>
+                                </div>
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <h4 style="display: flex; align-items: center; gap: 8px; color: var(--text-primary); margin-bottom: 12px;"><i data-lucide="truck" style="color: var(--accent-green);"></i> Available-to-Promise (ATP)</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The uncommitted inventory maintained to support customer order promising.<br><br><strong>ATP (Period 1) =</strong> On-hand + MPS - (Sum of orders before next MPS)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-solve" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="grid"></i> Interactive MPS Grid</div>
+                            <div style="margin-bottom: 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Starting On-Hand Inventory</label>
+                                    <input type="number" id="mps-onhand" class="form-control" value="64" style="width: 120px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>MPS Lot Size</label>
+                                    <input type="number" id="mps-lotsize" class="form-control" value="70" style="width: 120px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Time Horizon (Weeks)</label>
+                                    <input type="number" id="mps-periods" class="form-control" value="8" min="4" max="12" style="width: 120px;">
+                                </div>
+                                <button class="btn btn-primary" id="btn-recalc-mps" style="margin-top: 18px;">Recalculate</button>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Click highlighted cells (POH, MPS, ATP) to view the step-by-step logic.</p>
+
+                            <div style="overflow-x: auto;">
+                                <table id="mps-table">
+                                    <thead id="mps-thead">
+                                        <!-- Dynamically generated -->
+                                    </thead>
+                                    <tbody id="mps-tbody">
+                                        <!-- Dynamically generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-manual" class="tab-content">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="edit-3"></i> Manual Solve Mode</div>
+                            <p style="margin-bottom: 16px; color: var(--text-secondary);">Fill in the table below based on the Forecast and Customer Orders from the Auto tab. Click "Verify" to check your answers.</p>
+                            
+                            <div style="overflow-x: auto;">
+                                <table id="mps-manual-table">
+                                    <thead id="mps-manual-thead">
+                                    </thead>
+                                    <tbody id="mps-manual-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top: 16px; display: flex; gap: 12px;">
+                                <button class="btn btn-primary" id="btn-verify-manual-mps"><i data-lucide="check-circle"></i> Verify Answers</button>
+                                <button class="btn btn-secondary" id="btn-clear-manual-mps"><i data-lucide="rotate-ccw"></i> Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Step-by-Step Modal -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i data-lucide="help-circle"></i> Step-by-Step Breakdown</div>
+                <button class="modal-close" onclick="document.getElementById('stepModal').classList.remove('active')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="step-content" id="stepModalContent">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mps.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
