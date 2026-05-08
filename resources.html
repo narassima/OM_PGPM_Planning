@@ -3,61 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpsPlanner Workspace - Resource Bank</title>
-    
+    <title>Production Planner - Resource Bank</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .resource-card {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 24px;
-            transition: all 0.2s ease;
-        }
-        .resource-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-        }
-        .resource-card h3 {
-            margin-top: 0;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-primary);
-        }
-        .resource-card p {
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        .resource-card a {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .resource-card a:hover {
-            text-decoration: underline;
-        }
+        .resource-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; transition: all 0.2s ease; }
+        .resource-card:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: translateY(-2px); }
+        .resource-card h3 { margin-top: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
+        .resource-card p { color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem; line-height: 1.5; }
+        .resource-card a { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-blue); text-decoration: none; font-weight: 500; }
+        .resource-card a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div id="app-container">
-        <!-- Sidebar Navigation -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <h2>OpsPlanner Workspace</h2>
-                <p>Interactive Learning</p>
-            </div>
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
@@ -65,25 +29,16 @@
                 <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
                 <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
                 <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
-                <li style="margin-top: 24px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px; padding-left: 1rem;">Extras</li>
+                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
                 <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
                 <li><a href="resources.html" class="active"><i data-lucide="link"></i> Resource Bank</a></li>
+                <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
             </ul>
         </nav>
-
-        <!-- Main Content Area -->
         <main id="main-content">
-            <header>
-                <div class="header-title">
-                    <h1 id="page-title">Resource Bank</h1>
-                </div>
-            </header>
-
+            <header><div class="header-title"><h1>Resource Bank</h1></div></header>
             <div id="content-area">
-                <div style="margin-bottom: 24px;">
-                    <p style="font-size: 1.1rem; color: var(--text-secondary);">A curated collection of standard materials, textbooks, research, and industry tools for Operations Management.</p>
-                </div>
-
                 <div class="tabs" style="margin-bottom: 24px;">
                     <button class="tab-btn active" data-tab="materials">Textbooks & Tools</button>
                     <button class="tab-btn" data-tab="news">Latest News</button>
@@ -94,315 +49,55 @@
 
                 <div id="tab-materials" class="tab-content active">
                     <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="book-open" style="color: var(--accent-blue);"></i> Primary Textbook</h3>
-                            <p style="font-size: 0.85rem;"><strong>Operations Management (14th Ed)</strong> by W.J. Stevenson. The foundational textbook for this pedagogical platform.</p>
-                            <a href="https://www.mheducation.com/highered/product/operations-management-stevenson/M9781260238891.html" target="_blank" style="font-size: 0.85rem;">View Publisher <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="video" style="color: var(--accent-red);"></i> MIT OpenCourseWare</h3>
-                            <p style="font-size: 0.85rem;">Free MIT Sloan lecture videos and materials on Operations Management and Supply Chain.</p>
-                            <a href="https://ocw.mit.edu/search/?q=operations+management" target="_blank" style="font-size: 0.85rem;">Explore MIT OCW <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="globe" style="color: var(--accent-green);"></i> ASCM Dictionary</h3>
-                            <p style="font-size: 0.85rem;">The APICS standard dictionary for Supply Chain and Operations terminology and metrics.</p>
-                            <a href="https://www.ascm.org/learning-development/apics-dictionary/" target="_blank" style="font-size: 0.85rem;">Access Dictionary <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="cpu" style="color: var(--accent-purple);"></i> PuLP Linear Solver</h3>
-                            <p style="font-size: 0.85rem;">A Python library for solving linear programming problems for optimal capacity and APP.</p>
-                            <a href="https://coin-or.github.io/pulp/" target="_blank" style="font-size: 0.85rem;">View Documentation <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="settings" style="color: var(--text-primary);"></i> AnyLogic Simulation</h3>
-                            <p style="font-size: 0.85rem;">Multi-method simulation modeling tool for complex manufacturing and logistics systems.</p>
-                            <a href="https://www.anylogic.com/" target="_blank" style="font-size: 0.85rem;">Explore AnyLogic <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="database" style="color: var(--accent-blue);"></i> Odoo Open ERP</h3>
-                            <p style="font-size: 0.85rem;">An open-source suite of business apps, including an MRP sandbox for students to practice.</p>
-                            <a href="https://www.odoo.com/app/manufacturing" target="_blank" style="font-size: 0.85rem;">Try Odoo MRP <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="truck" style="color: var(--accent-green);"></i> SCOR Model</h3>
-                            <p style="font-size: 0.85rem;">The Supply Chain Operations Reference model for measuring and improving supply chains.</p>
-                            <a href="https://www.ascm.org/corporate-transformation/standards-tools/scor/" target="_blank" style="font-size: 0.85rem;">Learn SCOR <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="box" style="color: var(--accent-purple);"></i> Arena Simulation</h3>
-                            <p style="font-size: 0.85rem;">Rockwell Automation's simulation software to analyze the impact of process changes.</p>
-                            <a href="https://www.arenasimulation.com/" target="_blank" style="font-size: 0.85rem;">Explore Arena <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="file-spreadsheet" style="color: var(--accent-red);"></i> OM Excel Templates</h3>
-                            <p style="font-size: 0.85rem;">A collection of open-source Excel templates for capacity, forecasting, and inventory.</p>
-                            <a href="https://poms.org/" target="_blank" style="font-size: 0.85rem;">POMS Resources <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="book" style="color: var(--text-primary);"></i> The Goal (Book)</h3>
-                            <p style="font-size: 0.85rem;">Eliyahu Goldratt's classic business novel introducing the Theory of Constraints (TOC).</p>
-                            <a href="https://en.wikipedia.org/wiki/The_Goal_(novel)" target="_blank" style="font-size: 0.85rem;">About The Goal <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="briefcase" style="color: var(--accent-blue);"></i> Lean Six Sigma</h3>
-                            <p style="font-size: 0.85rem;">The IASSC official guide to continuous improvement and Six Sigma DMAIC methodologies.</p>
-                            <a href="https://iassc.org/" target="_blank" style="font-size: 0.85rem;">IASSC Guide <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="activity" style="color: var(--accent-green);"></i> Little's Law Calc</h3>
-                            <p style="font-size: 0.85rem;">Interactive calculators demonstrating the relationship between WIP, throughput, and lead time.</p>
-                            <a href="https://www.littleslaw.com/" target="_blank" style="font-size: 0.85rem;">Try Calculator <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="map" style="color: var(--accent-purple);"></i> Value Stream Mapper</h3>
-                            <p style="font-size: 0.85rem;">Lucidchart's free templates for building Value Stream Maps for Lean operations.</p>
-                            <a href="https://www.lucidchart.com/pages/examples/value-stream-mapping" target="_blank" style="font-size: 0.85rem;">Start Mapping <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="bar-chart-2" style="color: var(--accent-red);"></i> Tableau Public</h3>
-                            <p style="font-size: 0.85rem;">Free platform to explore supply chain and operational dashboards built by data scientists.</p>
-                            <a href="https://public.tableau.com/en-us/s/gallery" target="_blank" style="font-size: 0.85rem;">Explore Dashboards <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="server" style="color: var(--text-primary);"></i> Simio Software</h3>
-                            <p style="font-size: 0.85rem;">Advanced 3D simulation and digital twin software used in industrial engineering.</p>
-                            <a href="https://www.simio.com/" target="_blank" style="font-size: 0.85rem;">Learn Simio <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
+                        <div class="resource-card" style="padding: 16px;"><h3><i data-lucide="book-open" style="color: var(--accent-blue);"></i> Primary Textbook</h3><p style="font-size: 0.85rem;"><strong>Operations Management (14th Ed)</strong> by W.J. Stevenson.</p><a href="https://www.mheducation.com/highered/product/operations-management-stevenson/M9781260238891.html" target="_blank" style="font-size: 0.85rem;">View Publisher</a></div>
+                        <div class="resource-card" style="padding: 16px;"><h3><i data-lucide="video" style="color: var(--accent-red);"></i> MIT OpenCourseWare</h3><p style="font-size: 0.85rem;">Free MIT Sloan lecture materials on OM and Supply Chain.</p><a href="https://ocw.mit.edu/search/?q=operations+management" target="_blank" style="font-size: 0.85rem;">Explore MIT OCW</a></div>
+                        <div class="resource-card" style="padding: 16px;"><h3><i data-lucide="globe" style="color: var(--accent-green);"></i> ASCM Dictionary</h3><p style="font-size: 0.85rem;">The APICS standard dictionary for Supply Chain metrics.</p><a href="https://www.ascm.org/learning-development/apics-dictionary/" target="_blank" style="font-size: 0.85rem;">Access Dictionary</a></div>
                     </div>
                 </div>
 
                 <div id="tab-news" class="tab-content">
                     <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="newspaper" style="color: var(--accent-blue);"></i> Supply Chain Dive</h3>
-                            <p style="font-size: 0.85rem;">Daily news, industry trends, and deep dives into the supply chain sector.</p>
-                            <a href="https://www.supplychaindive.com/" target="_blank" style="font-size: 0.85rem;">Read Articles <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="trending-up" style="color: var(--accent-green);"></i> WSJ Logistics Report</h3>
-                            <p style="font-size: 0.85rem;">The Wall Street Journal's dedicated section covering global logistics.</p>
-                            <a href="https://www.wsj.com/news/logistics" target="_blank" style="font-size: 0.85rem;">View WSJ <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="mic" style="color: var(--accent-purple);"></i> Let's Talk Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">A top-rated podcast discussing the latest in supply chain innovations and diversity.</p>
-                            <a href="https://letstalksupplychain.com/" target="_blank" style="font-size: 0.85rem;">Listen to Podcast <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="radio" style="color: var(--accent-red);"></i> Supply Chain Now</h3>
-                            <p style="font-size: 0.85rem;">Interviews with industry leaders discussing digital transformation and operations.</p>
-                            <a href="https://supplychainnow.com/" target="_blank" style="font-size: 0.85rem;">Listen to Podcast <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="globe" style="color: var(--text-primary);"></i> Bloomberg Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">Real-time coverage of global supply chain disruptions and economic impacts.</p>
-                            <a href="https://www.bloomberg.com/supply-chain" target="_blank" style="font-size: 0.85rem;">Read Bloomberg <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="truck" style="color: var(--accent-blue);"></i> FreightWaves</h3>
-                            <p style="font-size: 0.85rem;">The leading source of news and data for the global freight market and logistics.</p>
-                            <a href="https://www.freightwaves.com/" target="_blank" style="font-size: 0.85rem;">Explore FreightWaves <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="box" style="color: var(--accent-green);"></i> Supply Chain Brain</h3>
-                            <p style="font-size: 0.85rem;">Comprehensive intelligence portal for supply chain executives and planners.</p>
-                            <a href="https://www.supplychainbrain.com/" target="_blank" style="font-size: 0.85rem;">Visit Site <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="headphones" style="color: var(--accent-purple);"></i> The Logistics of Logistics</h3>
-                            <p style="font-size: 0.85rem;">Podcast focusing on 3PL, freight forwarding, and supply chain technology.</p>
-                            <a href="https://www.thelogisticsoflogistics.com/" target="_blank" style="font-size: 0.85rem;">Listen to Podcast <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="file-text" style="color: var(--accent-red);"></i> Inbound Logistics</h3>
-                            <p style="font-size: 0.85rem;">Educational magazine offering case studies, trends, and supply chain IT resources.</p>
-                            <a href="https://www.inboundlogistics.com/" target="_blank" style="font-size: 0.85rem;">Read Magazine <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="rss" style="color: var(--text-primary);"></i> SCMR News</h3>
-                            <p style="font-size: 0.85rem;">Supply Chain Management Review offers high-level insights for operational executives.</p>
-                            <a href="https://www.scmr.com/" target="_blank" style="font-size: 0.85rem;">Visit SCMR <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="play-circle" style="color: var(--accent-blue);"></i> MIT SCM YouTube</h3>
-                            <p style="font-size: 0.85rem;">Official YouTube channel of the MIT Center for Transportation & Logistics.</p>
-                            <a href="https://www.youtube.com/c/MITSupplyChainManagement" target="_blank" style="font-size: 0.85rem;">Watch Videos <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="activity" style="color: var(--accent-green);"></i> Logistics Management</h3>
-                            <p style="font-size: 0.85rem;">News and features covering transportation, warehousing, and equipment.</p>
-                            <a href="https://www.logisticsmgmt.com/" target="_blank" style="font-size: 0.85rem;">Read Articles <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="package" style="color: var(--accent-purple);"></i> Supply Chain 24/7</h3>
-                            <p style="font-size: 0.85rem;">Aggregated resource hub for white papers, software news, and industry reports.</p>
-                            <a href="https://www.supplychain247.com/" target="_blank" style="font-size: 0.85rem;">Explore Hub <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="mic" style="color: var(--accent-red);"></i> ASCM Insights</h3>
-                            <p style="font-size: 0.85rem;">The official podcast of the Association for Supply Chain Management.</p>
-                            <a href="https://www.ascm.org/insights/" target="_blank" style="font-size: 0.85rem;">Listen to Podcast <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="shield" style="color: var(--text-primary);"></i> Risk Pulse</h3>
-                            <p style="font-size: 0.85rem;">Updates on geopolitical and environmental risks affecting global supply chains.</p>
-                            <a href="https://www.dhl.com/global-en/home/insights-and-innovation/insights/risk-management.html" target="_blank" style="font-size: 0.85rem;">View Reports <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
+                        <div class="resource-card" style="padding: 16px;"><h3><i data-lucide="newspaper" style="color: var(--accent-blue);"></i> Supply Chain Dive</h3><p style="font-size: 0.85rem;">Daily news and deep dives into the supply chain sector.</p><a href="https://www.supplychaindive.com/" target="_blank" style="font-size: 0.85rem;">Read Articles</a></div>
+                        <div class="resource-card" style="padding: 16px;"><h3><i data-lucide="trending-up" style="color: var(--accent-green);"></i> WSJ Logistics</h3><p style="font-size: 0.85rem;">The Wall Street Journal's dedicated logistics section.</p><a href="https://www.wsj.com/news/logistics" target="_blank" style="font-size: 0.85rem;">View WSJ</a></div>
                     </div>
                 </div>
 
                 <div id="tab-papers" class="tab-content">
-                    <p style="margin-bottom:20px;color:var(--text-secondary);font-size:0.9rem;">Curated research papers featuring works by <strong>Prof. M.S. Narassima</strong> and <strong>Dr. M. Thenarasu</strong> on supply chain, job shop scheduling, and simulation, alongside classic OM references.</p>
-                    <h3 style="margin-bottom:14px;font-size:1rem;color:var(--accent-blue);">Featured Works — Narassima & Thenarasu</h3>
-                    <div class="grid-3" style="gap:16px;margin-bottom:24px;">                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Digital Twin-Driven SimLean-TRIZ (2025)</h3><p style="font-size:0.79rem;">Thenarasu, M., Narassima, M.S. et al. — Integrating Digital Twins with Lean and TRIZ for operational efficiency in cold room door production. <em>Modelling</em>.</p><a href="https://www.mdpi.com/journal/modelling" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Inventory in Closed-Loop Supply Chain (2025)</h3><p style="font-size:0.79rem;">Thenarasu, M., Pai, V., Narassima, M.S., et al. — Discrete event simulation for CLSC inventory policy analysis. <em>Int'l Journal of Management Science &amp; Engineering Management</em>.</p><a href="https://www.tandfonline.com/journals/tmse20" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Multimodel Assembly Line Simulation (2023)</h3><p style="font-size:0.79rem;">Thenarasu, M. et al. — Productivity improvement through simulation and lean approaches in complex assembly lines. <em>Journal of Engineering Manufacture</em>.</p><a href="https://journals.sagepub.com/home/pib" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #dc2626;"><h3 style="font-size:0.88rem;">Mould Shop Productivity (2024)</h3><p style="font-size:0.79rem;">Thenarasu, M., et al. — Enhancing mould shop productivity using continuous improvement tools and simulation. <em>Int'l Journal of Systems Science: Operations &amp; Logistics</em>.</p><a href="https://www.tandfonline.com/journals/tsys20" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #d97706;"><h3 style="font-size:0.88rem;">Cardiology Department Performance (2022)</h3><p style="font-size:0.79rem;">Thenarasu, M., et al. — Performance improvement in hospital cardiology departments using discrete event simulation. <em>Int'l Journal of Advanced Intelligence Paradigms</em>.</p><a href="https://www.inderscience.com/jhome.php?jcode=ijaip" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #0891b2;"><h3 style="font-size:0.88rem;">Flexible Job Shop Scheduling (2024)</h3><p style="font-size:0.79rem;">Thenarasu, M., et al. — Multi-criteria FJSP optimization using simulation modeling and MCDM. <em>Int'l Journal of Production Research</em>.</p><a href="https://www.tandfonline.com/journals/tprs20" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Priority Dispatching &amp; Setup Minimization (2022)</h3><p style="font-size:0.79rem;">Narassima, M.S., et al. — Algorithm for minimizing makespan and transportation time in job shops. <em>Int'l Journal of Computer Aided Engineering &amp; Technology</em>.</p><a href="https://www.inderscience.com/jhome.php?jcode=ijcaet" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Supply Chain Resilience Index (Fuzzy Logic)</h3><p style="font-size:0.79rem;">Narassima, M.S. et al. — Measuring supply chain resilience via coexistent resilience index using fuzzy logic and simulation.</p><a href="https://scholar.google.com/citations?hl=en&user=RDFCAzYAAAAJ" target="_blank" style="font-size:0.79rem;">Google Scholar</a></div>
-                    </div>
-                    <h3 style="margin-bottom:14px;font-size:1rem;color:var(--accent-purple);">Classic OM Reference Papers</h3>
+                    <p style="margin-bottom:20px;color:var(--text-secondary);font-size:0.9rem;">Curated research covering supply chain resilience and simulation, including works by <strong>Prof. M.S. Narassima</strong> and <strong>Dr. M. Thenarasu</strong>.</p>
+                    <h3 style="margin-bottom:14px;font-size:1.1rem;color:var(--accent-blue);">Research Publications</h3>
                     <div class="grid-3" style="gap:16px;">
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Bullwhip Effect (1997)</h3><p style="font-size:0.79rem;">Lee, Padmanabhan &amp; Whang — Quantifying demand amplification in supply chains. <em>Management Science</em>.</p><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.43.4.546" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Toyota Production System (1977)</h3><p style="font-size:0.79rem;">Sugimori et al. — Original academic paper on TPS and Just-In-Time. <em>Int'l Journal of Production Research</em>.</p><a href="https://www.tandfonline.com/doi/abs/10.1080/00207547708943149" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #dc2626;"><h3 style="font-size:0.88rem;">Theory of Constraints (1990)</h3><p style="font-size:0.79rem;">Goldratt — What is this thing called Theory of Constraints? <em>North River Press</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/0925527394900124" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #d97706;"><h3 style="font-size:0.88rem;">Lean Thinking (1996)</h3><p style="font-size:0.79rem;">Womack &amp; Jones — Banish Waste and Create Wealth in your Corporation. <em>Journal of Operations Management</em>.</p><a href="https://www.sciencedirect.com/science/article/pii/S0272696397818027" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #0891b2;"><h3 style="font-size:0.88rem;">Supply Chain Resilience (2005)</h3><p style="font-size:0.79rem;">Sheffi &amp; Rice — A supply chain view of the resilient enterprise. <em>MIT Sloan Management Review</em>.</p><a href="https://sloanreview.mit.edu/article/a-supply-chain-view-of-the-resilient-enterprise/" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">EOQ Classic (1913/1990)</h3><p style="font-size:0.79rem;">Harris (1913) — How Many Parts to Make at Once. Reprinted in <em>Operations Research</em>, INFORMS.</p><a href="https://pubsonline.informs.org/doi/10.1287/opre.38.6.947" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Digital Supply Chains (2018)</h3><p style="font-size:0.79rem;">Buyukozkan &amp; Gocer — Digital SC framework. <em>Computers in Industry</em>, Elsevier.</p><a href="https://www.sciencedirect.com/science/article/pii/S0166361517305031" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Digital Twin-Driven SimLean-TRIX (2025)</h3><p style="font-size:0.79rem;">Thenarasu, M., Narassima, M.S. et al. &mdash; Operational efficiency in production.</p><a href="https://www.mdpi.com/journal/modelling" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #064e3b;"><h3 style="font-size:0.88rem;">Inventory in Closed-Loop SC (2025)</h3><p style="font-size:0.79rem;">Thenarasu, M. et al. &mdash; Discrete event simulation for CLSC.</p><a href="https://www.tandfonline.com/journals/tmse20" target="_blank" style="font-size:0.79rem;">View Journal</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #064e3b;"><h3 style="font-size:0.88rem;">Bullwhip Effect (1997)</h3><p style="font-size:0.79rem;">Lee et al. &mdash; Quantifying demand amplification.</p><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.43.4.546" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Toyota Production System (1977)</h3><p style="font-size:0.79rem;">Sugimori et al. &mdash; Original paper on TPS and JIT.</p><a href="https://www.tandfonline.com/doi/abs/10.1080/00207547708943149" target="_blank" style="font-size:0.79rem;">Read Paper</a></div>
                     </div>
                 </div>
 
                 <div id="tab-cases" class="tab-content">
-                    <p style="margin-bottom:20px;color:var(--text-secondary);font-size:0.9rem;">Real-world company case studies from news reports, industry white papers, and analyst publications — covering operations failures, resilience strategies, and digital transformations.</p>
-                    <div class="grid-3" style="gap:16px;">
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Lego: Nearshoring & Resilience (2024)</h3><p style="font-size:0.79rem;">Lego's "build where you sell" strategy involves opening new factories in Vietnam and Virginia to reduce lead times and carbon footprint. A case in agile capacity planning.</p><a href="https://www.lego.com/en-us/aboutus/news-room" target="_blank" style="font-size:0.79rem;">Read Lego News</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #dc2626;"><h3 style="font-size:0.88rem;">IKEA: Circular Supply Chain (2024)</h3><p style="font-size:0.79rem;">IKEA's shift to 100% circular materials by 2030, including buy-back programs and reverse logistics for furniture components. A case in sustainable BOM design.</p><a href="https://www.ikea.com/global/en/newsroom/sustainability/" target="_blank" style="font-size:0.79rem;">Read IKEA Case</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Maersk: Digital Supply Chain Twin (2023)</h3><p style="font-size:0.79rem;">Maersk built a digital twin of its ocean freight network, enabling real-time capacity planning and re-routing. Featured in Gartner Top 25 Supply Chains.</p><a href="https://www.maersk.com/news/articles/2023/04/04/the-future-of-logistics-is-digital" target="_blank" style="font-size:0.79rem;">Read Maersk</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #d97706;"><h3 style="font-size:0.88rem;">Tesla: Gigafactory Capacity Scaling (2024)</h3><p style="font-size:0.79rem;">Tesla's vertical integration and aggressive capacity expansion in Berlin and Texas. A live example of high-volume capacity planning and bottleneck management.</p><a href="https://www.tesla.com/impact" target="_blank" style="font-size:0.79rem;">Tesla Impact Report</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #7c3aed;"><h3 style="font-size:0.88rem;">Red Sea Crisis: Global Rerouting (2024)</h3><p style="font-size:0.79rem;">How global carriers rerouted around the Cape of Good Hope, adding 10-14 days to transits and disrupting global MPS timelines.</p><a href="https://www.supplychaindive.com/news/red-sea-shipping-disruption-supply-chain-impact/703893/" target="_blank" style="font-size:0.79rem;">Read Article</a></div>
-                        <div class="resource-card" style="padding:16px;border-left:4px solid #0891b2;"><h3 style="font-size:0.88rem;">Walmart: AI-Driven Forecasting (2024)</h3><p style="font-size:0.79rem;">Walmart's use of generative AI to enhance inventory forecasting and reduce out-of-stock events by 30% across global markets.</p><a href="https://corporate.walmart.com/news/2024/01/31/walmart-is-using-generative-ai-to-enhance-the-shopping-experience" target="_blank" style="font-size:0.79rem;">Read Case</a></div>
+                    <div class="grid-3" style="gap: 16px;">
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #2563eb;"><h3 style="font-size:0.88rem;">Lego: Nearshoring (2024)</h3><p style="font-size:0.79rem;">Lego's agile capacity planning via regional factories.</p><a href="https://www.lego.com" target="_blank" style="font-size:0.79rem;">Read News</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #dc2626;"><h3 style="font-size:0.88rem;">IKEA: Circular SC (2024)</h3><p style="font-size:0.79rem;">IKEA's material recovery and sustainable BOM design.</p><a href="https://www.ikea.com" target="_blank" style="font-size:0.79rem;">Read Case</a></div>
+                        <div class="resource-card" style="padding:16px;border-left:4px solid #059669;"><h3 style="font-size:0.88rem;">Maersk: Digital Twin (2023)</h3><p style="font-size:0.79rem;">Real-time network planning and global re-routing.</p><a href="https://www.maersk.com" target="_blank" style="font-size:0.79rem;">Read Maersk</a></div>
                     </div>
                 </div>
 
                 <div id="tab-reports" class="tab-content">
                     <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="pie-chart" style="color: var(--accent-purple);"></i> McKinsey Operations Practice</h3>
-                            <p style="font-size: 0.85rem;">White papers on the future of manufacturing, Industry 4.0, and supply chain resilience.</p>
-                            <a href="https://www.mckinsey.com/capabilities/operations/our-insights" target="_blank" style="font-size: 0.85rem;">View Reports <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="bar-chart-2" style="color: var(--accent-blue);"></i> Gartner Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">Annual reports on the Top 25 Supply Chains and technological innovations.</p>
-                            <a href="https://www.gartner.com/en/supply-chain" target="_blank" style="font-size: 0.85rem;">View Reports <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="briefcase" style="color: var(--accent-green);"></i> BCG Operations</h3>
-                            <p style="font-size: 0.85rem;">Boston Consulting Group's insights on digital supply chains and manufacturing.</p>
-                            <a href="https://www.bcg.com/capabilities/operations/overview" target="_blank" style="font-size: 0.85rem;">Explore BCG <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="database" style="color: var(--accent-red);"></i> Deloitte Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">Research on digital networks, procurement, and smart factory initiatives.</p>
-                            <a href="https://www2.deloitte.com/us/en/insights/focus/supply-chain.html" target="_blank" style="font-size: 0.85rem;">Read Deloitte <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="globe" style="color: var(--text-primary);"></i> Bain & Company</h3>
-                            <p style="font-size: 0.85rem;">Strategic insights on advanced manufacturing and services.</p>
-                            <a href="https://www.bain.com/insights/topics/operations/" target="_blank" style="font-size: 0.85rem;">View Insights <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="trending-up" style="color: var(--accent-purple);"></i> KPMG Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">Analysis of global supply chain risks and predictive logistics models.</p>
-                            <a href="https://kpmg.com/xx/en/home/insights/2021/05/supply-chain.html" target="_blank" style="font-size: 0.85rem;">Read KPMG <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="shield" style="color: var(--accent-blue);"></i> PwC Operations</h3>
-                            <p style="font-size: 0.85rem;">Reports on Operations transformation, ESG in supply chain, and procurement.</p>
-                            <a href="https://www.pwc.com/gx/en/issues/operations-consulting.html" target="_blank" style="font-size: 0.85rem;">Explore PwC <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="package" style="color: var(--accent-green);"></i> DHL Logistics Trend Radar</h3>
-                            <p style="font-size: 0.85rem;">Annual interactive radar of key social, business, and technology trends.</p>
-                            <a href="https://www.dhl.com/global-en/home/insights-and-innovation/insights/logistics-trend-radar.html" target="_blank" style="font-size: 0.85rem;">View Radar <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="activity" style="color: var(--accent-red);"></i> World Bank Logistics Performance</h3>
-                            <p style="font-size: 0.85rem;">The LPI report ranks countries based on their trade logistics performance.</p>
-                            <a href="https://lpi.worldbank.org/" target="_blank" style="font-size: 0.85rem;">View LPI <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="truck" style="color: var(--text-primary);"></i> Capgemini Research Inst.</h3>
-                            <p style="font-size: 0.85rem;">Deep-dive reports on the intelligent supply chain and sustainable manufacturing.</p>
-                            <a href="https://www.capgemini.com/insights/research-institute/supply-chain/" target="_blank" style="font-size: 0.85rem;">Read Reports <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="zap" style="color: var(--accent-purple);"></i> Accenture Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">Studies on building resilient, customer-centric supply chain networks.</p>
-                            <a href="https://www.accenture.com/us-en/services/supply-chain-management-and-operations-index" target="_blank" style="font-size: 0.85rem;">Explore Accenture <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="box" style="color: var(--accent-blue);"></i> MIT CTL Publications</h3>
-                            <p style="font-size: 0.85rem;">Working papers and industry briefs from the Center for Transportation & Logistics.</p>
-                            <a href="https://ctl.mit.edu/publications" target="_blank" style="font-size: 0.85rem;">Read Papers <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="file-text" style="color: var(--accent-green);"></i> WEF Supply Chain</h3>
-                            <p style="font-size: 0.85rem;">World Economic Forum reports on the future of advanced manufacturing.</p>
-                            <a href="https://www.weforum.org/topics/supply-chain-and-transport" target="_blank" style="font-size: 0.85rem;">View WEF <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="settings" style="color: var(--accent-red);"></i> IBM Institute for Business</h3>
-                            <p style="font-size: 0.85rem;">Insights on utilizing AI and Blockchain to optimize supply chains.</p>
-                            <a href="https://www.ibm.com/thought-leadership/institute-business-value/en-us/topic/supply-chain" target="_blank" style="font-size: 0.85rem;">Read IBM <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
-                        <div class="resource-card" style="padding: 16px;">
-                            <h3 style="font-size: 1.1rem;"><i data-lucide="map" style="color: var(--text-primary);"></i> CIPS Knowledge</h3>
-                            <p style="font-size: 0.85rem;">Chartered Institute of Procurement & Supply intelligence and benchmark reports.</p>
-                            <a href="https://www.cips.org/knowledge" target="_blank" style="font-size: 0.85rem;">Explore CIPS <i data-lucide="external-link" style="width: 12px; height: 12px;"></i></a>
-                        </div>
+                        <div class="resource-card" style="padding: 16px;"><h3>McKinsey Operations</h3><p style="font-size: 0.85rem;">Insights on Industry 4.0 and resilience.</p><a href="https://www.mckinsey.com" target="_blank" style="font-size: 0.85rem;">View Reports</a></div>
+                        <div class="resource-card" style="padding: 16px;"><h3>Gartner Supply Chain</h3><p style="font-size: 0.85rem;">Annual reports on Top 25 Supply Chains.</p><a href="https://www.gartner.com" target="_blank" style="font-size: 0.85rem;">View Reports</a></div>
                     </div>
                 </div>
-
-                <div id="tab-journals" class="tab-content">
-                    <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 0.95rem;">Top peer-reviewed journals for Operations Management and Supply Chain research — all FT-50 ranked or INFORMS listed.</p>
-                    <div class="grid-3" style="gap: 16px;">
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-blue);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-blue);"></i> Journal of Operations Management</h3><p style="font-size:0.82rem;">The flagship journal of the Decision Sciences Institute. FT-50 ranked. Covers empirical and analytical OM research.</p><a href="https://onlinelibrary.wiley.com/journal/18731317" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-purple);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-purple);"></i> Management Science (INFORMS)</h3><p style="font-size:0.82rem;">One of the world's leading journals covering all aspects of management science and analytics. FT-50.</p><a href="https://pubsonline.informs.org/journal/mnsc" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-green);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-green);"></i> Manufacturing & Service OM (MSOM)</h3><p style="font-size:0.82rem;">INFORMS journal dedicated to analytical and empirical OM models for manufacturing and services.</p><a href="https://pubsonline.informs.org/journal/msom" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-red);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-red);"></i> Operations Research (INFORMS)</h3><p style="font-size:0.82rem;">The oldest INFORMS journal, publishing original research in the theory and applications of OR.</p><a href="https://pubsonline.informs.org/journal/opre" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-amber);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-amber);"></i> International Journal of Prod. Econ.</h3><p style="font-size:0.82rem;">Covers quantitative and qualitative research relating to production, manufacturing systems, and logistics.</p><a href="https://www.journals.elsevier.com/international-journal-of-production-economics" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-blue);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-blue);"></i> Supply Chain Management: An Int'l Journal</h3><p style="font-size:0.82rem;">Emerald journal focused on theory and practice of supply chain management globally.</p><a href="https://www.emerald.com/insight/publication/issn/1359-8546" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-purple);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-purple);"></i> European Journal of Oper. Research</h3><p style="font-size:0.82rem;">World's largest OR journal by volume. Covers a wide range of quantitative planning methods.</p><a href="https://www.journals.elsevier.com/european-journal-of-operational-research" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                        <div class="resource-card" style="padding: 16px; border-left: 4px solid var(--accent-green);"><h3 style="font-size:1rem;"><i data-lucide="award" style="color:var(--accent-green);"></i> International Journal of Prod. Research</h3><p style="font-size:0.82rem;">Taylor & Francis journal covering production technology, planning, control, and logistics.</p><a href="https://www.tandfonline.com/journals/tprs20" target="_blank" style="font-size:0.82rem;">Visit Journal <i data-lucide="external-link" style="width:11px;"></i></a></div>
-                    </div>
-                </div>
-
             </div>
         </main>
     </div>
-
-    <script src="js/resources.js"></script>
     <script>
         lucide.createIcons();
-        // Simple tab logic for resources page
         document.querySelectorAll('.tab-btn').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 e.target.classList.add('active');
                 document.getElementById('tab-' + e.target.getAttribute('data-tab')).classList.add('active');
-                
-                // Papers tab — static content, no fetch needed
-                
-                // If they click cases tab, fetch live cases
-                if (e.target.getAttribute('data-tab') === 'cases' && window.fetchLiveCases) {
-                    window.fetchLiveCases();
-                }
             });
         });
     </script>

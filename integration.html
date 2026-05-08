@@ -12,7 +12,7 @@
     <style>
         .input-inline { width: 60px; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.85rem; text-align: center; }
         .highlight-val { font-weight: 800; color: var(--accent-blue); }
-        .handoff-summary { background: var(--accent-indigo-light); border-left: 4px solid var(--accent-indigo); padding: 12px 16px; margin-top: 15px; border-radius: 0 8px 8px 0; font-size: 0.85rem; }
+        .handoff-summary { background: var(--accent-forest-light); border-left: 4px solid var(--accent-forest); padding: 12px 16px; margin-top: 15px; border-radius: 0 8px 8px 0; font-size: 0.85rem; }
         .sync-btn { background: var(--accent-emerald); color: white; padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s; }
         .sync-btn:hover { background: #059669; }
     </style>
@@ -21,10 +21,10 @@
     <div id="app-container">
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h2>OpsPlanner Workspace</h2>
+                <h2>Production Planner</h2>
                 <p>Interactive Learning</p>
             </div>
-            <ul class="nav-links">
+                        <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
                 <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
@@ -33,6 +33,7 @@
                 <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
                 <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
                 <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
                 <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
                 <li><a href="integration.html" class="active"><i data-lucide="link-2"></i> Production Planner</a></li>
             </ul>
@@ -101,8 +102,8 @@
                         <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(0)">Back</button><button class="btn btn-primary" onclick="goToStage(2)">Next</button></div>
                     </div>
                     <div class="stage-panel" id="panel-2">
-                        <div class="stage-card" style="border-left-color: var(--accent-indigo);">
-                            <div class="card-title"><i data-lucide="calendar" style="color: var(--accent-indigo);"></i> Stage 3: Aggregate Plan</div>
+                        <div class="stage-card" style="border-left-color: var(--accent-forest);">
+                            <div class="card-title"><i data-lucide="calendar" style="color: var(--accent-forest);"></i> Stage 3: Aggregate Plan</div>
                             <table>
                                 <thead><tr><th>Month</th><th>Forecast</th><th>Planned Prod</th></tr></thead>
                                 <tbody>
@@ -175,3 +176,5 @@
     </script>
 </body>
 </html>
+
+

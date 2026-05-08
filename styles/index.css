@@ -1,40 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary-bg: #f8fafc;
-    --sidebar-bg: #0f172a;
+    --primary-bg: #fdfdfd;
+    --sidebar-bg: #fff7ed; /* Pastel Saffron */
     --card-bg: #ffffff;
 
     --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-on-dark: rgba(255,255,255,0.9);
+    --text-secondary: #64748b;
+    --text-on-dark: #431407; /* Darker text for light sidebar */
 
-    --accent-blue: #3b82f6;
+    --accent-blue: #2563eb;
     --accent-blue-light: #eff6ff;
-    --accent-blue-dark: #2563eb;
+    --accent-blue-dark: #1d4ed8;
 
-    --accent-indigo: #6366f1;
-    --accent-indigo-light: #eef2ff;
+    --accent-forest: #064e3b; /* Dark Green replacement for Violet */
+    --accent-forest-light: #ecfdf5;
 
     --accent-emerald: #10b981;
     --accent-emerald-light: #ecfdf5;
 
-    --accent-rose: #f43f5e;
+    --accent-rose: #be123c;
     --accent-rose-light: #fff1f2;
 
-    --accent-amber: #f59e0b;
+    --accent-amber: #d97706;
     --accent-amber-light: #fffbeb;
 
-    --border-color: #e2e8f0;
+    --border-color: #f1f5f9;
 
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 
     --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
-    --sidebar-width: 280px;
+    --sidebar-width: 340px;
 }
 
 * {
@@ -101,17 +101,35 @@ body {
     margin-bottom: 2px;
 }
 
-.nav-links a {
+#sidebar .nav-links a {
     display: flex;
     align-items: center;
-    padding: 9px 12px;
-    color: var(--text-on-dark);
+    gap: 14px;
+    padding: 12px 18px;
+    color: #431407;
     text-decoration: none;
-    font-weight: 500;
-    font-size: 0.82rem;
-    border-radius: 8px;
-    transition: all var(--transition-fast);
-    gap: 9px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    margin: 4px 0;
+    transition: var(--transition-fast);
+}
+
+#sidebar .nav-links a i {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}
+
+#sidebar .nav-links a:hover {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+#sidebar .nav-links a.active {
+    background: #ea580c; /* Deeper saffron/orange for active */
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
 }
 
 .nav-links a i {
@@ -121,9 +139,6 @@ body {
     opacity: 0.7;
 }
 
-.nav-links a:hover {
-    background: rgba(255,255,255,0.08);
-    color: #ffffff;
 }
 
 .nav-links a:hover i { opacity: 1; }
@@ -481,7 +496,7 @@ tr:hover {
 .modal-title {
     font-size: 1.05rem;
     font-weight: 800;
-    color: var(--accent-purple);
+    color: var(--accent-forest);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -512,13 +527,13 @@ tr:hover {
     transition: background-color var(--transition-fast);
     position: relative;
 }
-.cell-interactive:hover { background-color: var(--accent-purple-light) !important; }
+.cell-interactive:hover { background-color: var(--accent-forest-light) !important; }
 .cell-interactive::after {
     content: "?";
     position: absolute;
     top: 2px; right: 4px;
     font-size: 0.62rem;
-    color: var(--accent-purple);
+    color: var(--accent-forest);
     opacity: 0.65;
 }
 

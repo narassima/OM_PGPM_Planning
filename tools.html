@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Planner - Interactive Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles/index.css">
+    <style>
+        .tool-card { border-top: 4px solid var(--accent-blue); }
+        .calc-input { background: var(--primary-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; width: 100%; margin-bottom: 10px; font-weight: 600; }
+        .result-box { background: var(--accent-blue-light); padding: 15px; border-radius: 8px; text-align: center; }
+        .result-val { font-size: 1.5rem; font-weight: 800; color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
+                        <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="tools.html" class="active"><i data-lucide="cpu"></i> Interactive Tools</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+                <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
+            </ul>
+        </nav>
+        <main id="main-content">
+            <header><div class="header-title"><h1>Interactive Operations Tools</h1></div></header>
+            <div id="content-area">
+                <div class="module-container">
+                    <div class="grid-2">
+                        <!-- Tool 1: EOQ -->
+                        <div class="card tool-card">
+                            <div class="card-title"><i data-lucide="trending-down"></i> Economic Order Quantity (EOQ)</div>
+                            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:15px;">Balance holding costs vs ordering costs to find the optimal batch size.</p>
+                            <div class="grid-2">
+                                <div>
+                                    <label style="font-size:0.7rem; font-weight:700;">Annual Demand (D)</label>
+                                    <input type="number" id="eoq-d" class="calc-input" value="10000" oninput="calculateEOQ()">
+                                    <label style="font-size:0.7rem; font-weight:700;">Ordering Cost (S)</label>
+                                    <input type="number" id="eoq-s" class="calc-input" value="50" oninput="calculateEOQ()">
+                                    <label style="font-size:0.7rem; font-weight:700;">Holding Cost (H)</label>
+                                    <input type="number" id="eoq-h" class="calc-input" value="2" oninput="calculateEOQ()">
+                                </div>
+                                <div class="result-box">
+                                    <div class="key-label">Optimal Order Qty</div>
+                                    <div class="result-val" id="eoq-result">707</div>
+                                    <div class="key-label" style="margin-top:10px;">Orders per Year</div>
+                                    <div id="eoq-orders" style="font-weight:700;">14.1</div>
+                                </div>
+                            </div>
+                            <div style="height:200px; margin-top:20px;"><canvas id="eoqChart"></canvas></div>
+                        </div>
+
+                        <!-- Tool 2: Little's Law -->
+                        <div class="card tool-card" style="border-top-color: var(--accent-emerald);">
+                            <div class="card-title"><i data-lucide="activity" style="color:var(--accent-emerald);"></i> Little's Law Simulator</div>
+                            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:15px;">Inventory (L) = Throughput (?) × Lead Time (W)</p>
+                            <div class="form-group">
+                                <label>Throughput (Units/Hour)</label>
+                                <input type="range" id="ll-t" min="1" max="100" value="10" style="width:100%" oninput="calculateLL()">
+                                <div id="ll-t-val" style="text-align:right; font-weight:700;">10</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Lead Time (Hours)</label>
+                                <input type="range" id="ll-w" min="1" max="48" value="4" style="width:100%" oninput="calculateLL()">
+                                <div id="ll-w-val" style="text-align:right; font-weight:700;">4</div>
+                            </div>
+                            <div class="result-box" style="background: var(--accent-emerald-light);">
+                                <div class="key-label" style="color:var(--accent-emerald);">Average WIP Inventory (L)</div>
+                                <div class="result-val" id="ll-result" style="color:var(--accent-emerald);">40 Units</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        let eoqChart = null;
+        function calculateEOQ() {
+            const d = parseFloat(document.getElementById('eoq-d').value) || 0;
+            const s = parseFloat(document.getElementById('eoq-s').value) || 0;
+            const h = parseFloat(document.getElementById('eoq-h').value) || 0.1;
+            const q = Math.sqrt((2 * d * s) / h);
+            document.getElementById('eoq-result').innerText = Math.round(q);
+            document.getElementById('eoq-orders').innerText = (d / q).toFixed(1);
+            updateEOQChart(d, s, h, q);
+        }
+        function updateEOQChart(D, S, H, optimalQ) {
+            const ctx = document.getElementById('eoqChart').getContext('2d');
+            const labels = [];
+            const holdingData = [];
+            const orderingData = [];
+            const totalData = [];
+            for (let q = Math.max(1, optimalQ * 0.2); q <= optimalQ * 2; q += optimalQ * 0.1) {
+                labels.push(Math.round(q));
+                const hold = (q / 2) * H;
+                const ord = (D / q) * S;
+                holdingData.push(hold);
+                orderingData.push(ord);
+                totalData.push(hold + ord);
+            }
+            if (eoqChart) eoqChart.destroy();
+            eoqChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Total Cost', data: totalData, borderColor: '#3b82f6', tension: 0.3, borderWidth: 3 },
+                        { label: 'Holding Cost', data: holdingData, borderColor: '#10b981', borderDash: [5, 5] },
+                        { label: 'Ordering Cost', data: orderingData, borderColor: '#f59e0b', borderDash: [5, 5] }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
+            });
+        }
+        function calculateLL() {
+            const t = document.getElementById('ll-t').value;
+            const w = document.getElementById('ll-w').value;
+            document.getElementById('ll-t-val').innerText = t;
+            document.getElementById('ll-w-val').innerText = w;
+            document.getElementById('ll-result').innerText = (t * w) + ' Units';
+        }
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); calculateEOQ(); calculateLL(); });
+    </script>
+</body>
+</html>
+
