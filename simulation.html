@@ -3,32 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Process Strategy Simulator - Expert Module</title>
+    <title>Advanced Process Simulator - Expert Suite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .sim-grid { display: grid; grid-template-columns: 350px 1fr; gap: 24px; }
-        .input-card { background: white; border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
-        .visualizer { background: white; border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .factory-canvas { height: 300px; background: #f1f5f9; border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #e2e8f0; }
-        .matrix-container { height: 250px; margin-top: 20px; position: relative; border-left: 2px solid #475569; border-bottom: 2px solid #475569; padding: 10px; }
-        .matrix-label-y { position: absolute; left: -80px; top: 50%; transform: rotate(-90deg); font-size: 0.75rem; font-weight: 700; color: #475569; }
-        .matrix-label-x { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; font-weight: 700; color: #475569; }
-        .matrix-dot { width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%; position: absolute; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--accent-blue); }
-        .machine-box { width: 60px; height: 50px; background: white; border: 2px solid var(--accent-blue); border-radius: 6px; position: absolute; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-primary); }
-        .part { width: 10px; height: 10px; background: var(--accent-emerald); border-radius: 2px; position: absolute; z-index: 10; transition: all 0.4s linear; }
-        .output-card { background: var(--accent-blue-light); border: 1px solid rgba(37,99,235,0.2); border-radius: 10px; padding: 15px; margin-top: 15px; }
-        .output-val { font-size: 1.4rem; font-weight: 800; color: var(--accent-blue); }
-        .ref-box { font-size: 0.75rem; color: var(--text-secondary); font-style: italic; margin-top: 15px; padding: 10px; border-top: 1px solid #eee; }
+        .sim-grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; }
+        .factory-canvas { height: 320px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; position: relative; overflow: hidden; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .machine { width: 70px; height: 60px; background: white; border: 2px solid var(--accent-blue); border-radius: 8px; position: absolute; font-size: 0.65rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: var(--shadow-sm); z-index: 5; transition: all 0.5s ease; }
+        .machine i { margin-bottom: 4px; color: var(--accent-blue); }
+        .part { width: 12px; height: 12px; border-radius: 3px; position: absolute; z-index: 10; transition: all 0.6s linear; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .output-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+        .metric-card { background: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center; }
+        .metric-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .metric-val { font-size: 1.2rem; font-weight: 800; color: var(--accent-blue); }
+        .matrix-overlay { position: absolute; bottom: 20px; right: 20px; width: 180px; height: 140px; background: rgba(255,255,255,0.9); border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.6rem; pointer-events: none; }
+        .matrix-dot { width: 8px; height: 8px; background: var(--accent-rose); border-radius: 50%; position: absolute; transition: all 0.5s ease; }
     </style>
 </head>
 <body>
     <div id="app-container">
         <nav id="sidebar">
-            <div class="sidebar-header"><h2>Production Planner</h2><p>Expert Education Suite</p></div>
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Expert Simulation Suite</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
@@ -45,75 +43,73 @@
             </ul>
         </nav>
         <main id="main-content">
-            <header><div class="header-title"><h1>Process Strategy Simulator</h1></div></header>
+            <header><div class="header-title"><h1>Advanced Process Simulator</h1></div></header>
             <div id="content-area">
-                <div class="concept-box">
-                    <strong><i data-lucide="book-open"></i> Professor's Note:</strong> This simulator models the <strong>Hayes-Wheelwright Product-Process Matrix</strong>. As you shift from high-variety (Job Shop) to high-volume (Mass Production), you trade off flexibility for unit cost efficiency. Watch the <i>Flow</i> vs. <i>Functional</i> layout changes in the visualizer below.
-                </div>
-
                 <div class="sim-grid">
-                    <!-- LEFT: INPUTS -->
-                    <div class="input-card">
-                        <h3 style="font-size: 0.9rem; margin-bottom: 15px;"><i data-lucide="sliders"></i> System Inputs</h3>
+                    <!-- CONTROLS -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <h3 style="font-size: 0.9rem; margin-bottom: 15px;"><i data-lucide="sliders"></i> System Parameters</h3>
+                        
                         <div class="form-group">
-                            <label>Product Variety</label>
+                            <label>Product Variety (High = Job Shop)</label>
                             <input type="range" id="inp-variety" min="1" max="100" value="10" oninput="runSim()">
-                            <span id="lbl-variety" style="font-size: 0.75rem;">Low (Standardized)</span>
                         </div>
                         <div class="form-group">
-                            <label>Production Volume</label>
+                            <label>Production Volume (High = Mass)</label>
                             <input type="range" id="inp-volume" min="1" max="100" value="90" oninput="runSim()">
-                            <span id="lbl-volume" style="font-size: 0.75rem;">High (Mass)</span>
                         </div>
-                        <div class="form-group">
-                            <label>Changeover Time (Hrs)</label>
-                            <input type="number" id="inp-setup" class="form-control" value="0.5" onchange="runSim()">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Machines</label>
+                                <input type="number" id="inp-machines" class="form-control" value="4" onchange="runSim()">
+                            </div>
+                            <div class="form-group">
+                                <label>Reliability %</label>
+                                <input type="number" id="inp-uptime" class="form-control" value="95" onchange="runSim()">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Batch Size (Units)</label>
-                            <input type="number" id="inp-batch" class="form-control" value="100" onchange="runSim()">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Worker Skill</label>
+                                <select id="inp-skill" class="form-control" onchange="runSim()">
+                                    <option value="0.8">General</option>
+                                    <option value="1.0" selected>Skilled</option>
+                                    <option value="1.3">Expert</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quality %</label>
+                                <input type="number" id="inp-quality" class="form-control" value="98" onchange="runSim()">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Machine Reliability (%)</label>
-                            <input type="range" id="inp-uptime" min="50" max="100" value="95" oninput="runSim()">
-                            <span id="lbl-uptime" style="font-size: 0.75rem;">95% Uptime</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Inventory Carrying Cost (%)</label>
-                            <input type="number" id="inp-carrying" class="form-control" value="25" onchange="runSim()">
+                        
+                        <div class="output-grid">
+                            <div class="metric-card"><div class="metric-label">Unit Cost</div><div class="metric-val" id="res-cost">$0</div></div>
+                            <div class="metric-card"><div class="metric-label">Lead Time</div><div class="metric-val" id="res-lt">0d</div></div>
+                            <div class="metric-card"><div class="metric-label">Utilization</div><div class="metric-val" id="res-util">0%</div></div>
+                            <div class="metric-card"><div class="metric-label">Throughput</div><div class="metric-val" id="res-tp">0/h</div></div>
                         </div>
 
-                        <div class="output-card">
-                            <div style="font-size: 0.7rem; color: var(--accent-blue); text-transform: uppercase;">Est. Unit Cost</div>
-                            <div class="output-val" id="res-cost">$0.00</div>
-                        </div>
-                        <div class="output-card" style="background: var(--accent-emerald-light); border-color: var(--accent-emerald);">
-                            <div style="font-size: 0.7rem; color: var(--accent-emerald); text-transform: uppercase;">Lead Time (Days)</div>
-                            <div class="output-val" id="res-lt" style="color: var(--accent-emerald);">0.0</div>
+                        <div style="margin-top: 15px; padding: 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 0.75rem;">
+                            <strong>Note:</strong> Higher variety increases <i>Setup Waste</i> and <i>WIP Queues</i>. Mass production optimizes <i>Cycle Time</i> but lacks <i>Agility</i>.
                         </div>
                     </div>
 
-                    <!-- RIGHT: VISUALIZER -->
-                    <div class="visualizer">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <h3 id="res-type-title" style="color: var(--accent-blue);">Mass Production (Flow Shop)</h3>
-                            <span id="res-layout-type" style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">PRODUCT LAYOUT</span>
+                    <!-- VISUALIZATION -->
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="factory-canvas" id="floor">
+                            <div class="matrix-overlay">
+                                <div style="border-left: 1px solid #94a3b8; border-bottom: 1px solid #94a3b8; width: 100%; height: 100%; position: relative;">
+                                    <div style="position: absolute; left: 2px; top: 0; transform: rotate(-90deg) translateX(-100%); transform-origin: top left;">VOL</div>
+                                    <div style="position: absolute; bottom: 2px; right: 0;">VAR</div>
+                                    <div class="matrix-dot" id="dot"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="factory-floor" id="floor" style="height: 250px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; position: relative; overflow: hidden;"></div>
-                        
-                        <div class="matrix-container" id="matrix">
-                            <div class="matrix-label-y">VOLUME</div>
-                            <div class="matrix-label-x">VARIETY</div>
-                            <div style="position: absolute; right: 0; bottom: 0; font-size: 0.6rem; color: #94a3b8;">High Vol / Low Var</div>
-                            <div style="position: absolute; left: 10px; top: 10px; font-size: 0.6rem; color: #94a3b8;">Low Vol / High Var</div>
-                            <div class="matrix-dot" id="dot"></div>
-                        </div>
-                        
-                        <div class="ref-box" id="prof-commentary" style="background: #fffbeb; border: 1px solid #fde68a; font-style: normal; margin-bottom: 10px;">
-                            <strong>Strategic Insight:</strong> <span id="lbl-commentary">Mass production achieves the lowest unit cost by standardizing tasks, but it is highly vulnerable to demand shifts.</span>
-                        </div>
-                        <div class="ref-box">
-                            <i data-lucide="link-2"></i> Reference: <i>Hayes, R. H., & Wheelwright, S. C. (1979). Link manufacturing process and product life cycles. Harvard Business Review.</i>
+
+                        <div class="card">
+                            <h3 id="res-mode-name" style="color: var(--accent-blue); margin-bottom: 5px;">Mass Production</h3>
+                            <p id="res-mode-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Efficient flow shop with standardized parts and specialized labor.</p>
                         </div>
                     </div>
                 </div>
@@ -122,141 +118,135 @@
     </div>
 
     <script>
+        let mode = '';
+        let particles = [];
         const floor = document.getElementById('floor');
-        const dot = document.getElementById('dot');
-        let currentMode = '';
-
-        const commentary = {
-            'Mass Production': "High efficiency via specialized equipment. The 'Product Layout' minimizes handling but requires high volume to amortize fixed costs.",
-            'Batch Production': "A middle-ground 'Hybrid' strategy. Effective for products with periodic demand but suffers from 'Wait-for-Batch' lead time delays.",
-            'Flow Shop': "Sequential flow but with enough flexibility to handle variations. Requires robust Master Production Scheduling (MPS).",
-            'Job Shop': "Maximum flexibility with a 'Functional Layout'. The challenge here is complex routing and high Work-in-Process (WIP) levels."
-        };
+        let spawnTimer = null;
 
         function runSim() {
-            const variety = parseInt(document.getElementById('inp-variety').value);
-            const volume = parseInt(document.getElementById('inp-volume').value);
-            const setup = parseFloat(document.getElementById('inp-setup').value) || 0;
-            const batch = parseInt(document.getElementById('inp-batch').value) || 1;
-            const skill = document.getElementById('inp-skill').value;
+            const varLevel = parseInt(document.getElementById('inp-variety').value);
+            const volLevel = parseInt(document.getElementById('inp-volume').value);
+            const machines = parseInt(document.getElementById('inp-machines').value) || 1;
+            const uptime = parseInt(document.getElementById('inp-uptime').value) || 1;
+            const skill = parseFloat(document.getElementById('inp-skill').value);
+            const quality = parseInt(document.getElementById('inp-quality').value) || 1;
 
-            // Labels
-            document.getElementById('lbl-variety').innerText = variety < 30 ? "Low (Standardized)" : (variety < 70 ? "Medium (Batches)" : "High (Unique Custom)");
-            document.getElementById('lbl-volume').innerText = volume < 30 ? "Low (Unit)" : (volume < 70 ? "Medium (Batch)" : "High (Mass)");
+            // Matrix Dot
+            const dot = document.getElementById('dot');
+            dot.style.left = (varLevel) + '%';
+            dot.style.bottom = (volLevel) + '%';
 
-            // Dot Position on Matrix
-            dot.style.left = (variety) + '%';
-            dot.style.top = (100 - volume) + '%';
-
-            const uptime = parseInt(document.getElementById('inp-uptime').value);
-            const carrying = parseFloat(document.getElementById('inp-carrying').value) || 0;
-
-            document.getElementById('lbl-uptime').innerText = uptime + '% Uptime';
-
-            // Determination logic...
-            let type = '';
-            // ... (rest of type logic)
-            if (volume > 70 && variety < 30) { type = 'Mass Production'; layout = 'PRODUCT LAYOUT (FLOW)'; }
-            else if (volume > 40 && variety < 60) { type = 'Batch Production'; layout = 'CELLULAR / HYBRID'; }
-            else if (volume > 60 && variety > 40) { type = 'Flow Shop'; layout = 'REPETITIVE FLOW'; }
-            else { type = 'Job Shop'; layout = 'FUNCTIONAL LAYOUT'; }
-
-            document.getElementById('res-type-title').innerText = type;
-            document.getElementById('res-layout-type').innerText = layout;
-            document.getElementById('lbl-commentary').innerText = commentary[type] || "";
-
-            // Advanced Academic Logic
-            // Unit Cost = (Variable) + (Setup/Batch) + (Holding Cost)
-            let laborCost = (100 - volume) * 0.5; // Complexity cost
-            let reliabilityFactor = (105 - uptime) / 5; // Lower uptime = higher cost
-            let holdingCost = (batch * (carrying / 100)) / 2;
+            // Identify Mode
+            let newMode = 'Job Shop';
+            let desc = "Functional layout focusing on high flexibility and unique customer orders.";
+            if (volLevel > 75 && varLevel < 25) { newMode = 'Mass Production'; desc = "Rigid product layout for high-volume efficiency."; }
+            else if (volLevel > 50 && varLevel < 50) { newMode = 'Batch Process'; desc = "Hybrid layout managing production runs for similar products."; }
+            else if (volLevel > 70 && varLevel > 40) { newMode = 'Flow Shop'; desc = "Semi-flexible lines with repetitive tasks and high throughput."; }
             
-            let unitCost = laborCost + (50 / batch) + reliabilityFactor + holdingCost;
+            if (newMode !== mode) {
+                mode = newMode;
+                document.getElementById('res-mode-name').innerText = mode;
+                document.getElementById('res-mode-desc').innerText = desc;
+                initLayout(machines);
+            }
+
+            // Calculations
+            const setupWaste = (varLevel / 100) * 40; // Variety causes downtime
+            const baseCost = 50;
+            const economies = (volLevel / 100) * 30;
+            const unitCost = baseCost - economies + setupWaste + (100 - quality);
             document.getElementById('res-cost').innerText = '$' + unitCost.toFixed(2);
 
-            // Lead Time = WIP / Throughput. High variety and low reliability spike LT.
-            let lt = ((variety * 0.8) + (batch / 10)) * (100 / uptime);
-            document.getElementById('res-lt').innerText = lt.toFixed(1);
+            const lt = (varLevel * 0.8) + (100 / (volLevel * 0.1)) + (100 - uptime);
+            document.getElementById('res-lt').innerText = lt.toFixed(1) + 'd';
 
-            if (type !== currentMode) {
-                currentMode = type;
-                renderFactory(type);
-            }
+            const util = (volLevel * 0.7 + uptime * 0.3) * (quality / 100);
+            document.getElementById('res-util').innerText = Math.min(100, util).toFixed(0) + '%';
+
+            const tp = (volLevel / 5) * skill * (uptime / 100);
+            document.getElementById('res-tp').innerText = tp.toFixed(1) + '/h';
+
+            // Restart spawner with new frequency
+            if (spawnTimer) clearInterval(spawnTimer);
+            const freq = Math.max(200, 2500 - (volLevel * 20));
+            spawnTimer = setInterval(spawnPart, freq);
         }
 
-        function renderFactory(mode) {
-            floor.innerHTML = '';
-            if (mode === 'Mass Production') {
-                createMachine(50, 100, 'Station A');
-                createMachine(200, 100, 'Station B');
-                createMachine(350, 100, 'Station C');
-                createMachine(500, 100, 'Station D');
-            } else if (mode === 'Job Shop') {
-                createMachine(100, 50, 'Lathing');
-                createMachine(100, 150, 'Milling');
-                createMachine(300, 50, 'Grinding');
-                createMachine(300, 150, 'Assembly');
-                createMachine(500, 100, 'QC');
-            } else { // Batch / Flow Shop
-                createMachine(80, 100, 'Process 1');
-                createMachine(250, 50, 'Process 2A');
-                createMachine(250, 150, 'Process 2B');
-                createMachine(450, 100, 'Packing');
-            }
-        }
+        function initLayout(count) {
+            // Clear current machines and particles
+            const mNodes = floor.querySelectorAll('.machine');
+            mNodes.forEach(n => n.remove());
+            
+            const icons = ['settings', 'cpu', 'tool', 'zap', 'package', 'activity'];
+            for(let i=0; i<count; i++) {
+                const m = document.createElement('div');
+                m.className = 'machine';
+                m.id = 'm-' + i;
+                
+                // Position logic based on mode
+                let x, y;
+                if (mode === 'Mass Production') {
+                    x = 50 + (i * 120);
+                    y = 120;
+                } else if (mode === 'Job Shop') {
+                    x = 60 + (i % 2 === 0 ? 0 : 350);
+                    y = 40 + (Math.floor(i/2) * 80);
+                } else {
+                    x = 100 + (i * 90);
+                    y = 60 + (i % 2 === 0 ? 0 : 120);
+                }
 
-        function createMachine(x, y, name) {
-            const m = document.createElement('div');
-            m.className = 'machine-box';
-            m.style.left = x + 'px';
-            m.style.top = y + 'px';
-            m.innerText = name;
-            floor.appendChild(m);
+                m.style.left = x + 'px';
+                m.style.top = y + 'px';
+                m.innerHTML = `<i data-lucide="${icons[i % icons.length]}"></i> M${i+1}`;
+                floor.appendChild(m);
+            }
+            lucide.createIcons();
         }
 
         function spawnPart() {
-            const variety = parseInt(document.getElementById('inp-variety').value);
-            const volume = parseInt(document.getElementById('inp-volume').value);
-            
+            const varLevel = parseInt(document.getElementById('inp-variety').value);
             const p = document.createElement('div');
             p.className = 'part';
+            p.style.backgroundColor = `hsl(${varLevel > 40 ? Math.random() * 360 : 200}, 70%, 50%)`;
             p.style.left = '-20px';
-            p.style.top = '120px';
-            // Variety changes color
-            if (variety > 50) p.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+            p.style.top = '140px';
             floor.appendChild(p);
 
-            // Pathing logic
-            if (currentMode === 'Mass Production') {
-                setTimeout(() => p.style.left = '50px', 100);
-                setTimeout(() => p.style.left = '200px', 1000);
-                setTimeout(() => p.style.left = '350px', 2000);
-                setTimeout(() => p.style.left = '500px', 3000);
-                setTimeout(() => p.style.left = '100%', 4000);
-            } else if (currentMode === 'Job Shop') {
-                // Chaotic functional path
-                let r = Math.random();
-                setTimeout(() => { p.style.left = '100px'; p.style.top = r > 0.5 ? '50px' : '150px'; }, 500);
-                setTimeout(() => { p.style.left = '300px'; p.style.top = r < 0.5 ? '50px' : '150px'; }, 2000);
-                setTimeout(() => { p.style.left = '500px'; p.style.top = '100px'; }, 4000);
-                setTimeout(() => p.style.left = '100%', 6000);
-            } else {
-                setTimeout(() => p.style.left = '80px', 500);
-                setTimeout(() => { p.style.left = '250px'; p.style.top = Math.random() > 0.5 ? '50px' : '150px'; }, 1500);
-                setTimeout(() => { p.style.left = '450px'; p.style.top = '100px'; }, 3000);
-                setTimeout(() => p.style.left = '100%', 4500);
-            }
-            setTimeout(() => p.remove(), 7000);
+            const mNodes = Array.from(floor.querySelectorAll('.machine'));
+            if (mNodes.length === 0) return;
 
-            // Spawn next based on volume
-            let interval = 2000 - (volume * 18);
-            setTimeout(spawnPart, Math.max(200, interval));
+            let steps = [];
+            if (mode === 'Mass Production') {
+                steps = mNodes.map(m => ({ x: parseInt(m.style.left) + 25, y: parseInt(m.style.top) + 20 }));
+            } else if (mode === 'Job Shop') {
+                // Random routing
+                const count = Math.min(3, mNodes.length);
+                for(let i=0; i<count; i++) {
+                    const idx = Math.floor(Math.random() * mNodes.length);
+                    steps.push({ x: parseInt(mNodes[idx].style.left) + 25, y: parseInt(mNodes[idx].style.top) + 20 });
+                }
+            } else {
+                // Sequential but skip some
+                steps = mNodes.filter(() => Math.random() > 0.3).map(m => ({ x: parseInt(m.style.left) + 25, y: parseInt(m.style.top) + 20 }));
+            }
+
+            // Execute animation
+            steps.forEach((step, idx) => {
+                setTimeout(() => {
+                    p.style.left = step.x + 'px';
+                    p.style.top = step.y + 'px';
+                }, (idx + 1) * 800);
+            });
+
+            setTimeout(() => {
+                p.style.left = '100%';
+                setTimeout(() => p.remove(), 1000);
+            }, (steps.length + 1) * 800);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
             runSim();
-            spawnPart();
         });
     </script>
 </body>
