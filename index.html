@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpsPlanner Workspace - Dashboard</title>
-    
+    <title>Production Planner - Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,8 +12,7 @@
 </head>
 <body>
     <div id="app-container">
-        <!-- Sidebar Navigation -->
-                <nav id="sidebar">
+        <nav id="sidebar">
             <div class="sidebar-header">
                 <h2>Production Planner</h2>
                 <p>Interactive Learning</p>
@@ -33,61 +31,92 @@
                 <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
             </ul>
         </nav>
-
-        <!-- Main Content Area -->
         <main id="main-content">
             <header>
-                <div class="header-title">
-                    <h1 id="page-title">Dashboard</h1>
+                <div class="header-title"><h1>Dashboard</h1></div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="showHelp()"><i data-lucide="help-circle"></i> How to Use</button>
                 </div>
             </header>
-
             <div id="content-area">
                 <div class="module-container">
-                    <div class="card" style="background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-green-light)); padding: 0; overflow: hidden; display: flex; flex-direction: row; align-items: center;">
+                    <!-- Welcome Banner -->
+                    <div class="card" style="background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-green-light)); padding: 0; overflow: hidden; display: flex; flex-direction: row; align-items: center; border: none; margin-bottom: 32px;">
                         <div style="padding: 40px; flex: 1;">
-                            <h2 style="color: var(--accent-blue); font-size: 2.2rem; margin-bottom: 16px;">Operations Planner Workspace</h2>
-                            <p style="font-size: 1.15rem; color: var(--text-secondary); line-height: 1.6; text-align: justify; margin: 0;">
-                                Welcome to the central command hub for operations management. This comprehensive planning environment bridges the gap between high-level business strategy and granular factory-floor execution. Use these interconnected modules to model real-world scenarios: establish your theoretical and effective <strong>Capacity</strong> limits, define your optimal <strong>Aggregate Production Plan (APP)</strong> to balance workforce and inventory costs against fluctuating demand, disaggregate those plans into a precise <strong>Master Production Schedule (MPS)</strong>, and finally drive the exact timing of sub-assemblies and raw materials via the <strong>Material Requirements Planning (MRP)</strong> engine using the exact structure of your <strong>Bill of Materials (BOM)</strong>.
+                            <h2 style="color: var(--accent-blue); font-size: 2.2rem; margin-bottom: 16px;">Production Planner Workspace</h2>
+                            <p style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; text-align: justify;">
+                                Bridge the gap between strategy and execution. This integrated environment allows you to model real-world manufacturing cascades from <strong>BOM</strong> and <strong>Capacity</strong> to <strong>Aggregate Plans</strong> and <strong>MRP</strong>.
                             </p>
+                            <button class="btn btn-primary" style="margin-top: 20px;" onclick="window.location.href='integration.html'">Go to Unified Planner <i data-lucide="arrow-right"></i></button>
                         </div>
-                        <div style="flex: 0 0 45%; max-width: 45%; height: 100%;">
-                            <img src="img/banner_hd.png" alt="High-tech manufacturing facility and supply chain logistics" style="width: 100%; height: 100%; object-fit: cover; border-left: 4px solid #fff;">
+                        <div style="flex: 0 0 40%; max-width: 40%; height: 100%;">
+                            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800" alt="Manufacturing" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>
 
-                    <h3 style="margin: 32px 0 16px; font-size: 1.4rem; color: var(--text-primary);">Learning Modules</h3>
+                    <!-- Usage Guide Card -->
+                    <div class="card" style="border-left: 4px solid var(--accent-blue); background: #f0f9ff; margin-bottom: 32px;">
+                        <h3 style="display: flex; align-items: center; gap: 8px; color: var(--accent-blue);"><i data-lucide="compass"></i> Quick Navigation Guide</h3>
+                        <div class="grid-3" style="margin-top: 15px; gap: 20px;">
+                            <div>
+                                <h4 style="font-size: 0.9rem; margin-bottom: 5px;">1. Define Basics</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary);">Start with <strong>BOM</strong> to define parts and <strong>Capacity</strong> to set production limits.</p>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; margin-bottom: 5px;">2. Plan Strategy</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary);">Use <strong>Aggregate Planning</strong> to balance demand and <strong>MPS</strong> for weekly targets.</p>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; margin-bottom: 5px;">3. Execute & Analyze</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary);">Check <strong>MRP</strong> for material orders and use <strong>Interactive Tools</strong> for simulations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 16px;">Core Modules</h3>
                     <div class="grid-3">
-                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #f0fdf4); border: 1px solid #bbf7d0; transition: transform 0.2s;" onclick="window.location.href='capacity.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div class="card-title" style="color: #166534;"><i data-lucide="bar-chart-2" style="color: #22c55e;"></i> Capacity Planning</div>
-                            <p style="color: #166534; font-size: 0.95rem; line-height: 1.4;">Design vs. Effective capacity, utilization, and bottleneck analysis.</p>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='capacity.html'">
+                            <div class="card-title"><i data-lucide="bar-chart-2"></i> Capacity Planning</div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Analyze limits and bottlenecks.</p>
                         </div>
-                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #eff6ff); border: 1px solid #bfdbfe; transition: transform 0.2s;" onclick="window.location.href='app.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div class="card-title" style="color: #1e3a8a;"><i data-lucide="calendar" style="color: #3b82f6;"></i> Aggregate Planning</div>
-                            <p style="color: #1e3a8a; font-size: 0.95rem; line-height: 1.4;">Chase vs. Level strategies, demand matching, and cost computations.</p>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='app.html'">
+                            <div class="card-title"><i data-lucide="calendar"></i> Aggregate Planning</div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Strategy & cost modeling.</p>
                         </div>
-                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #faf5ff); border: 1px solid #e9d5ff; transition: transform 0.2s;" onclick="window.location.href='mps.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div class="card-title" style="color: #581c87;"><i data-lucide="layers" style="color: #a855f7;"></i> Master Prod. Schedule</div>
-                            <p style="color: #581c87; font-size: 0.95rem; line-height: 1.4;">Disaggregation and Available-To-Promise (ATP) inventory calculations.</p>
-                        </div>
-                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #fef2f2); border: 1px solid #fecaca; transition: transform 0.2s;" onclick="window.location.href='mrp.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div class="card-title" style="color: #991b1b;"><i data-lucide="package" style="color: #ef4444;"></i> MRP</div>
-                            <p style="color: #991b1b; font-size: 0.95rem; line-height: 1.4;">Gross requirements, netting, and planned order releases.</p>
-                        </div>
-                        <div class="card" style="cursor: pointer; background: linear-gradient(to bottom right, #ffffff, #fff7ed); border: 1px solid #fed7aa; transition: transform 0.2s;" onclick="window.location.href='bom.html'" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div class="card-title" style="color: #9a3412;"><i data-lucide="git-merge" style="color: #f97316;"></i> Bill of Materials</div>
-                            <p style="color: #9a3412; font-size: 0.95rem; line-height: 1.4;">Product structure trees and low-level coding.</p>
+                        <div class="card" style="cursor: pointer;" onclick="window.location.href='integration.html'">
+                            <div class="card-title"><i data-lucide="link-2" style="color: var(--accent-emerald);"></i> Unified Planner</div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Full cascade in one view.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title"><i data-lucide="help-circle"></i> How to Navigate</div>
+                <button class="modal-close" onclick="closeHelp()"><i data-lucide="x"></i></button>
+            </div>
+            <div style="padding: 20px; line-height: 1.6;">
+                <p>Welcome to the <strong>Production Planner</strong>. Here is how to get the most out of it:</p>
+                <ul style="margin-top: 15px; padding-left: 20px;">
+                    <li><strong>Sidebar:</strong> All modules are always accessible on the left.</li>
+                    <li><strong>Unified Planner:</strong> Use this to see how a change in BOM cost affects the total MRP spend in one screen.</li>
+                    <li><strong>Interactive Tools:</strong> Use these for "what-if" scenarios like EOQ or OEE simulations.</li>
+                    <li><strong>Export:</strong> Use the "Download" button at the top right of any page to save your work as PDF or Excel.</li>
+                    <li><strong>Resource Bank:</strong> Access curated papers, cases, and journals for your studies.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+        function showHelp() { document.getElementById('helpModal').classList.add('active'); }
+        function closeHelp() { document.getElementById('helpModal').classList.remove('active'); }
     </script>
 </body>
 </html>
-
-
-

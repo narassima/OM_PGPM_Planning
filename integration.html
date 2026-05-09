@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Production Planner - End-to-End Simulator</title>
+    <title>Production Planner - Unified Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,20 +11,24 @@
     <link rel="stylesheet" href="styles/index.css">
     <script src="js/export.js"></script>
     <style>
+        .unified-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .full-width { grid-column: span 2; }
         .input-inline { width: 70px; padding: 6px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; text-align: center; }
-        .highlight-val { font-weight: 800; color: var(--accent-blue); }
-        .result-highlight { padding: 24px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .key-metric { font-size: 2rem; font-weight: 800; margin-top: 8px; }
-        .stage-nav-btns { display: flex; justify-content: space-between; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        .card { height: 100%; display: flex; flex-direction: column; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
+        .card-header h3 { margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .badge-success { background: var(--accent-emerald-light); color: var(--accent-emerald); }
+        .badge-warning { background: var(--accent-amber-light); color: var(--accent-amber); }
+        .badge-danger { background: var(--accent-rose-light); color: var(--accent-rose); }
+        .flow-arrow { display: flex; justify-content: center; align-items: center; color: var(--text-secondary); padding: 10px 0; }
+        @media (max-width: 1200px) { .unified-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
 </head>
 <body>
     <div id="app-container">
-                <nav id="sidebar">
-            <div class="sidebar-header">
-                <h2>Production Planner</h2>
-                <p>Interactive Learning</p>
-            </div>
+        <nav id="sidebar">
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
@@ -41,217 +45,162 @@
         </nav>
         <main id="main-content">
             <header>
-                <div class="header-title"><h1>Production Planner</h1></div>
+                <div class="header-title"><h1>Unified Production Dashboard</h1></div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="resetAll()"><i data-lucide="rotate-ccw"></i> Reset Planner</button>
+                    <button class="btn btn-secondary" onclick="location.reload()"><i data-lucide="rotate-ccw"></i> Reset All</button>
                 </div>
             </header>
             <div id="content-area">
-                <div class="module-container">
-                    <div class="concept-box" style="background: var(--accent-forest-light); border-left-color: var(--accent-forest); color: var(--accent-forest);">
-                        <strong><i data-lucide="info"></i> Interactive Planning Cascade:</strong> Adjust variables in any stage to see the ripple effect across the entire planning stack (BOM &rarr; Capacity &rarr; APP &rarr; MPS &rarr; MRP).
-                    </div>
-                    
-                    <div class="stage-stepper" id="stageStepper" style="margin: 32px 0;">
-                        <div class="stage-step active-step" onclick="goToStage(0)" id="step-0"><div class="stage-step-num">1</div><div class="stage-step-label">BOM</div></div>
-                        <div class="stage-connector"></div>
-                        <div class="stage-step" onclick="goToStage(1)" id="step-1"><div class="stage-step-num">2</div><div class="stage-step-label">Capacity</div></div>
-                        <div class="stage-connector"></div>
-                        <div class="stage-step" onclick="goToStage(2)" id="step-2"><div class="stage-step-num">3</div><div class="stage-step-label">APP</div></div>
-                        <div class="stage-connector"></div>
-                        <div class="stage-step" onclick="goToStage(3)" id="step-3"><div class="stage-step-num">4</div><div class="stage-step-label">MPS</div></div>
-                        <div class="stage-connector"></div>
-                        <div class="stage-step" onclick="goToStage(4)" id="step-4"><div class="stage-step-num">5</div><div class="stage-step-label">MRP</div></div>
+                <div class="concept-box" style="margin-bottom: 24px;">
+                    <strong><i data-lucide="info"></i> Connected Planning:</strong> This single-page view connects the entire planning cascade. Change inputs in the top cards (BOM/Capacity) to see how they impact Aggregate Planning, MPS, and the final MRP explosion in real-time.
+                </div>
+
+                <div class="unified-grid">
+                    <!-- STAGE 1: BOM -->
+                    <div class="card" style="border-top: 4px solid var(--accent-amber);">
+                        <div class="card-header">
+                            <h3><i data-lucide="git-merge" style="color: var(--accent-amber);"></i> 1. Bill of Materials</h3>
+                        </div>
+                        <table>
+                            <thead><tr><th>Component</th><th>Qty</th><th>Unit Cost</th></tr></thead>
+                            <tbody>
+                                <tr><td>Seat Assy</td><td>1</td><td>$<input type="number" class="input-inline" value="15" id="cost-seat" onchange="updateAll()"></td></tr>
+                                <tr><td>Back Assy</td><td>1</td><td>$<input type="number" class="input-inline" value="12" id="cost-back" onchange="updateAll()"></td></tr>
+                                <tr><td>Leg Frame</td><td>1</td><td>$<input type="number" class="input-inline" value="20" id="cost-legs" onchange="updateAll()"></td></tr>
+                            </tbody>
+                        </table>
+                        <div style="margin-top: auto; padding-top: 15px; text-align: right; font-weight: 800;">
+                            Unit Material Cost: <span id="total-bom-cost" style="color: var(--accent-amber);">$47</span>
+                        </div>
                     </div>
 
-                    <div class="stage-panel active" id="panel-0">
-                        <div class="stage-card" style="border-left: 5px solid var(--accent-amber);">
-                            <h3>Stage 1: Define Bill of Materials (BOM)</h3>
-                            <p style="margin-bottom: 20px; color: var(--text-secondary);">Set the unit costs for individual components of the finished assembly.</p>
-                            <div class="grid-2">
-                                <table>
-                                    <thead><tr><th>Component</th><th>Qty/Parent</th><th>Unit Cost ($)</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>Seat Assembly</td><td>1</td><td><input type="number" class="input-inline" value="15" id="cost-seat" onchange="updateAll()"></td></tr>
-                                        <tr><td>Back Assembly</td><td>1</td><td><input type="number" class="input-inline" value="12" id="cost-back" onchange="updateAll()"></td></tr>
-                                        <tr><td>Leg Frame</td><td>1</td><td><input type="number" class="input-inline" value="20" id="cost-legs" onchange="updateAll()"></td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="result-highlight" style="background: var(--accent-amber-light);">
-                                    <div class="key-label" style="color: var(--accent-amber); font-weight: 700;">Total Unit Material Cost</div>
-                                    <div class="key-metric" id="total-bom-cost" style="color: var(--accent-amber);">$47</div>
-                                </div>
+                    <!-- STAGE 2: CAPACITY -->
+                    <div class="card" style="border-top: 4px solid var(--accent-blue);">
+                        <div class="card-header">
+                            <h3><i data-lucide="bar-chart-2" style="color: var(--accent-blue);"></i> 2. Resource Capacity</h3>
+                        </div>
+                        <div class="grid-2">
+                            <div>
+                                <label style="font-size: 0.75rem;">Shifts / Day</label><input type="number" class="form-control" value="2" id="cap-shifts" oninput="updateAll()">
+                                <label style="font-size: 0.75rem; margin-top: 8px;">Hrs / Shift</label><input type="number" class="form-control" value="8" id="cap-hours" oninput="updateAll()">
+                            </div>
+                            <div style="background: var(--accent-blue-light); padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--accent-blue);">Monthly Cap</div>
+                                <div id="total-capacity" style="font-size: 1.5rem; font-weight: 800; color: var(--accent-blue);">800</div>
                             </div>
                         </div>
-                        <div class="stage-nav-btns"><span></span><button class="btn btn-primary" onclick="goToStage(1)">Next Stage: Capacity <i data-lucide="arrow-right"></i></button></div>
                     </div>
 
-                    <div class="stage-panel" id="panel-1">
-                        <div class="stage-card" style="border-left: 5px solid var(--accent-blue);">
-                            <h3>Stage 2: Resource Capacity Planning</h3>
-                            <p style="margin-bottom: 20px; color: var(--text-secondary);">Define your production constraints based on shifts and cycle times.</p>
-                            <div class="grid-2">
-                                <div>
-                                    <label>Working Hours per Shift</label><input type="number" class="form-control" value="8" id="cap-hours" oninput="updateAll()">
-                                    <label>Number of Shifts per Day</label><input type="number" class="form-control" value="2" id="cap-shifts" oninput="updateAll()">
-                                    <label>Cycle Time per Unit (Hours)</label><input type="number" step="0.1" class="form-control" value="0.5" id="cap-cycle" oninput="updateAll()">
-                                </div>
-                                <div class="result-highlight" style="background: var(--accent-blue-light);">
-                                    <div class="key-label" style="color: var(--accent-blue); font-weight: 700;">Monthly Effective Capacity</div>
-                                    <div class="key-metric" id="total-capacity" style="color: var(--accent-blue);">800</div>
-                                    <p style="font-size: 0.75rem; margin-top: 8px;">(Based on 25 working days)</p>
-                                </div>
-                            </div>
+                    <!-- STAGE 3: APP (Full Width) -->
+                    <div class="card full-width" style="border-top: 4px solid var(--accent-forest);">
+                        <div class="card-header">
+                            <h3><i data-lucide="calendar" style="color: var(--accent-forest);"></i> 3. Aggregate Production Plan (Strategic)</h3>
                         </div>
-                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(0)"><i data-lucide="arrow-left"></i> Back</button><button class="btn btn-primary" onclick="goToStage(2)">Next Stage: APP <i data-lucide="arrow-right"></i></button></div>
+                        <table>
+                            <thead><tr><th>Month</th><th>Forecast</th><th>Planned Production</th><th>Capacity Load</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr><td>Month 1</td><td>400</td><td><input type="number" class="input-inline" value="450" id="app-p1" oninput="updateAll()"></td><td id="load-m1">0%</td><td id="status-m1"></td></tr>
+                                <tr><td>Month 2</td><td>550</td><td><input type="number" class="input-inline" value="500" id="app-p2" oninput="updateAll()"></td><td id="load-m2">0%</td><td id="status-m2"></td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="stage-panel" id="panel-2">
-                        <div class="stage-card" style="border-left: 5px solid var(--accent-forest);">
-                            <h3>Stage 3: Aggregate Production Plan (APP)</h3>
-                            <table>
-                                <thead><tr><th>Month</th><th>Sales Forecast</th><th>Planned Production Qty</th><th>Status</th></tr></thead>
-                                <tbody>
-                                    <tr><td>Month 1</td><td>400</td><td><input type="number" class="input-inline" value="450" id="app-p1" oninput="updateAll()"></td><td id="status-m1"></td></tr>
-                                    <tr><td>Month 2</td><td>550</td><td><input type="number" class="input-inline" value="500" id="app-p2" oninput="updateAll()"></td><td id="status-m2"></td></tr>
-                                </tbody>
-                            </table>
+                    <!-- STAGE 4: MPS -->
+                    <div class="card" style="border-top: 4px solid var(--accent-emerald);">
+                        <div class="card-header">
+                            <h3><i data-lucide="layers" style="color: var(--accent-emerald);"></i> 4. Master Schedule (Tactical)</h3>
+                            <span class="status-badge badge-success">M1 Breakdown</span>
                         </div>
-                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(1)"><i data-lucide="arrow-left"></i> Back</button><button class="btn btn-primary" onclick="goToStage(3)">Next Stage: MPS <i data-lucide="arrow-right"></i></button></div>
+                        <table>
+                            <thead><tr><th>Week</th><th>MPS Target</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr><td>Week 1</td><td><input type="number" class="input-inline" value="110" id="mps-w1" oninput="updateAll()"></td><td id="load-w1">OK</td></tr>
+                                <tr><td>Week 2</td><td><input type="number" class="input-inline" value="120" id="mps-w2" oninput="updateAll()"></td><td id="load-w2">OK</td></tr>
+                                <tr><td>Week 3</td><td><input type="number" class="input-inline" value="110" id="mps-w3" oninput="updateAll()"></td><td id="load-w3">OK</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="stage-panel" id="panel-3">
-                        <div class="stage-card" style="border-left: 5px solid var(--accent-emerald);">
-                            <h3>Stage 4: Master Production Schedule (MPS)</h3>
-                            <p style="margin-bottom: 20px; color: var(--text-secondary);">Disaggregate Month 1 into weekly production targets.</p>
-                            <table>
-                                <thead><tr><th>Week</th><th>MPS Target Qty</th><th>Resource Load</th></tr></thead>
-                                <tbody>
-                                    <tr><td>Week 1</td><td><input type="number" class="input-inline" value="110" id="mps-w1" oninput="updateAll()"></td><td id="load-w1"></td></tr>
-                                    <tr><td>Week 2</td><td><input type="number" class="input-inline" value="120" id="mps-w2" oninput="updateAll()"></td><td id="load-w2"></td></tr>
-                                    <tr><td>Week 3</td><td><input type="number" class="input-inline" value="110" id="mps-w3" oninput="updateAll()"></td><td id="load-w3"></td></tr>
-                                    <tr><td>Week 4</td><td><input type="number" class="input-inline" value="110" id="mps-w4" oninput="updateAll()"></td><td id="load-w4"></td></tr>
-                                </tbody>
-                            </table>
+                    <!-- STAGE 5: MRP -->
+                    <div class="card" style="border-top: 4px solid var(--accent-rose);">
+                        <div class="card-header">
+                            <h3><i data-lucide="package" style="color: var(--accent-rose);"></i> 5. MRP Explosion (Execution)</h3>
                         </div>
-                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(2)"><i data-lucide="arrow-left"></i> Back</button><button class="btn btn-primary" onclick="goToStage(4)">Next Stage: MRP <i data-lucide="arrow-right"></i></button></div>
-                    </div>
-
-                    <div class="stage-panel" id="panel-4">
-                        <div class="stage-card" style="border-left: 5px solid var(--accent-rose);">
-                            <h3>Stage 5: Material Requirements Planning (MRP)</h3>
-                            <p style="margin-bottom: 20px; color: var(--text-secondary);">Exploded material requirements for Week 1 based on BOM quantities.</p>
-                            <table>
-                                <thead><tr><th>Component Item</th><th>Gross Requirements</th><th>Unit Cost</th><th>Total Cost</th></tr></thead>
-                                <tbody id="mrp-table-body"></tbody>
-                                <tfoot><tr style="font-weight: 800; background: #fafafa;"><td colspan="3" style="text-align: right;">Total Material Expenditure (W1):</td><td id="mrp-total-spend"></td></tr></tfoot>
-                            </table>
-                        </div>
-                        <div class="stage-nav-btns"><button class="btn btn-secondary" onclick="goToStage(3)"><i data-lucide="arrow-left"></i> Back</button><button class="btn btn-success" onclick="resetAll()">Finish Planning Session</button></div>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 10px;">Direct materials needed for Week 1 target:</p>
+                        <table style="font-size: 0.85rem;">
+                            <thead><tr><th>Item</th><th>Gross Req</th><th>Total Cost</th></tr></thead>
+                            <tbody id="mrp-table-body"></tbody>
+                            <tfoot><tr style="font-weight: 800; background: #fafafa;"><td>Total Spend</td><td></td><td id="mrp-total-spend"></td></tr></tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
         </main>
     </div>
-    <script>
-        function goToStage(n) {
-            document.querySelectorAll('.stage-panel').forEach((p, i) => p.classList.toggle('active', i === n));
-            document.querySelectorAll('.stage-step').forEach((s, i) => {
-                s.classList.remove('active-step', 'completed-step');
-                if (i < n) s.classList.add('completed-step'); else if (i === n) s.classList.add('active-step');
-            });
-            document.getElementById('content-area').scrollTop = 0;
-            lucide.createIcons();
-        }
 
+    <script>
         function updateAll() {
-            // BOM Logic
+            // BOM
             const cSeat = parseFloat(document.getElementById('cost-seat').value) || 0;
             const cBack = parseFloat(document.getElementById('cost-back').value) || 0;
             const cLegs = parseFloat(document.getElementById('cost-legs').value) || 0;
             const totalBOM = cSeat + cBack + cLegs;
             document.getElementById('total-bom-cost').innerText = '$' + totalBOM;
 
-            // Capacity Logic
-            const hrs = parseFloat(document.getElementById('cap-hours').value) || 0;
+            // Capacity
             const shifts = parseFloat(document.getElementById('cap-shifts').value) || 0;
-            const cycle = parseFloat(document.getElementById('cap-cycle').value) || 0.1;
-            const monthlyCap = Math.floor((hrs * shifts * 25) / cycle);
+            const hrs = parseFloat(document.getElementById('cap-hours').value) || 0;
+            const monthlyCap = Math.floor(shifts * hrs * 25 * 2); // Sample logic
             document.getElementById('total-capacity').innerText = monthlyCap;
 
-            // APP Validation
+            // APP
             [1, 2].forEach(m => {
                 const p = parseFloat(document.getElementById('app-p' + m).value) || 0;
+                const load = ((p / monthlyCap) * 100).toFixed(0);
+                document.getElementById('load-m' + m).innerText = load + '%';
                 const status = document.getElementById('status-m' + m);
-                if (p > monthlyCap) {
-                    status.innerHTML = '<span style="color:var(--accent-rose);">&#9888; Over Cap</span>';
-                } else {
-                    status.innerHTML = '<span style="color:var(--accent-emerald);">&#10004; Feasible</span>';
-                }
+                if (load > 100) status.innerHTML = '<span class="status-badge badge-danger">Overload</span>';
+                else status.innerHTML = '<span class="status-badge badge-success">Feasible</span>';
             });
 
-            // MPS & Load
-            const weeklyCap = monthlyCap / 4;
-            [1, 2, 3, 4].forEach(w => {
-                const q = parseFloat(document.getElementById('mps-w' + w).value) || 0;
-                const load = ((q / weeklyCap) * 100).toFixed(1);
-                document.getElementById('load-w' + w).innerText = load + '%';
-            });
-
-            // MRP Explosion (Week 1)
-            const mpsW1 = parseFloat(document.getElementById('mps-w1').value) || 0;
+            // MPS
+            const m1Prod = parseFloat(document.getElementById('app-p1').value) || 0;
+            const w1 = parseFloat(document.getElementById('mps-w1').value) || 0;
+            const w2 = parseFloat(document.getElementById('mps-w2').value) || 0;
+            const w3 = parseFloat(document.getElementById('mps-w3').value) || 0;
+            
+            // MRP (Week 1 Focus)
             const mrpBody = document.getElementById('mrp-table-body');
             mrpBody.innerHTML = '';
-            
             const items = [
-                { name: 'Seat Assembly', cost: cSeat },
-                { name: 'Back Assembly', cost: cBack },
+                { name: 'Seat Assy', cost: cSeat },
+                { name: 'Back Assy', cost: cBack },
                 { name: 'Leg Frame', cost: cLegs }
             ];
-
             let totalSpend = 0;
             items.forEach(item => {
-                const subTotal = item.cost * mpsW1;
-                totalSpend += subTotal;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${item.name}</td><td>${mpsW1}</td><td>$${item.cost}</td><td>$${subTotal}</td>`;
-                mrpBody.appendChild(tr);
+                const sub = item.cost * w1;
+                totalSpend += sub;
+                mrpBody.innerHTML += `<tr><td>${item.name}</td><td>${w1}</td><td>$${sub}</td></tr>`;
             });
             document.getElementById('mrp-total-spend').innerText = '$' + totalSpend;
-            
-            lucide.createIcons();
-        }
-
-        function resetAll() {
-            if(confirm('Reset all planning data?')) {
-                location.reload();
-            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             updateAll();
             lucide.createIcons();
-            
             if (typeof initExportDropdown === 'function') {
                 initExportDropdown(() => {
-                    // Collect all data for the full planner export
-                    const data = [
+                    return [
                         ["Stage", "Metric", "Value"],
-                        ["BOM", "Seat Cost", document.getElementById('cost-seat').value],
-                        ["BOM", "Back Cost", document.getElementById('cost-back').value],
-                        ["BOM", "Leg Cost", document.getElementById('cost-legs').value],
-                        ["BOM", "Total BOM Cost", document.getElementById('total-bom-cost').innerText],
-                        ["Capacity", "Monthly Cap", document.getElementById('total-capacity').innerText],
+                        ["BOM", "Total Cost", document.getElementById('total-bom-cost').innerText],
+                        ["Capacity", "Available", document.getElementById('total-capacity').innerText],
                         ["APP", "Month 1 Target", document.getElementById('app-p1').value],
-                        ["APP", "Month 2 Target", document.getElementById('app-p2').value],
-                        ["MPS", "Week 1 Target", document.getElementById('mps-w1').value],
-                        ["MRP", "W1 Total Material Spend", document.getElementById('mrp-total-spend').innerText]
+                        ["MRP", "W1 Spend", document.getElementById('mrp-total-spend').innerText]
                     ];
-                    return data;
                 });
             }
         });
     </script>
 </body>
 </html>
-
