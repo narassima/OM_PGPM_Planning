@@ -13,16 +13,17 @@
     <style>
         .unified-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         .full-width { grid-column: span 2; }
-        .input-inline { width: 70px; padding: 6px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; text-align: center; }
-        .card { height: 100%; display: flex; flex-direction: column; }
-        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
-        .card-header h3 { margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .input-inline { width: 60px; padding: 4px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; text-align: center; }
+        .card { height: 100%; display: flex; flex-direction: column; padding: 20px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+        .card-header h3 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .var-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .var-item { background: var(--primary-bg); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); flex: 1; min-width: 120px; }
+        .var-item label { display: block; font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
         .badge-success { background: var(--accent-emerald-light); color: var(--accent-emerald); }
         .badge-warning { background: var(--accent-amber-light); color: var(--accent-amber); }
         .badge-danger { background: var(--accent-rose-light); color: var(--accent-rose); }
-        .flow-arrow { display: flex; justify-content: center; align-items: center; color: var(--text-secondary); padding: 10px 0; }
-        @media (max-width: 1200px) { .unified-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
 </head>
 <body>
@@ -41,6 +42,7 @@
                 <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
                 <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
                 <li><a href="integration.html" class="active"><i data-lucide="link-2"></i> Production Planner</a></li>
+                <li><a href="simulation.html"><i data-lucide="play-circle"></i> Process Simulator</a></li>
             </ul>
         </nav>
         <main id="main-content">
@@ -51,86 +53,64 @@
                 </div>
             </header>
             <div id="content-area">
-                <div class="concept-box" style="margin-bottom: 24px;">
-                    <strong><i data-lucide="info"></i> Connected Planning:</strong> This single-page view connects the entire planning cascade. Change inputs in the top cards (BOM/Capacity) to see how they impact Aggregate Planning, MPS, and the final MRP explosion in real-time.
-                </div>
-
                 <div class="unified-grid">
-                    <!-- STAGE 1: BOM -->
+                    <!-- STAGE 1: BOM & COSTING -->
                     <div class="card" style="border-top: 4px solid var(--accent-amber);">
-                        <div class="card-header">
-                            <h3><i data-lucide="git-merge" style="color: var(--accent-amber);"></i> 1. Bill of Materials</h3>
+                        <div class="card-header"><h3><i data-lucide="git-merge" style="color: var(--accent-amber);"></i> 1. Product & Costs</h3></div>
+                        <div class="var-group">
+                            <div class="var-item"><label>Seat ($)</label><input type="number" class="input-inline" value="15" id="cost-seat" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Back ($)</label><input type="number" class="input-inline" value="12" id="cost-back" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Legs ($)</label><input type="number" class="input-inline" value="20" id="cost-legs" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Labor ($/hr)</label><input type="number" class="input-inline" value="25" id="cost-labor" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Scrap %</label><input type="number" class="input-inline" value="5" id="scrap-rate" onchange="updateAll()"></div>
                         </div>
-                        <table>
-                            <thead><tr><th>Component</th><th>Qty</th><th>Unit Cost</th></tr></thead>
-                            <tbody>
-                                <tr><td>Seat Assy</td><td>1</td><td>$<input type="number" class="input-inline" value="15" id="cost-seat" onchange="updateAll()"></td></tr>
-                                <tr><td>Back Assy</td><td>1</td><td>$<input type="number" class="input-inline" value="12" id="cost-back" onchange="updateAll()"></td></tr>
-                                <tr><td>Leg Frame</td><td>1</td><td>$<input type="number" class="input-inline" value="20" id="cost-legs" onchange="updateAll()"></td></tr>
-                            </tbody>
-                        </table>
-                        <div style="margin-top: auto; padding-top: 15px; text-align: right; font-weight: 800;">
-                            Unit Material Cost: <span id="total-bom-cost" style="color: var(--accent-amber);">$47</span>
+                        <div style="margin-top: 15px; font-weight: 800; border-top: 1px dashed #ddd; padding-top: 10px;">
+                            Est. Unit Cost (incl. Scrap): <span id="total-unit-cost" style="color: var(--accent-amber);">$0</span>
                         </div>
                     </div>
 
-                    <!-- STAGE 2: CAPACITY -->
+                    <!-- STAGE 2: CAPACITY & LIMITS -->
                     <div class="card" style="border-top: 4px solid var(--accent-blue);">
-                        <div class="card-header">
-                            <h3><i data-lucide="bar-chart-2" style="color: var(--accent-blue);"></i> 2. Resource Capacity</h3>
-                        </div>
-                        <div class="grid-2">
-                            <div>
-                                <label style="font-size: 0.75rem;">Shifts / Day</label><input type="number" class="form-control" value="2" id="cap-shifts" oninput="updateAll()">
-                                <label style="font-size: 0.75rem; margin-top: 8px;">Hrs / Shift</label><input type="number" class="form-control" value="8" id="cap-hours" oninput="updateAll()">
-                            </div>
-                            <div style="background: var(--accent-blue-light); padding: 15px; border-radius: 8px; text-align: center;">
-                                <div style="font-size: 0.75rem; color: var(--accent-blue);">Monthly Cap</div>
-                                <div id="total-capacity" style="font-size: 1.5rem; font-weight: 800; color: var(--accent-blue);">800</div>
+                        <div class="card-header"><h3><i data-lucide="bar-chart-2" style="color: var(--accent-blue);"></i> 2. Operations Capacity</h3></div>
+                        <div class="var-group">
+                            <div class="var-item"><label>Shifts/Day</label><input type="number" class="input-inline" value="2" id="cap-shifts" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Hrs/Shift</label><input type="number" class="input-inline" value="8" id="cap-hours" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Efficiency %</label><input type="number" class="input-inline" value="85" id="cap-eff" onchange="updateAll()"></div>
+                            <div class="var-item" style="background: var(--accent-blue-light); border-color: var(--accent-blue);">
+                                <label style="color: var(--accent-blue);">Monthly Cap</label>
+                                <span id="total-capacity" style="font-weight: 800; color: var(--accent-blue);">0</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- STAGE 3: APP (Full Width) -->
+                    <!-- STAGE 3: APP (Strategic) -->
                     <div class="card full-width" style="border-top: 4px solid var(--accent-forest);">
-                        <div class="card-header">
-                            <h3><i data-lucide="calendar" style="color: var(--accent-forest);"></i> 3. Aggregate Production Plan (Strategic)</h3>
-                        </div>
+                        <div class="card-header"><h3><i data-lucide="calendar" style="color: var(--accent-forest);"></i> 3. Aggregate Production Planning</h3></div>
                         <table>
-                            <thead><tr><th>Month</th><th>Forecast</th><th>Planned Production</th><th>Capacity Load</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Month</th><th>Demand</th><th>Planned Prod</th><th>Inventory</th><th>Utilization</th><th>Feasibility</th></tr></thead>
                             <tbody>
-                                <tr><td>Month 1</td><td>400</td><td><input type="number" class="input-inline" value="450" id="app-p1" oninput="updateAll()"></td><td id="load-m1">0%</td><td id="status-m1"></td></tr>
-                                <tr><td>Month 2</td><td>550</td><td><input type="number" class="input-inline" value="500" id="app-p2" oninput="updateAll()"></td><td id="load-m2">0%</td><td id="status-m2"></td></tr>
+                                <tr><td>Month 1</td><td>400</td><td><input type="number" class="input-inline" value="420" id="app-p1" onchange="updateAll()"></td><td id="inv-m1">20</td><td id="util-m1">0%</td><td id="status-m1"></td></tr>
+                                <tr><td>Month 2</td><td>550</td><td><input type="number" class="input-inline" value="530" id="app-p2" onchange="updateAll()"></td><td id="inv-m2">0</td><td id="util-m2">0%</td><td id="status-m2"></td></tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- STAGE 4: MPS -->
+                    <!-- STAGE 4: MPS & MRP (Execution) -->
                     <div class="card" style="border-top: 4px solid var(--accent-emerald);">
-                        <div class="card-header">
-                            <h3><i data-lucide="layers" style="color: var(--accent-emerald);"></i> 4. Master Schedule (Tactical)</h3>
-                            <span class="status-badge badge-success">M1 Breakdown</span>
+                        <div class="card-header"><h3><i data-lucide="layers" style="color: var(--accent-emerald);"></i> 4. MPS Disaggregation</h3></div>
+                        <div class="var-group">
+                            <div class="var-item"><label>W1 Target</label><input type="number" class="input-inline" value="105" id="mps-w1" onchange="updateAll()"></div>
+                            <div class="var-item"><label>W2 Target</label><input type="number" class="input-inline" value="105" id="mps-w2" onchange="updateAll()"></div>
+                            <div class="var-item"><label>Safety Stock</label><input type="number" class="input-inline" value="10" id="safety-factor" onchange="updateAll()"></div>
                         </div>
-                        <table>
-                            <thead><tr><th>Week</th><th>MPS Target</th><th>Status</th></tr></thead>
-                            <tbody>
-                                <tr><td>Week 1</td><td><input type="number" class="input-inline" value="110" id="mps-w1" oninput="updateAll()"></td><td id="load-w1">OK</td></tr>
-                                <tr><td>Week 2</td><td><input type="number" class="input-inline" value="120" id="mps-w2" oninput="updateAll()"></td><td id="load-w2">OK</td></tr>
-                                <tr><td>Week 3</td><td><input type="number" class="input-inline" value="110" id="mps-w3" oninput="updateAll()"></td><td id="load-w3">OK</td></tr>
-                            </tbody>
-                        </table>
                     </div>
 
-                    <!-- STAGE 5: MRP -->
                     <div class="card" style="border-top: 4px solid var(--accent-rose);">
-                        <div class="card-header">
-                            <h3><i data-lucide="package" style="color: var(--accent-rose);"></i> 5. MRP Explosion (Execution)</h3>
-                        </div>
-                        <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 10px;">Direct materials needed for Week 1 target:</p>
-                        <table style="font-size: 0.85rem;">
-                            <thead><tr><th>Item</th><th>Gross Req</th><th>Total Cost</th></tr></thead>
+                        <div class="card-header"><h3><i data-lucide="package" style="color: var(--accent-rose);"></i> 5. MRP Material Orders</h3></div>
+                        <p style="font-size: 0.7rem; color: var(--text-secondary);">Calculated orders for Week 1 (incl. lead time offset):</p>
+                        <table style="font-size: 0.8rem; margin-top: 5px;">
+                            <thead><tr><th>Item</th><th>Gross Req</th><th>Lead Time</th><th>Order Total</th></tr></thead>
                             <tbody id="mrp-table-body"></tbody>
-                            <tfoot><tr style="font-weight: 800; background: #fafafa;"><td>Total Spend</td><td></td><td id="mrp-total-spend"></td></tr></tfoot>
                         </table>
                     </div>
                 </div>
@@ -140,67 +120,62 @@
 
     <script>
         function updateAll() {
-            // BOM
+            // Costs & Scrap
             const cSeat = parseFloat(document.getElementById('cost-seat').value) || 0;
             const cBack = parseFloat(document.getElementById('cost-back').value) || 0;
             const cLegs = parseFloat(document.getElementById('cost-legs').value) || 0;
-            const totalBOM = cSeat + cBack + cLegs;
-            document.getElementById('total-bom-cost').innerText = '$' + totalBOM;
+            const cLabor = parseFloat(document.getElementById('cost-labor').value) || 0;
+            const scrap = parseFloat(document.getElementById('scrap-rate').value) || 0;
+            
+            const rawCost = cSeat + cBack + cLegs + (cLabor * 0.5); // 0.5hr labor per unit
+            const finalUnitCost = (rawCost / (1 - (scrap / 100))).toFixed(2);
+            document.getElementById('total-unit-cost').innerText = '$' + finalUnitCost;
 
             // Capacity
             const shifts = parseFloat(document.getElementById('cap-shifts').value) || 0;
             const hrs = parseFloat(document.getElementById('cap-hours').value) || 0;
-            const monthlyCap = Math.floor(shifts * hrs * 25 * 2); // Sample logic
+            const eff = parseFloat(document.getElementById('cap-eff').value) || 0;
+            const monthlyCap = Math.floor(shifts * hrs * 22 * (eff / 100) * 2); // 22 days, 2 workers
             document.getElementById('total-capacity').innerText = monthlyCap;
 
             // APP
-            [1, 2].forEach(m => {
-                const p = parseFloat(document.getElementById('app-p' + m).value) || 0;
-                const load = ((p / monthlyCap) * 100).toFixed(0);
-                document.getElementById('load-m' + m).innerText = load + '%';
-                const status = document.getElementById('status-m' + m);
-                if (load > 100) status.innerHTML = '<span class="status-badge badge-danger">Overload</span>';
-                else status.innerHTML = '<span class="status-badge badge-success">Feasible</span>';
-            });
-
-            // MPS
-            const m1Prod = parseFloat(document.getElementById('app-p1').value) || 0;
-            const w1 = parseFloat(document.getElementById('mps-w1').value) || 0;
-            const w2 = parseFloat(document.getElementById('mps-w2').value) || 0;
-            const w3 = parseFloat(document.getElementById('mps-w3').value) || 0;
+            const d1 = 400, d2 = 550;
+            const p1 = parseFloat(document.getElementById('app-p1').value) || 0;
+            const p2 = parseFloat(document.getElementById('app-p2').value) || 0;
             
-            // MRP (Week 1 Focus)
+            [1, 2].forEach(m => {
+                const prod = (m === 1 ? p1 : p2);
+                const util = ((prod / monthlyCap) * 100).toFixed(1);
+                document.getElementById('util-m' + m).innerText = util + '%';
+                const status = document.getElementById('status-m' + m);
+                if (util > 100) status.innerHTML = '<span class="status-badge badge-danger">Overload</span>';
+                else status.innerHTML = '<span class="status-badge badge-success">OK</span>';
+            });
+            document.getElementById('inv-m1').innerText = (p1 - d1);
+            document.getElementById('inv-m2').innerText = (p1 - d1 + p2 - d2);
+
+            // MRP
+            const w1Target = parseFloat(document.getElementById('mps-w1').value) || 0;
+            const sf = parseFloat(document.getElementById('safety-factor').value) || 0;
+            const gross = w1Target + sf;
             const mrpBody = document.getElementById('mrp-table-body');
             mrpBody.innerHTML = '';
-            const items = [
-                { name: 'Seat Assy', cost: cSeat },
-                { name: 'Back Assy', cost: cBack },
-                { name: 'Leg Frame', cost: cLegs }
+            const materials = [
+                { name: 'Seat Assy', lt: '2w', cost: cSeat },
+                { name: 'Back Assy', lt: '2w', cost: cBack },
+                { name: 'Leg Frame', lt: '1w', cost: cLegs }
             ];
-            let totalSpend = 0;
-            items.forEach(item => {
-                const sub = item.cost * w1;
-                totalSpend += sub;
-                mrpBody.innerHTML += `<tr><td>${item.name}</td><td>${w1}</td><td>$${sub}</td></tr>`;
+            materials.forEach(mat => {
+                const total = (gross * mat.cost * (1 + scrap/100)).toFixed(0);
+                mrpBody.innerHTML += `<tr><td>${mat.name}</td><td>${gross}</td><td>${mat.lt}</td><td>$${total}</td></tr>`;
             });
-            document.getElementById('mrp-total-spend').innerText = '$' + totalSpend;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             updateAll();
             lucide.createIcons();
-            if (typeof initExportDropdown === 'function') {
-                initExportDropdown(() => {
-                    return [
-                        ["Stage", "Metric", "Value"],
-                        ["BOM", "Total Cost", document.getElementById('total-bom-cost').innerText],
-                        ["Capacity", "Available", document.getElementById('total-capacity').innerText],
-                        ["APP", "Month 1 Target", document.getElementById('app-p1').value],
-                        ["MRP", "W1 Spend", document.getElementById('mrp-total-spend').innerText]
-                    ];
-                });
-            }
         });
     </script>
 </body>
 </html>
+

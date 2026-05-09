@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Planner - Process Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/index.css">
+    <style>
+        .sim-container { background: white; border-radius: 16px; padding: 30px; border: 1px solid var(--border-color); }
+        .control-panel { background: var(--primary-bg); padding: 20px; border-radius: 12px; margin-bottom: 24px; }
+        .factory-floor { height: 200px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; position: relative; overflow: hidden; margin: 20px 0; }
+        .machine { width: 60px; height: 60px; background: white; border: 2px solid var(--accent-blue); border-radius: 8px; position: absolute; display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .product { width: 12px; height: 12px; background: var(--accent-emerald); border-radius: 50%; position: absolute; transition: all 0.5s linear; z-index: 3; }
+        .stat-box { text-align: center; padding: 15px; border-radius: 8px; background: white; border: 1px solid var(--border-color); }
+        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--accent-blue); }
+        .type-active { border-color: var(--accent-blue) !important; background: var(--accent-blue-light) !important; }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+                <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
+                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Process Simulator</a></li>
+            </ul>
+        </nav>
+        <main id="main-content">
+            <header>
+                <div class="header-title"><h1>Process Simulation</h1></div>
+            </header>
+            <div id="content-area">
+                <div class="sim-container">
+                    <div class="control-panel">
+                        <div class="grid-3" style="gap: 15px;">
+                            <div class="card" id="btn-mass" style="cursor:pointer; text-align:center; padding:15px;" onclick="setMode('mass')">
+                                <i data-lucide="zap"></i><h4>Mass Production</h4><p style="font-size:0.7rem;">High Volume / Low Variety</p>
+                            </div>
+                            <div class="card" id="btn-batch" style="cursor:pointer; text-align:center; padding:15px;" onclick="setMode('batch')">
+                                <i data-lucide="package"></i><h4>Batch Process</h4><p style="font-size:0.7rem;">Mid Volume / Mid Variety</p>
+                            </div>
+                            <div class="card" id="btn-job" style="cursor:pointer; text-align:center; padding:15px;" onclick="setMode('job')">
+                                <i data-lucide="settings"></i><h4>Job Shop</h4><p style="font-size:0.7rem;">Low Volume / High Variety</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="factory-floor" id="floor">
+                        <!-- Simulation elements generated here -->
+                    </div>
+
+                    <div class="grid-3" style="margin-top: 20px;">
+                        <div class="stat-box"><div class="metric-label">Avg. Lead Time</div><div class="stat-val" id="val-lt">0</div></div>
+                        <div class="stat-box"><div class="metric-label">Work-in-Process</div><div class="stat-val" id="val-wip">0</div></div>
+                        <div class="stat-box"><div class="metric-label">Efficiency</div><div class="stat-val" id="val-eff">0%</div></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        let mode = 'mass';
+        const floor = document.getElementById('floor');
+        
+        function setMode(m) {
+            mode = m;
+            document.querySelectorAll('.grid-3 .card').forEach(c => c.classList.remove('type-active'));
+            document.getElementById('btn-' + m).classList.add('type-active');
+            resetSim();
+        }
+
+        function resetSim() {
+            floor.innerHTML = '';
+            if (mode === 'mass') {
+                createMachine(50, 70, 'Lathe');
+                createMachine(250, 70, 'Mill');
+                createMachine(450, 70, 'Assembly');
+                document.getElementById('val-lt').innerText = '2 Days';
+                document.getElementById('val-wip').innerText = 'Low';
+                document.getElementById('val-eff').innerText = '98%';
+            } else if (mode === 'batch') {
+                createMachine(50, 30, 'Area A');
+                createMachine(50, 110, 'Area B');
+                createMachine(450, 70, 'Packing');
+                document.getElementById('val-lt').innerText = '14 Days';
+                document.getElementById('val-wip').innerText = 'High';
+                document.getElementById('val-eff').innerText = '75%';
+            } else {
+                createMachine(100, 30, 'Drill');
+                createMachine(300, 110, 'Paint');
+                createMachine(500, 30, 'QC');
+                document.getElementById('val-lt').innerText = '45 Days';
+                document.getElementById('val-wip').innerText = 'Extremely High';
+                document.getElementById('val-eff').innerText = '40%';
+            }
+            startParticles();
+        }
+
+        function createMachine(x, y, name) {
+            const m = document.createElement('div');
+            m.className = 'machine';
+            m.style.left = x + 'px';
+            m.style.top = y + 'px';
+            m.innerText = name;
+            floor.appendChild(m);
+        }
+
+        function startParticles() {
+            setInterval(() => {
+                const p = document.createElement('div');
+                p.className = 'product';
+                p.style.left = '0px';
+                p.style.top = '100px';
+                floor.appendChild(p);
+                
+                if (mode === 'mass') {
+                    setTimeout(() => p.style.left = '50px', 100);
+                    setTimeout(() => p.style.left = '250px', 1000);
+                    setTimeout(() => p.style.left = '450px', 2000);
+                    setTimeout(() => p.style.left = '100%', 3000);
+                } else if (mode === 'batch') {
+                    setTimeout(() => { p.style.left = '50px'; p.style.top = (Math.random() > 0.5 ? '30px' : '110px'); }, 500);
+                    setTimeout(() => { p.style.left = '450px'; p.style.top = '70px'; }, 2500);
+                    setTimeout(() => p.style.left = '100%', 4000);
+                } else {
+                    setTimeout(() => { p.style.left = '100px'; p.style.top = '30px'; }, 500);
+                    setTimeout(() => { p.style.left = '300px'; p.style.top = '110px'; }, 2000);
+                    setTimeout(() => { p.style.left = '500px'; p.style.top = '30px'; }, 4000);
+                    setTimeout(() => p.style.left = '100%', 6000);
+                }
+                setTimeout(() => p.remove(), 7000);
+            }, mode === 'mass' ? 500 : (mode === 'batch' ? 2000 : 4000));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setMode('mass');
+        });
+    </script>
+</body>
+</html>
