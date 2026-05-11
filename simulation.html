@@ -69,8 +69,9 @@
             <header>
                 <div class="header-title"><h1>Advanced Process Simulation Workspace</h1></div>
                 <div class="header-actions">
+                    <button class="btn btn-secondary" style="margin-right:8px;" onclick="resetAll()"><i data-lucide="trash-2"></i> Clear Canvas</button>
                     <select id="scenario-preset" class="form-control" style="width:200px;" onchange="loadScenario()">
-                        <option value="">-- Scenario Preset --</option>
+                        <option value="">-- Load Scenario --</option>
                         <option value="mass">Mass Manufacturing</option>
                         <option value="job">Job Shop</option>
                         <option value="assembly">Assembly Line</option>
@@ -81,13 +82,23 @@
 
             <div class="quadrant-grid" id="grid">
                 <div class="quadrant" style="grid-column: 1; grid-row: 1;">
-                    <div class="q-header"><h3>1. Configuration <span class="help-btn" onclick="showHelp('config')">?</span></h3></div>
+                    <div class="q-header"><h3>1. Run Configuration <span class="help-btn" onclick="showHelp('config')">?</span></h3></div>
                     <div class="q-content">
-                        <div class="form-group-sm"><label>Batch Target</label><input type="number" id="inp-batch" class="form-control" value="20"></div>
-                        <div class="form-group-sm"><label>Sim Duration (s)</label><input type="number" id="inp-time" class="form-control" value="300"></div>
+                        <div class="form-group-sm">
+                            <label>Termination Goal (Units)</label>
+                            <input type="number" id="inp-batch" class="form-control" value="20" title="Stop after this many units exit the system">
+                        </div>
+                        <div class="form-group-sm">
+                            <label>Termination Goal (Seconds)</label>
+                            <input type="number" id="inp-time" class="form-control" value="300" title="Stop after this much simulation time has passed">
+                        </div>
+                        <p style="font-size:0.6rem; color:#64748b; margin-top:-5px; font-style:italic;">* Simulation stops when FIRST goal is reached.</p>
                         <hr style="margin:10px 0; border-top:1px solid #eee;">
                         <div id="inspector" style="display:none;">
-                            <h4 style="font-size:0.65rem; color:#0a66c2; margin-bottom:8px;">ELEMENT INSPECTOR</h4>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <h4 style="font-size:0.65rem; color:#0a66c2; margin:0;">ELEMENT INSPECTOR</h4>
+                                <button class="btn btn-secondary" style="padding:2px 6px; font-size:0.6rem; color:#cc1016;" onclick="deleteSelected()"><i data-lucide="trash"></i> Delete</button>
+                            </div>
                             <div class="form-group-sm"><label>Name</label><input type="text" id="prop-name" class="form-control" oninput="applyProps()"></div>
                             <div class="form-group-sm" id="prop-delay-grp"><label>Delay (s)</label><input type="number" id="prop-delay" class="form-control" onchange="applyProps()"></div>
                             <div class="form-group-sm" id="prop-prob-grp"><label>True %</label><input type="number" id="prop-prob" class="form-control" onchange="applyProps()"></div>
@@ -100,6 +111,11 @@
                     <div class="q-header"><h3>2. Simulation Canvas <span class="help-btn" onclick="showHelp('canvas')">?</span></h3><span id="sim-status" style="font-size:0.6rem;">IDLE</span></div>
                     <div class="q-content" style="padding:0;">
                         <div class="canvas-area" id="canvas">
+                            <div id="goal-overlay" style="position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.9); border:1px solid #0a66c2; padding:8px; border-radius:6px; font-size:0.65rem; z-index:100; pointer-events:none; display:none;">
+                                <div style="font-weight:800; color:#0a66c2; margin-bottom:4px;">RUN GOAL STATUS</div>
+                                <div id="goal-units">Units: 0 / 20</div>
+                                <div id="goal-time">Time: 0.0s / 300s</div>
+                            </div>
                             <svg class="connector-svg" id="svg-layer">
                                 <defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>
                             </svg>
@@ -326,8 +342,15 @@
             isRunning = true;
             startTime = Date.now();
             processed = 0; totalTime = 0;
+            
+            // Clear previous entities and machine states
+            document.querySelectorAll('.entity-particle').forEach(e => e.remove());
+            blocks.forEach(b => { b.queue = []; b.busy = false; b.totalBusy = 0; if(document.getElementById('q-'+b.id)) document.getElementById('q-'+b.id).innerText = '0'; });
+
             document.getElementById('btn-run').innerHTML = '<i data-lucide="square"></i> Stop';
             document.getElementById('sim-status').innerText = 'RUNNING';
+            document.getElementById('goal-overlay').style.display = 'block';
+            
             blocks.filter(b => b.type === 'source').forEach(src => {
                 const schedule = () => {
                     if (!isRunning) return;
@@ -336,7 +359,7 @@
                 };
                 schedule();
             });
-            runTimer = setInterval(updateStats, 1000);
+            runTimer = setInterval(updateStats, 100); // Faster update for goal tracking
             lucide.createIcons();
         }
 
@@ -346,14 +369,22 @@
             intervals.forEach(clearTimeout); intervals = [];
             document.getElementById('btn-run').innerHTML = '<i data-lucide="play"></i> Run';
             document.getElementById('sim-status').innerText = 'IDLE';
+            document.getElementById('goal-overlay').style.display = 'none';
             lucide.createIcons();
+            updateStats(); // Final update
         }
 
         function spawnEntity(src) {
             const batchLimit = parseInt(document.getElementById('inp-batch').value);
             const timeLimit = parseInt(document.getElementById('inp-time').value);
             const elapsed = (Date.now() - startTime) / 1000 * speed;
-            if (processed >= batchLimit || elapsed >= timeLimit) { stopSim(); return; }
+            
+            if (processed >= batchLimit || elapsed >= timeLimit) { 
+                stopSim(); 
+                alert(`Simulation Goal Reached! \n\nUnits: ${processed}\nTime: ${elapsed.toFixed(1)}s`);
+                return; 
+            }
+
             const ent = { id: 'E'+Math.floor(Math.random()*1000), el: document.createElement('div'), entry: Date.now() };
             ent.el.className = 'entity-particle';
             ent.el.style.left = (src.x + 45) + 'px'; ent.el.style.top = (src.y + 25) + 'px';
@@ -410,6 +441,15 @@
             document.getElementById('val-lt').innerText = processed > 0 ? (totalTime / processed).toFixed(1) + 's' : '0.0s';
             const wip = blocks.reduce((acc, b) => acc + b.queue.length + (b.busy ? 1 : 0), 0);
             document.getElementById('val-wip').innerText = wip;
+
+            // Update Goal Overlay
+            const batchLimit = document.getElementById('inp-batch').value;
+            const timeLimit = document.getElementById('inp-time').value;
+            const elapsed = isRunning ? (Date.now() - startTime) / 1000 * speed : 0;
+            
+            document.getElementById('goal-units').innerText = `Units: ${processed} / ${batchLimit}`;
+            document.getElementById('goal-time').innerText = `Time: ${elapsed.toFixed(1)}s / ${timeLimit}s`;
+
             if (filter !== 'all') {
                 const detail = document.getElementById('stats-detail');
                 detail.innerHTML = '';
@@ -462,15 +502,37 @@
             }, 100);
         }
 
+        function deleteSelected() {
+            if (!selected) return;
+            // Remove connections to/from this block
+            links = links.filter(l => l.from !== selected.id && l.to !== selected.id);
+            // Remove block from array
+            blocks = blocks.filter(b => b.id !== selected.id);
+            // Remove from DOM
+            const el = document.getElementById(selected.id);
+            if (el) el.remove();
+            
+            selected = null;
+            document.getElementById('inspector').style.display = 'none';
+            document.getElementById('inspector-none').style.display = 'block';
+            renderLinks();
+            updateStats();
+        }
+
         function resetAll() {
             stopSim(); blocks = []; links = []; processed = 0; totalTime = 0;
             const divs = canvas.querySelectorAll('.block-obj, .entity-particle');
             divs.forEach(d => d.remove());
             const svgLayer = document.getElementById('svg-layer');
             if (svgLayer) svgLayer.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
-            document.getElementById('val-tp').innerText = '0';
+            
+            document.getElementById('val-tp').innerText = '0 Units';
             document.getElementById('val-lt').innerText = '0.0s';
             document.getElementById('val-wip').innerText = '0';
+            
+            document.getElementById('inspector').style.display = 'none';
+            document.getElementById('inspector-none').style.display = 'block';
+            
             updateStats();
         }
 
