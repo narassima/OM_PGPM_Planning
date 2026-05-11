@@ -30,8 +30,11 @@
         .res-pool { background: #eef3f8; padding: 10px; border-radius: 6px; font-size: 0.75rem; margin-bottom: 15px; }
         .res-count { font-weight: 800; color: #0a66c2; float: right; }
 
-        .tab-btn { flex: 1; padding: 8px; font-size: 0.7rem; font-weight: 700; border: none; background: #eef3f8; cursor: pointer; }
-        .tab-btn.active { background: #0a66c2; color: white; }
+        .help-trigger { width: 16px; height: 16px; background: #eef3f8; color: #0a66c2; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; cursor: help; margin-left: 5px; font-weight: 800; border: 1px solid #dce6f1; }
+        .help-trigger:hover { background: #0a66c2; color: white; }
+        
+        #help-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; background: white; border-radius: 8px; box-shadow: var(--shadow-lg); z-index: 1000; padding: 20px; display: none; border: 1px solid var(--border-color); }
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; }
     </style>
 </head>
 <body>
@@ -78,19 +81,20 @@
                     <div id="palette-content">
                         <h4 style="font-size:0.7rem; color:#666; margin-bottom:10px;">GLOBAL PARAMETERS</h4>
                         <div class="form-group">
-                            <label>Target Batch Size</label>
-                            <input type="number" id="inp-batch-size" class="form-control" value="50" onchange="updateKPIs()">
+                            <label>Target Batch Size <span class="help-trigger" onclick="showHelp('batch')">?</span></label>
+                            <input type="number" id="inp-batch-size" class="form-control" value="50" onchange="updateStats()">
                         </div>
                         <div class="form-group">
-                            <label>Max Run Duration (s)</label>
-                            <input type="number" id="inp-max-time" class="form-control" value="300" onchange="updateKPIs()">
+                            <label>Max Run Duration (s) <span class="help-trigger" onclick="showHelp('duration')">?</span></label>
+                            <input type="number" id="inp-max-time" class="form-control" value="300" onchange="updateStats()">
                         </div>
 
                         <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">FLOW COMPONENTS</h4>
-                        <button class="tool-btn" onclick="addBlock('source')"><i data-lucide="plus-square"></i> Source (Create)</button>
-                        <button class="tool-btn" onclick="addBlock('service')"><i data-lucide="settings"></i> Service (Seize+Delay+Rel)</button>
-                        <button class="tool-btn" onclick="addBlock('sink')"><i data-lucide="log-out"></i> Sink (Dispose)</button>
-                        <button class="tool-btn" onclick="setMode('connect')" id="conn-btn"><i data-lucide="share-2"></i> Connection Tool</button>
+                        <button class="tool-btn" onclick="addBlock('source')"><i data-lucide="plus-square"></i> Source (Create) <span class="help-trigger" onclick="showHelp('source')">?</span></button>
+                        <button class="tool-btn" onclick="addBlock('service')"><i data-lucide="settings"></i> Service (Process) <span class="help-trigger" onclick="showHelp('service')">?</span></button>
+                        <button class="tool-btn" onclick="addBlock('decide')"><i data-lucide="split"></i> Decide (Branch) <span class="help-trigger" onclick="showHelp('decide')">?</span></button>
+                        <button class="tool-btn" onclick="addBlock('sink')"><i data-lucide="log-out"></i> Sink (Dispose) <span class="help-trigger" onclick="showHelp('sink')">?</span></button>
+                        <button class="tool-btn" onclick="setMode('connect')" id="conn-btn"><i data-lucide="share-2"></i> Connector</button>
 
                         <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">RESOURCES</h4>
                         <div class="form-group">
@@ -133,6 +137,15 @@
                                 <input type="number" id="prop-res" class="form-control" value="1" onchange="applyProps()">
                             </div>
                         </div>
+
+                        <!-- DECIDE OPTIONS -->
+                        <div id="decide-opts" style="display:none;">
+                            <div class="form-group">
+                                <label>Percent True (%)</label>
+                                <input type="number" id="prop-percent" class="form-control" value="50" onchange="applyProps()">
+                            </div>
+                            <p style="font-size:0.65rem; color:#666;">First connection = TRUE, Second = FALSE.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -172,6 +185,14 @@
         </main>
     </div>
 
+    <!-- HELP MODAL -->
+    <div class="modal-backdrop" id="backdrop" onclick="closeHelp()"></div>
+    <div id="help-modal">
+        <h3 id="help-title" style="color:#0a66c2; margin-bottom:10px;">Variable Guide</h3>
+        <p id="help-text" style="font-size:0.85rem; line-height:1.5; color:var(--text-secondary);"></p>
+        <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="closeHelp()">Close Guide</button>
+    </div>
+
     <script>
         let blocks = [];
         let connections = [];
@@ -188,6 +209,27 @@
 
         const canvas = document.getElementById('canvas');
         const svg = document.getElementById('svg-layer');
+
+        const helpData = {
+            batch: "Target Batch Size: Total number of entities to process before the simulation stops. Ideal for measuring the time to complete a fixed production order.",
+            duration: "Max Run Duration: The maximum clock time (simulated seconds) the engine will run. If the batch isn't finished by this time, the engine stops.",
+            source: "Source: Generates parts or orders based on a probability distribution. Exponential distribution is best for modeling random Poisson arrivals.",
+            service: "Service: Represents a machine or manual station. It Seizes an operator, Delays for the process time, and then Releases the operator.",
+            decide: "Decide: A probabilistic branch. Entities are routed to the 'True' path based on the percentage, and 'False' otherwise (e.g., Scrap/Rework).",
+            sink: "Sink: The end of the process. Entities are disposed here, and their total Lead Time is recorded for the KPI dashboard."
+        };
+
+        function showHelp(key) {
+            document.getElementById('help-title').innerText = key.toUpperCase() + " GUIDE";
+            document.getElementById('help-text').innerText = helpData[key] || "No guide available.";
+            document.getElementById('help-modal').style.display = 'block';
+            document.getElementById('backdrop').style.display = 'block';
+        }
+
+        function closeHelp() {
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('backdrop').style.display = 'none';
+        }
 
         function switchTab(t) {
             document.getElementById('palette-content').style.display = t === 'palette' ? 'block' : 'none';
@@ -216,7 +258,7 @@
             const b = {
                 id, type, x, y,
                 name: type.toUpperCase() + '-' + blocks.length,
-                dist: 'fixed', mean: 5, delay: 3, resReq: 1,
+                dist: 'fixed', mean: 5, delay: 3, resReq: 1, percent: 50,
                 queue: [], processing: false,
                 totalBusy: 0
             };
@@ -272,7 +314,7 @@
         }
 
         function renderConnections() {
-            svg.innerHTML = '<defs><marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
+            svg.innerHTML = '<defs><marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto"><path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" /></marker></defs>';
             connections.forEach(c => {
                 const b1 = blocks.find(x => x.id === c.from);
                 const b2 = blocks.find(x => x.id === c.to);
@@ -294,9 +336,11 @@
             document.getElementById('prop-mean').value = b.mean;
             document.getElementById('prop-delay').value = b.delay;
             document.getElementById('prop-res').value = b.resReq;
+            document.getElementById('prop-percent').value = b.percent || 50;
             
             document.getElementById('source-opts').style.display = b.type === 'source' ? 'block' : 'none';
             document.getElementById('service-opts').style.display = b.type === 'service' ? 'block' : 'none';
+            document.getElementById('decide-opts').style.display = b.type === 'decide' ? 'block' : 'none';
         }
 
         function applyProps() {
@@ -306,6 +350,7 @@
             selectedBlock.mean = parseFloat(document.getElementById('prop-mean').value);
             selectedBlock.delay = parseFloat(document.getElementById('prop-delay').value);
             selectedBlock.resReq = parseInt(document.getElementById('prop-res').value);
+            selectedBlock.percent = parseFloat(document.getElementById('prop-percent').value);
             document.getElementById(selectedBlock.id).querySelector('div:last-child').innerText = selectedBlock.name;
         }
 
@@ -396,13 +441,27 @@
 
         function move(ent, currId) {
             if (!isRunning) return;
-            const link = connections.find(c => c.from === currId);
-            if (!link) {
+            
+            const currBlock = blocks.find(b => b.id === currId);
+            const outgoing = connections.filter(c => c.from === currId);
+            
+            if (outgoing.length === 0) {
                 ent.el.remove();
                 processed++;
                 totalFlowTime += (Date.now() - ent.entry) / 1000;
                 return;
             }
+
+            let link;
+            if (currBlock.type === 'decide') {
+                // If decide, use probability
+                const isTrue = Math.random() * 100 < currBlock.percent;
+                link = isTrue ? outgoing[0] : (outgoing[1] || outgoing[0]); // Fallback to first if only one connected
+            } else {
+                // Default: Pick first or random if multiple (though UI usually adds one)
+                link = outgoing[Math.floor(Math.random() * outgoing.length)];
+            }
+
             const next = blocks.find(b => b.id === link.to);
             ent.el.style.left = (next.x + 50) + 'px';
             ent.el.style.top = (next.y + 30) + 'px';
