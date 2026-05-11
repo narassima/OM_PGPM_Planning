@@ -10,11 +10,20 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .quadrant-grid { display: grid; grid-template-columns: 350px 1fr; grid-template-rows: 1fr 350px; height: calc(100vh - 60px); background: #f3f2ef; gap: 8px; padding: 8px; box-sizing: border-box; }
-        .quadrant { background: white; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-sm); }
-        .q-header { background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #eef3f8; display: flex; justify-content: space-between; align-items: center; }
-        .q-header h3 { font-size: 0.75rem; color: #0a66c2; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
-        .q-content { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
+        .quadrant-grid { display: grid; grid-template-columns: 350px 5px 1fr; grid-template-rows: 1fr 5px 350px; height: calc(100vh - 60px); background: #f3f2ef; padding: 0; box-sizing: border-box; }
+        .quadrant { background: white; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; }
+        .q-header { background: #f8fafc; padding: 8px 12px; border-bottom: 1px solid #eef3f8; display: flex; justify-content: space-between; align-items: center; }
+        .q-header h3 { font-size: 0.7rem; color: #0a66c2; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+        .q-content { flex: 1; padding: 12px; overflow-y: auto; position: relative; }
+
+        /* RESIZERS */
+        .resizer-h { grid-column: 2; grid-row: 1 / span 3; cursor: col-resize; background: #e2e8f0; transition: 0.2s; }
+        .resizer-h:hover { background: #0a66c2; }
+        .resizer-v { grid-row: 2; grid-column: 1 / span 3; cursor: row-resize; background: #e2e8f0; transition: 0.2s; }
+        .resizer-v:hover { background: #0a66c2; }
+
+        .help-btn { width: 14px; height: 14px; background: #eef3f8; color: #0a66c2; border-radius: 50%; font-size: 0.6rem; cursor: help; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid #dce6f1; }
+        .help-btn:hover { background: #0a66c2; color: white; }
 
         /* Q2: Simulation Window */
         .canvas-area { background: #ffffff; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; width: 100%; height: 100%; position: relative; overflow: auto; }
@@ -43,13 +52,20 @@
 <body>
     <div id="app-container">
         <nav id="sidebar">
-            <div class="sidebar-header"><h2>Planner</h2><p>Simulator Pro</p></div>
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Simulator Pro v4</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
-                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity</a></li>
-                <li><a href="integration.html"><i data-lucide="link-2"></i> Unified Planner</a></li>
-                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Simulator</a></li>
-                <li><a href="resources.html"><i data-lucide="link"></i> Resources</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+                <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
+                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Process Simulator</a></li>
             </ul>
         </nav>
         <main id="main-content">
@@ -66,33 +82,40 @@
                 </div>
             </header>
 
-            <div class="quadrant-grid">
+            <div class="quadrant-grid" id="grid">
                 <!-- Q1: INPUT CONFIGURATION -->
                 <div class="quadrant" style="grid-column: 1; grid-row: 1;">
-                    <div class="q-header"><h3>1. Configuration</h3><i data-lucide="edit-3" size="14"></i></div>
+                    <div class="q-header">
+                        <h3>1. Configuration <span class="help-btn" onclick="showHelp('config')">?</span></h3>
+                    </div>
                     <div class="q-content">
                         <div class="form-group-sm">
-                            <label>Batch Target</label>
+                            <label>Batch Target <span class="help-btn" onclick="showHelp('batch')">?</span></label>
                             <input type="number" id="inp-batch" class="form-control" value="20">
                         </div>
                         <div class="form-group-sm">
-                            <label>Simulation Duration (s)</label>
+                            <label>Sim Duration (s) <span class="help-btn" onclick="showHelp('duration')">?</span></label>
                             <input type="number" id="inp-time" class="form-control" value="300">
                         </div>
-                        <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
+                        <hr style="margin:10px 0; border-top:1px solid #eee;">
                         <div id="inspector" style="display:none;">
-                            <h4 style="font-size:0.7rem; color:#0a66c2; margin-bottom:10px;">ELEMENT INSPECTOR</h4>
+                            <h4 style="font-size:0.65rem; color:#0a66c2; margin-bottom:8px;">ELEMENT INSPECTOR</h4>
                             <div class="form-group-sm"><label>Name</label><input type="text" id="prop-name" class="form-control" oninput="applyProps()"></div>
-                            <div class="form-group-sm" id="prop-delay-grp"><label>Processing Time (s)</label><input type="number" id="prop-delay" class="form-control" onchange="applyProps()"></div>
-                            <div class="form-group-sm" id="prop-prob-grp"><label>Percent True (%)</label><input type="number" id="prop-prob" class="form-control" onchange="applyProps()"></div>
+                            <div class="form-group-sm" id="prop-delay-grp"><label>Delay (s) <span class="help-btn" onclick="showHelp('delay')">?</span></label><input type="number" id="prop-delay" class="form-control" onchange="applyProps()"></div>
+                            <div class="form-group-sm" id="prop-prob-grp"><label>True % <span class="help-btn" onclick="showHelp('decide')">?</span></label><input type="number" id="prop-prob" class="form-control" onchange="applyProps()"></div>
                         </div>
-                        <div id="inspector-none" style="font-size:0.7rem; color:#999; text-align:center; padding:20px;">Select an element to edit properties</div>
+                        <div id="inspector-none" style="font-size:0.65rem; color:#999; text-align:center; padding:10px;">Select an element</div>
                     </div>
                 </div>
 
+                <div class="resizer-h" id="resizer-h"></div>
+
                 <!-- Q2: SIMULATION WINDOW -->
-                <div class="quadrant" style="grid-column: 2; grid-row: 1;">
-                    <div class="q-header"><h3>2. Simulation Window</h3><span id="sim-status" style="font-size:0.6rem; color:#666;">IDLE</span></div>
+                <div class="quadrant" style="grid-column: 3; grid-row: 1;">
+                    <div class="q-header">
+                        <h3>2. Canvas <span class="help-btn" onclick="showHelp('canvas')">?</span></h3>
+                        <span id="sim-status" style="font-size:0.6rem; color:#666;">IDLE</span>
+                    </div>
                     <div class="q-content" style="padding:0;">
                         <div class="canvas-area" id="canvas">
                             <svg class="connector-svg" id="svg-layer">
@@ -102,45 +125,44 @@
                     </div>
                 </div>
 
+                <div class="resizer-v" id="resizer-v"></div>
+
                 <!-- Q3: COMMANDS & PALETTE -->
-                <div class="quadrant" style="grid-column: 1; grid-row: 2;">
-                    <div class="q-header"><h3>3. Commands & Tools</h3><i data-lucide="terminal" size="14"></i></div>
+                <div class="quadrant" style="grid-column: 1; grid-row: 3;">
+                    <div class="q-header"><h3>3. Palette <span class="help-btn" onclick="showHelp('palette')">?</span></h3></div>
                     <div class="q-content">
-                        <div style="display:flex; gap:10px; margin-bottom:15px;">
-                            <button class="btn btn-primary" style="flex:1;" id="btn-run" onclick="toggleRun()"><i data-lucide="play" size="14"></i> Run</button>
-                            <button class="btn btn-secondary" style="flex:1;" onclick="resetAll()"><i data-lucide="rotate-ccw" size="14"></i> Clear</button>
+                        <div style="display:flex; gap:5px; margin-bottom:12px;">
+                            <button class="btn btn-primary" style="flex:1; font-size:0.7rem;" id="btn-run" onclick="toggleRun()">Run</button>
+                            <button class="btn btn-secondary" style="flex:1; font-size:0.7rem;" onclick="resetAll()">Clear</button>
                         </div>
                         <div class="form-group-sm">
-                            <label>Engine Speed: <span id="speed-txt">2x</span></label>
+                            <label>Speed: <span id="speed-txt">2x</span></label>
                             <input type="range" id="inp-speed" min="1" max="20" value="2" onchange="updateSpeed()">
                         </div>
-                        <h4 style="font-size:0.7rem; color:#666; margin:15px 0 10px;">PALETTE</h4>
                         <div class="tool-grid">
-                            <button class="btn-tool" onclick="addObj('source')"><i data-lucide="plus-circle"></i> Source</button>
-                            <button class="btn-tool" onclick="addObj('process')"><i data-lucide="settings"></i> Process</button>
-                            <button class="btn-tool" onclick="addObj('decide')"><i data-lucide="split"></i> Decide</button>
-                            <button class="btn-tool" onclick="addObj('sink')"><i data-lucide="log-out"></i> Sink</button>
-                            <button class="btn-tool" style="grid-column: span 2;" id="btn-conn" onclick="setMode('connect')"><i data-lucide="share-2"></i> Connector Tool</button>
+                            <button class="btn-tool" onclick="addObj('source')">Source</button>
+                            <button class="btn-tool" onclick="addObj('process')">Process</button>
+                            <button class="btn-tool" onclick="addObj('decide')">Decide</button>
+                            <button class="btn-tool" onclick="addObj('sink')">Sink</button>
+                            <button class="btn-tool" style="grid-column: span 2;" id="btn-conn" onclick="setMode('connect')"><i data-lucide="share-2" size="12"></i> Connector Tool</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Q4: OUTPUT ANALYTICS -->
-                <div class="quadrant" style="grid-column: 2; grid-row: 2;">
-                    <div class="q-header"><h3>4. Output Analytics</h3><i data-lucide="pie-chart" size="14"></i></div>
+                <div class="quadrant" style="grid-column: 3; grid-row: 3;">
+                    <div class="q-header"><h3>4. Analytics <span class="help-btn" onclick="showHelp('stats')">?</span></h3></div>
                     <div class="q-content">
                         <div class="kpi-filter-bar">
-                            <span class="filter-chip active" onclick="setFilter('all', this)">Overview</span>
-                            <span class="filter-chip" onclick="setFilter('machine', this)">Machines</span>
-                            <span class="filter-chip" onclick="setFilter('entity', this)">Entities</span>
+                            <span class="filter-chip active" onclick="setFilter('all', this)">All</span>
+                            <span class="filter-chip" onclick="setFilter('machine', this)">Resources</span>
                         </div>
                         <div id="stats-panel">
                             <div id="stats-all">
-                                <div class="stat-card"><span>Total Throughput</span> <strong id="val-tp">0 Units</strong></div>
-                                <div class="stat-card"><span>Avg. Lead Time</span> <strong id="val-lt">0.0s</strong></div>
-                                <div class="stat-card"><span>Current WIP</span> <strong id="val-wip">0</strong></div>
+                                <div class="stat-card" style="font-size:0.7rem;"><span>Throughput</span> <strong id="val-tp">0</strong></div>
+                                <div class="stat-card" style="font-size:0.7rem;"><span>Avg Cycle Time</span> <strong id="val-lt">0.0s</strong></div>
                             </div>
-                            <div id="stats-detail" style="display:none;"></div>
+                            <div id="stats-detail" style="display:none; font-size:0.7rem;"></div>
                         </div>
                     </div>
                 </div>
@@ -148,7 +170,83 @@
         </main>
     </div>
 
+    <!-- HELP MODAL -->
+    <div class="modal-backdrop" id="backdrop" onclick="closeHelp()"></div>
+    <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; z-index:1001; width:350px; border:1px solid #ddd;">
+        <h4 id="help-title" style="color:#0a66c2; margin-bottom:10px; font-size:0.9rem;">Guide</h4>
+        <p id="help-text" style="font-size:0.75rem; color:#666; line-height:1.4;"></p>
+        <button class="btn btn-primary" style="margin-top:15px; width:100%;" onclick="closeHelp()">Close</button>
+    </div>
+        </main>
+    </div>
+
     <script>
+        const helpData = {
+            config: "Configuration: Set global simulation parameters like target quantities and time limits.",
+            batch: "Batch Target: The number of units to process before the simulation ends.",
+            duration: "Sim Duration: Total wall-clock time for the simulation run.",
+            canvas: "Canvas: The visual modeling area. Drag elements and connect them here.",
+            palette: "Palette: Drag these components into the canvas to build your process flow.",
+            stats: "Analytics: Live performance tracking of machines and overall throughput.",
+            delay: "Processing Time: How long it takes to complete work at this station.",
+            decide: "True %: Probability (0-100) that an entity will take the 'True' path."
+        };
+
+        function showHelp(key) {
+            document.getElementById('help-title').innerText = key.toUpperCase() + " GUIDE";
+            document.getElementById('help-text').innerText = helpData[key] || "No guide available.";
+            document.getElementById('help-modal').style.display = 'block';
+            document.getElementById('backdrop').style.display = 'block';
+        }
+
+        function closeHelp() {
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('backdrop').style.display = 'none';
+        }
+
+        // RESIZING LOGIC
+        const gridContainer = document.getElementById('grid');
+        const resizerH = document.getElementById('resizer-h');
+        const resizerV = document.getElementById('resizer-v');
+
+        let isResizingH = false;
+        let isResizingV = false;
+
+        resizerH.addEventListener('mousedown', (e) => {
+            isResizingH = true;
+            document.body.style.cursor = 'col-resize';
+            e.preventDefault();
+        });
+        resizerV.addEventListener('mousedown', (e) => {
+            isResizingV = true;
+            document.body.style.cursor = 'row-resize';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isResizingH) {
+                const rect = gridContainer.getBoundingClientRect();
+                const newWidth = e.clientX - rect.left;
+                if (newWidth > 200 && newWidth < rect.width - 200) {
+                    gridContainer.style.gridTemplateColumns = `${newWidth}px 5px 1fr`;
+                }
+            }
+            if (isResizingV) {
+                const rect = gridContainer.getBoundingClientRect();
+                const newHeight = e.clientY - rect.top;
+                if (newHeight > 150 && newHeight < rect.height - 100) {
+                    gridContainer.style.gridTemplateRows = `${newHeight}px 5px 1fr`;
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizingH = false;
+            isResizingV = false;
+            document.body.style.cursor = 'default';
+        });
+
+        // STATE
         let blocks = [];
         let links = [];
         let isRunning = false;
