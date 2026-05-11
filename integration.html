@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="styles/index.css">
     <script src="js/export.js"></script>
     <style>
-        .unified-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .full-width { grid-column: span 2; }
+        .unified-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .full-width { grid-column: 1 / -1; }
         .input-inline { width: 60px; padding: 4px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; text-align: center; }
         .card { height: 100%; display: flex; flex-direction: column; padding: 20px; }
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }

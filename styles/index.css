@@ -1,40 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary-bg: #fdfdfd;
-    --sidebar-bg: #fff7ed; /* Pastel Saffron */
+    --primary-bg: #f3f2ef; /* LinkedIn Light Gray */
+    --sidebar-bg: #ffffff;
     --card-bg: #ffffff;
 
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --text-on-dark: #431407; /* Darker text for light sidebar */
+    --text-primary: rgba(0, 0, 0, 0.9);
+    --text-secondary: rgba(0, 0, 0, 0.6);
+    --text-on-dark: #ffffff;
 
-    --accent-blue: #2563eb;
-    --accent-blue-light: #eff6ff;
-    --accent-blue-dark: #1d4ed8;
+    --accent-blue: #0a66c2; /* LinkedIn Blue */
+    --accent-blue-light: #eef3f8;
+    --accent-blue-dark: #004182;
 
-    --accent-forest: #064e3b; /* Dark Green replacement for Violet */
-    --accent-forest-light: #ecfdf5;
+    --accent-forest: #004182; 
+    --accent-forest-light: #eef3f8;
 
-    --accent-emerald: #10b981;
-    --accent-emerald-light: #ecfdf5;
+    --accent-emerald: #057642; /* LinkedIn Green for success */
+    --accent-emerald-light: #eef3f8;
 
-    --accent-rose: #be123c;
-    --accent-rose-light: #fff1f2;
+    --accent-rose: #cc1016;
+    --accent-rose-light: #f9eaea;
 
-    --accent-amber: #d97706;
-    --accent-amber-light: #fffbeb;
+    --accent-amber: #915907;
+    --accent-amber-light: #fdf5e8;
 
-    --border-color: #f1f5f9;
+    --border-color: #dce6f1;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-sm: 0 0 0 1px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
 
-    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 0.15s ease-out;
+    --transition-normal: 0.2s ease-out;
     
-    --sidebar-width: 340px;
+    --sidebar-width: 280px;
 }
 
 * {
@@ -62,76 +62,65 @@ body {
 /* ── Sidebar ── */
 #sidebar {
     width: var(--sidebar-width);
-    background: var(--sidebar-bg); /* Pastel Saffron */
+    background: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     position: sticky;
     top: 0;
     height: 100vh;
-    overflow-y: auto; /* Prevent hiding on small screens */
+    overflow-y: auto;
     transition: var(--transition-normal);
 }
 
 .sidebar-header {
-    padding: 32px 24px;
-    background: var(--accent-forest); /* Dark Green Header */
-    margin-bottom: 20px;
+    padding: 24px;
+    background: var(--accent-blue); /* LinkedIn Blue Header */
+    margin-bottom: 8px;
 }
 
 .sidebar-header h2 {
-    color: #fff7ed; /* Light Saffron Text */
-    font-size: 1.25rem;
-    font-weight: 800;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
     margin-bottom: 2px;
 }
 
 .sidebar-header p {
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.6);
-    font-weight: 500;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 400;
 }
 
 .nav-links {
     list-style: none;
-    padding: 10px 8px;
+    padding: 12px 0;
     flex: 1;
-    overflow-y: auto;
-}
-
-.nav-links li {
-    margin-bottom: 2px;
 }
 
 #sidebar .nav-links a {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 18px;
-    color: #431407;
+    gap: 12px;
+    padding: 10px 24px;
+    color: var(--text-secondary);
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 10px;
-    margin: 4px 0;
+    font-size: 0.9rem;
     transition: var(--transition-fast);
-}
-
-#sidebar .nav-links a i {
-    width: 20px;
-    height: 20px;
-    opacity: 0.8;
+    border-left: 4px solid transparent;
 }
 
 #sidebar .nav-links a:hover {
-    background: #ffedd5;
-    color: #9a3412;
+    background: var(--accent-blue-light);
+    color: var(--accent-blue);
 }
 
 #sidebar .nav-links a.active {
-    background: #ea580c; /* Deeper saffron/orange for active */
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+    background: var(--accent-blue-light);
+    color: var(--accent-blue);
+    border-left-color: var(--accent-blue);
+    font-weight: 700;
 }
 
 .nav-links a i {
@@ -377,8 +366,66 @@ header {
 }
 
 /* ── Grids ── */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.grid-2 { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 18px; 
+}
+.grid-3 { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 18px; 
+}
+
+@media (max-width: 1024px) {
+    #app-container {
+        flex-direction: column;
+    }
+    #sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar-header {
+        padding: 20px;
+    }
+    .nav-links {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px;
+        white-space: nowrap;
+    }
+    .nav-links li {
+        margin-bottom: 0;
+        margin-right: 10px;
+    }
+    #sidebar .nav-links a {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    #main-content {
+        height: auto;
+        overflow: visible;
+    }
+    #content-area {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 640px) {
+    .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+    }
+    .header-title h1 {
+        font-size: 1rem;
+    }
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+}
 
 /* ── Tables ── */
 table {
