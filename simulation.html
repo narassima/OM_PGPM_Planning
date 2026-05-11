@@ -3,38 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnyLogic-Pro: 4-Quadrant Discrete Simulator</title>
+    <title>Production Planner - Advanced Process Simulation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .quadrant-grid { display: grid; grid-template-columns: 350px 5px 1fr; grid-template-rows: 1fr 5px 350px; height: calc(100vh - 60px); background: #f3f2ef; padding: 0; box-sizing: border-box; }
         .quadrant-grid { display: grid; grid-template-columns: 350px 8px 1fr; grid-template-rows: 1fr 8px 350px; height: calc(100vh - 60px); background: #f3f2ef; padding: 0; box-sizing: border-box; }
         .quadrant { background: white; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; }
         .q-header { background: #f8fafc; padding: 8px 12px; border-bottom: 1px solid #eef3f8; display: flex; justify-content: space-between; align-items: center; }
         .q-header h3 { font-size: 0.7rem; color: #0a66c2; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
         .q-content { flex: 1; padding: 12px; overflow-y: auto; position: relative; }
 
-        /* RESIZERS */
         .resizer-h { grid-column: 2; grid-row: 1 / span 3; cursor: col-resize; background: #e2e8f0; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; transition: 0.2s; position: relative; z-index: 100; }
-        .resizer-h:hover, .resizer-h.active { background: #0a66c2; width: 8px; }
+        .resizer-h:hover, .resizer-h.active { background: #0a66c2; }
         .resizer-v { grid-row: 2; grid-column: 1 / span 3; cursor: row-resize; background: #e2e8f0; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; transition: 0.2s; position: relative; z-index: 100; }
-        .resizer-v:hover, .resizer-v.active { background: #0a66c2; height: 8px; }
+        .resizer-v:hover, .resizer-v.active { background: #0a66c2; }
 
         .help-btn { width: 14px; height: 14px; background: #eef3f8; color: #0a66c2; border-radius: 50%; font-size: 0.6rem; cursor: help; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid #dce6f1; }
         .help-btn:hover { background: #0a66c2; color: white; }
 
-        /* Q2: Simulation Window */
         .canvas-area { background: #ffffff; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; width: 100%; height: 100%; position: relative; overflow: auto; }
         .block-obj { width: 100px; height: 60px; background: white; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-align: center; padding: 5px; box-shadow: var(--shadow-sm); }
-        .block-obj.active { border-color: #057642; background: #ecfdf5; }
+        .block-obj.active { border-color: #057642; background: #ecfdf5; box-shadow: 0 0 8px rgba(5,118,66,0.3); }
+        .block-obj.conn-src { border-color: #d97706; background: #fffbeb; }
         .block-q-badge { position: absolute; top: -10px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; }
         .connector-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
         .entity-particle { width: 10px; height: 10px; border-radius: 50%; background: #0a66c2; position: absolute; z-index: 20; transition: all 0.5s linear; }
 
-        /* General UI components */
         .form-group-sm { margin-bottom: 10px; }
         .form-group-sm label { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 4px; font-weight: 600; }
         .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -47,7 +44,6 @@
         .filter-chip.active { background: #0a66c2; color: white; border-color: #0a66c2; }
         
         .stat-card { border: 1px solid #eef3f8; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .stat-card:hover { background: #f8fafc; }
     </style>
 </head>
 <body>
@@ -84,39 +80,24 @@
             </header>
 
             <div class="quadrant-grid" id="grid">
-                <!-- Q1: INPUT CONFIGURATION -->
                 <div class="quadrant" style="grid-column: 1; grid-row: 1;">
-                    <div class="q-header">
-                        <h3>1. Configuration <span class="help-btn" onclick="showHelp('config')">?</span></h3>
-                    </div>
+                    <div class="q-header"><h3>1. Configuration <span class="help-btn" onclick="showHelp('config')">?</span></h3></div>
                     <div class="q-content">
-                        <div class="form-group-sm">
-                            <label>Batch Target <span class="help-btn" onclick="showHelp('batch')">?</span></label>
-                            <input type="number" id="inp-batch" class="form-control" value="20">
-                        </div>
-                        <div class="form-group-sm">
-                            <label>Sim Duration (s) <span class="help-btn" onclick="showHelp('duration')">?</span></label>
-                            <input type="number" id="inp-time" class="form-control" value="300">
-                        </div>
+                        <div class="form-group-sm"><label>Batch Target</label><input type="number" id="inp-batch" class="form-control" value="20"></div>
+                        <div class="form-group-sm"><label>Sim Duration (s)</label><input type="number" id="inp-time" class="form-control" value="300"></div>
                         <hr style="margin:10px 0; border-top:1px solid #eee;">
                         <div id="inspector" style="display:none;">
                             <h4 style="font-size:0.65rem; color:#0a66c2; margin-bottom:8px;">ELEMENT INSPECTOR</h4>
                             <div class="form-group-sm"><label>Name</label><input type="text" id="prop-name" class="form-control" oninput="applyProps()"></div>
-                            <div class="form-group-sm" id="prop-delay-grp"><label>Delay (s) <span class="help-btn" onclick="showHelp('delay')">?</span></label><input type="number" id="prop-delay" class="form-control" onchange="applyProps()"></div>
-                            <div class="form-group-sm" id="prop-prob-grp"><label>True % <span class="help-btn" onclick="showHelp('decide')">?</span></label><input type="number" id="prop-prob" class="form-control" onchange="applyProps()"></div>
+                            <div class="form-group-sm" id="prop-delay-grp"><label>Delay (s)</label><input type="number" id="prop-delay" class="form-control" onchange="applyProps()"></div>
+                            <div class="form-group-sm" id="prop-prob-grp"><label>True %</label><input type="number" id="prop-prob" class="form-control" onchange="applyProps()"></div>
                         </div>
                         <div id="inspector-none" style="font-size:0.65rem; color:#999; text-align:center; padding:10px;">Select an element</div>
                     </div>
                 </div>
-
                 <div class="resizer-h" id="resizer-h"></div>
-
-                <!-- Q2: SIMULATION WINDOW -->
                 <div class="quadrant" style="grid-column: 3; grid-row: 1;">
-                    <div class="q-header">
-                        <h3>2. Canvas <span class="help-btn" onclick="showHelp('canvas')">?</span></h3>
-                        <span id="sim-status" style="font-size:0.6rem; color:#666;">IDLE</span>
-                    </div>
+                    <div class="q-header"><h3>2. Simulation Canvas <span class="help-btn" onclick="showHelp('canvas')">?</span></h3><span id="sim-status" style="font-size:0.6rem;">IDLE</span></div>
                     <div class="q-content" style="padding:0;">
                         <div class="canvas-area" id="canvas">
                             <svg class="connector-svg" id="svg-layer">
@@ -125,21 +106,15 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="resizer-v" id="resizer-v"></div>
-
-                <!-- Q3: COMMANDS & PALETTE -->
                 <div class="quadrant" style="grid-column: 1; grid-row: 3;">
-                    <div class="q-header"><h3>3. Palette <span class="help-btn" onclick="showHelp('palette')">?</span></h3></div>
+                    <div class="q-header"><h3>3. Palette & Controls <span class="help-btn" onclick="showHelp('palette')">?</span></h3></div>
                     <div class="q-content">
                         <div style="display:flex; gap:5px; margin-bottom:12px;">
                             <button class="btn btn-primary" style="flex:1; font-size:0.7rem;" id="btn-run" onclick="toggleRun()">Run</button>
                             <button class="btn btn-secondary" style="flex:1; font-size:0.7rem;" onclick="resetAll()">Clear</button>
                         </div>
-                        <div class="form-group-sm">
-                            <label>Speed: <span id="speed-txt">2x</span></label>
-                            <input type="range" id="inp-speed" min="1" max="20" value="2" onchange="updateSpeed()">
-                        </div>
+                        <div class="form-group-sm"><label>Speed: <span id="speed-txt">2x</span></label><input type="range" id="inp-speed" min="1" max="20" value="2" onchange="updateSpeed()"></div>
                         <div class="tool-grid">
                             <button class="btn-tool" onclick="addObj('source')">Source</button>
                             <button class="btn-tool" onclick="addObj('process')">Process</button>
@@ -149,19 +124,18 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Q4: OUTPUT ANALYTICS -->
                 <div class="quadrant" style="grid-column: 3; grid-row: 3;">
-                    <div class="q-header"><h3>4. Analytics <span class="help-btn" onclick="showHelp('stats')">?</span></h3></div>
+                    <div class="q-header"><h3>4. Analytics Dashboard <span class="help-btn" onclick="showHelp('stats')">?</span></h3></div>
                     <div class="q-content">
                         <div class="kpi-filter-bar">
-                            <span class="filter-chip active" onclick="setFilter('all', this)">All</span>
-                            <span class="filter-chip" onclick="setFilter('machine', this)">Resources</span>
+                            <span class="filter-chip active" onclick="setFilter('all', this)">Overview</span>
+                            <span class="filter-chip" onclick="setFilter('machine', this)">Stations</span>
                         </div>
                         <div id="stats-panel">
                             <div id="stats-all">
                                 <div class="stat-card" style="font-size:0.7rem;"><span>Throughput</span> <strong id="val-tp">0</strong></div>
                                 <div class="stat-card" style="font-size:0.7rem;"><span>Avg Cycle Time</span> <strong id="val-lt">0.0s</strong></div>
+                                <div class="stat-card" style="font-size:0.7rem;"><span>System WIP</span> <strong id="val-wip">0</strong></div>
                             </div>
                             <div id="stats-detail" style="display:none; font-size:0.7rem;"></div>
                         </div>
@@ -173,24 +147,22 @@
 
     <!-- HELP MODAL -->
     <div class="modal-backdrop" id="backdrop" onclick="closeHelp()"></div>
-    <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; z-index:1001; width:350px; border:1px solid #ddd;">
+    <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; z-index:1001; width:350px; border:1px solid #ddd; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
         <h4 id="help-title" style="color:#0a66c2; margin-bottom:10px; font-size:0.9rem;">Guide</h4>
         <p id="help-text" style="font-size:0.75rem; color:#666; line-height:1.4;"></p>
         <button class="btn btn-primary" style="margin-top:15px; width:100%;" onclick="closeHelp()">Close</button>
-    </div>
-        </main>
     </div>
 
     <script>
         const helpData = {
             config: "Configuration: Set global simulation parameters like target quantities and time limits.",
-            batch: "Batch Target: The number of units to process before the simulation ends.",
-            duration: "Sim Duration: Total wall-clock time for the simulation run.",
-            canvas: "Canvas: The visual modeling area. Drag elements and connect them here.",
-            palette: "Palette: Drag these components into the canvas to build your process flow.",
-            stats: "Analytics: Live performance tracking of machines and overall throughput.",
-            delay: "Processing Time: How long it takes to complete work at this station.",
-            decide: "True %: Probability (0-100) that an entity will take the 'True' path."
+            batch: "Batch Target: The total units to process before the simulation auto-stops.",
+            duration: "Sim Duration: The maximum clock time for the simulation run.",
+            canvas: "Canvas: The visual modeling area. Elements can be dragged and connected here.",
+            palette: "Palette: Core building blocks for your process models.",
+            stats: "Analytics: Live performance tracking of throughput and station utilization.",
+            delay: "Processing Time: Time required to complete a task at this specific station.",
+            decide: "True %: The probability (0-100) that an entity will follow the True path."
         };
 
         function showHelp(key) {
@@ -205,53 +177,32 @@
             document.getElementById('backdrop').style.display = 'none';
         }
 
-        // RESIZING LOGIC
+        // RESIZING
         const gridContainer = document.getElementById('grid');
         const resizerH = document.getElementById('resizer-h');
         const resizerV = document.getElementById('resizer-v');
-
         let isResizingH = false;
         let isResizingV = false;
 
-        resizerH.addEventListener('mousedown', (e) => {
-            isResizingH = true;
-            resizerH.classList.add('active');
-            document.body.style.cursor = 'col-resize';
-            e.preventDefault();
-        });
-        resizerV.addEventListener('mousedown', (e) => {
-            isResizingV = true;
-            resizerV.classList.add('active');
-            document.body.style.cursor = 'row-resize';
-            e.preventDefault();
-        });
+        resizerH.addEventListener('mousedown', (e) => { isResizingH = true; resizerH.classList.add('active'); document.body.style.cursor = 'col-resize'; e.preventDefault(); });
+        resizerV.addEventListener('mousedown', (e) => { isResizingV = true; resizerV.classList.add('active'); document.body.style.cursor = 'row-resize'; e.preventDefault(); });
 
         document.addEventListener('mousemove', (e) => {
             if (isResizingH) {
                 const rect = gridContainer.getBoundingClientRect();
                 const newWidth = e.clientX - rect.left;
-                if (newWidth > 200 && newWidth < rect.width - 200) {
-                    gridContainer.style.gridTemplateColumns = `${newWidth}px 8px 1fr`;
-                }
+                if (newWidth > 200 && newWidth < rect.width - 200) gridContainer.style.gridTemplateColumns = `${newWidth}px 8px 1fr`;
             }
             if (isResizingV) {
                 const rect = gridContainer.getBoundingClientRect();
                 const newHeight = e.clientY - rect.top;
-                if (newHeight > 150 && newHeight < rect.height - 100) {
-                    gridContainer.style.gridTemplateRows = `${newHeight}px 8px 1fr`;
-                }
+                if (newHeight > 150 && newHeight < rect.height - 100) gridContainer.style.gridTemplateRows = `${newHeight}px 8px 1fr`;
             }
         });
 
-        document.addEventListener('mouseup', () => {
-            isResizingH = false;
-            isResizingV = false;
-            resizerH.classList.remove('active');
-            resizerV.classList.remove('active');
-            document.body.style.cursor = 'default';
-        });
+        document.addEventListener('mouseup', () => { isResizingH = false; isResizingV = false; resizerH.classList.remove('active'); resizerV.classList.remove('active'); document.body.style.cursor = 'default'; });
 
-        // STATE
+        // SIM STATE
         let blocks = [];
         let links = [];
         let isRunning = false;
@@ -265,7 +216,6 @@
         let filter = 'all';
 
         const canvas = document.getElementById('canvas');
-        const svg = document.getElementById('svg-layer');
 
         function setMode(m) {
             mode = m;
@@ -283,13 +233,7 @@
 
         function addObj(type, x=50, y=50, name) {
             const id = 'b' + Date.now() + Math.floor(Math.random()*1000);
-            const b = {
-                id, type, x, y,
-                name: name || type.toUpperCase() + '-' + (blocks.length+1),
-                delay: 2, prob: 50,
-                queue: [], busy: false,
-                totalBusy: 0
-            };
+            const b = { id, type, x, y, name: name || type.toUpperCase() + '-' + (blocks.length+1), delay: 2, prob: 50, queue: [], busy: false, totalBusy: 0 };
             blocks.push(b);
             drawObj(b);
             return b;
@@ -308,13 +252,13 @@
                 if (mode === 'connect') {
                     if (!connSrc) {
                         connSrc = b;
-                        el.style.borderColor = '#d97706';
+                        el.classList.add('conn-src');
                     } else {
                         if (connSrc.id !== b.id) {
                             links.push({ from: connSrc.id, to: b.id });
                             renderLinks();
                         }
-                        document.querySelectorAll('.block-obj').forEach(x => x.style.borderColor = '');
+                        document.querySelectorAll('.block-obj').forEach(x => x.classList.remove('conn-src'));
                         connSrc = null;
                         setMode('select');
                     }
@@ -334,12 +278,13 @@
                 };
                 document.onmouseup = () => document.onmousemove = null;
             };
-
             canvas.appendChild(el);
         }
 
         function renderLinks() {
-            svg.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
+            const svgLayer = document.getElementById('svg-layer');
+            if (!svgLayer) return;
+            svgLayer.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
             links.forEach(l => {
                 const b1 = blocks.find(x => x.id === l.from);
                 const b2 = blocks.find(x => x.id === l.to);
@@ -349,7 +294,7 @@
                 line.setAttribute("x2", b2.x + 50); line.setAttribute("y2", b2.y + 30);
                 line.setAttribute("stroke", "#0a66c2"); line.setAttribute("stroke-width", "2");
                 line.setAttribute("marker-end", "url(#arrow)");
-                svg.appendChild(line);
+                svgLayer.appendChild(line);
             });
         }
 
@@ -383,7 +328,6 @@
             processed = 0; totalTime = 0;
             document.getElementById('btn-run').innerHTML = '<i data-lucide="square"></i> Stop';
             document.getElementById('sim-status').innerText = 'RUNNING';
-            
             blocks.filter(b => b.type === 'source').forEach(src => {
                 const schedule = () => {
                     if (!isRunning) return;
@@ -392,7 +336,6 @@
                 };
                 schedule();
             });
-
             runTimer = setInterval(updateStats, 1000);
             lucide.createIcons();
         }
@@ -410,9 +353,7 @@
             const batchLimit = parseInt(document.getElementById('inp-batch').value);
             const timeLimit = parseInt(document.getElementById('inp-time').value);
             const elapsed = (Date.now() - startTime) / 1000 * speed;
-
             if (processed >= batchLimit || elapsed >= timeLimit) { stopSim(); return; }
-
             const ent = { id: 'E'+Math.floor(Math.random()*1000), el: document.createElement('div'), entry: Date.now() };
             ent.el.className = 'entity-particle';
             ent.el.style.left = (src.x + 45) + 'px'; ent.el.style.top = (src.y + 25) + 'px';
@@ -424,13 +365,11 @@
             if (!isRunning) return;
             const b = blocks.find(x => x.id === currId);
             const outgoing = links.filter(l => l.from === currId);
-            
             if (outgoing.length === 0) {
                 ent.el.remove(); processed++;
                 totalTime += (Date.now() - ent.entry) / 1000 * speed;
                 return;
             }
-
             let link;
             if (b.type === 'decide') {
                 const isTrue = Math.random() * 100 < b.prob;
@@ -438,18 +377,14 @@
             } else {
                 link = outgoing[Math.floor(Math.random() * outgoing.length)];
             }
-
             const next = blocks.find(n => n.id === link.to);
             ent.el.style.left = (next.x + 45) + 'px'; ent.el.style.top = (next.y + 25) + 'px';
-
             if (next.type === 'sink') {
                 setTimeout(() => { ent.el.remove(); processed++; updateStats(); }, 500 / speed);
                 return;
             }
-
             next.queue.push(ent);
             document.getElementById('q-' + next.id).innerText = next.queue.length;
-
             const process = () => {
                 if (!isRunning) return;
                 const bEl = document.getElementById(next.id);
@@ -475,7 +410,6 @@
             document.getElementById('val-lt').innerText = processed > 0 ? (totalTime / processed).toFixed(1) + 's' : '0.0s';
             const wip = blocks.reduce((acc, b) => acc + b.queue.length + (b.busy ? 1 : 0), 0);
             document.getElementById('val-wip').innerText = wip;
-
             if (filter !== 'all') {
                 const detail = document.getElementById('stats-detail');
                 detail.innerHTML = '';
@@ -483,74 +417,64 @@
                     const elapsed = (Date.now() - startTime) / 1000 * speed;
                     blocks.filter(b => b.type === 'process').forEach(b => {
                         const util = elapsed > 0 ? Math.min(100, (b.totalBusy / elapsed) * 100) : 0;
-                        detail.innerHTML += `<div class="stat-card"><span>${b.name}</span> <strong>${util.toFixed(1)}% Util</strong></div>`;
+                        detail.innerHTML += `<div class="stat-card"><span>${b.name}</span> <strong>${util.toFixed(1)}%</strong></div>`;
                     });
-                } else if (filter === 'entity') {
-                    detail.innerHTML += `<div class="stat-card"><span>Total Entities Created</span> <strong>${processed + wip}</strong></div>`;
-                    detail.innerHTML += `<div class="stat-card"><span>Avg. Lead Time</span> <strong>${(totalTime / Math.max(1, processed)).toFixed(1)}s</strong></div>`;
                 }
             }
         }
 
-        function updateSpeed() {
-            speed = parseInt(document.getElementById('inp-speed').value);
-            document.getElementById('speed-txt').innerText = speed + 'x';
-        }
+        function updateSpeed() { speed = parseInt(document.getElementById('inp-speed').value); document.getElementById('speed-txt').innerText = speed + 'x'; }
 
         function loadScenario() {
             resetAll();
             const type = document.getElementById('scenario-preset').value;
             if (!type) return;
-
-            if (type === 'mass') {
-                // MASS MANUFACTURING: Fast, linear, high-volume
-                const s = addObj('source', 50, 150, "Incoming Mat"); s.delay = 1.5;
-                const p1 = addObj('process', 200, 150, "Stamping"); p1.delay = 2;
-                const p2 = addObj('process', 350, 150, "Degrease"); p2.delay = 2;
-                const p3 = addObj('process', 500, 150, "Coating"); p3.delay = 2;
-                const k = addObj('sink', 650, 150, "Finished Goods");
-                links.push({from: s.id, to: p1.id}, {from: p1.id, to: p2.id}, {from: p2.id, to: p3.id}, {from: p3.id, to: k.id});
-            } else if (type === 'job') {
-                // JOB SHOP: Variable paths, branching logic
-                const s = addObj('source', 50, 150, "Custom Orders"); s.delay = 4;
-                const d = addObj('decide', 200, 150, "Path Route"); d.prob = 60;
-                const p1 = addObj('process', 350, 50, "Lathe-A"); p1.delay = 8;
-                const p2 = addObj('process', 350, 250, "Mill-B"); p2.delay = 12;
-                const k = addObj('sink', 550, 150, "Shipment");
-                links.push({from: s.id, to: d.id}, {from: d.id, to: p1.id}, {from: d.id, to: p2.id}, {from: p1.id, to: k.id}, {from: p2.id, to: k.id});
-            } else if (type === 'assembly') {
-                // ASSEMBLY LINE: Converging parts
-                const s1 = addObj('source', 50, 80, "Base Frame"); s1.delay = 5;
-                const s2 = addObj('source', 50, 220, "Electronics"); s2.delay = 5;
-                const p1 = addObj('process', 300, 150, "Main Assembly"); p1.delay = 10;
-                const k = addObj('sink', 500, 150, "QC Exit");
-                links.push({from: s1.id, to: p1.id}, {from: s2.id, to: p1.id}, {from: p1.id, to: k.id});
-            } else if (type === 'batch') {
-                // BATCH PROCESSING: Slower, resource-heavy
-                const s = addObj('source', 50, 150, "Bulk Load"); s.delay = 2;
-                const p = addObj('process', 300, 150, "Oven Batch"); p.delay = 25;
-                const k = addObj('sink', 550, 150, "Package");
-                links.push({from: s.id, to: p.id}, {from: p.id, to: k.id});
-            }
-
-            renderLinks();
-            updateStats();
-            lucide.createIcons();
+            setTimeout(() => {
+                if (type === 'mass') {
+                    const s = addObj('source', 50, 150, "Incoming Mat"); s.delay = 1.5;
+                    const p1 = addObj('process', 200, 150, "Stamping"); p1.delay = 2;
+                    const p2 = addObj('process', 350, 150, "Degrease"); p2.delay = 2;
+                    const p3 = addObj('process', 500, 150, "Coating"); p3.delay = 2;
+                    const k = addObj('sink', 650, 150, "Finished Goods");
+                    links.push({from: s.id, to: p1.id}, {from: p1.id, to: p2.id}, {from: p2.id, to: p3.id}, {from: p3.id, to: k.id});
+                } else if (type === 'job') {
+                    const s = addObj('source', 50, 150, "Custom Orders"); s.delay = 4;
+                    const d = addObj('decide', 200, 150, "Path Route"); d.prob = 60;
+                    const p1 = addObj('process', 350, 50, "Lathe-A"); p1.delay = 8;
+                    const p2 = addObj('process', 350, 250, "Mill-B"); p2.delay = 12;
+                    const k = addObj('sink', 550, 150, "Shipment");
+                    links.push({from: s.id, to: d.id}, {from: d.id, to: p1.id}, {from: d.id, to: p2.id}, {from: p1.id, to: k.id}, {from: p2.id, to: k.id});
+                } else if (type === 'assembly') {
+                    const s1 = addObj('source', 50, 80, "Base Frame"); s1.delay = 5;
+                    const s2 = addObj('source', 50, 220, "Electronics"); s2.delay = 5;
+                    const p1 = addObj('process', 300, 150, "Main Assembly"); p1.delay = 10;
+                    const k = addObj('sink', 500, 150, "QC Exit");
+                    links.push({from: s1.id, to: p1.id}, {from: s2.id, to: p1.id}, {from: p1.id, to: k.id});
+                } else if (type === 'batch') {
+                    const s = addObj('source', 50, 150, "Bulk Load"); s.delay = 2;
+                    const p = addObj('process', 300, 150, "Oven Batch"); p.delay = 25;
+                    const k = addObj('sink', 550, 150, "Package");
+                    links.push({from: s.id, to: p.id}, {from: p.id, to: k.id});
+                }
+                renderLinks();
+                updateStats();
+                lucide.createIcons();
+            }, 100);
         }
 
         function resetAll() {
             stopSim(); blocks = []; links = []; processed = 0; totalTime = 0;
-            canvas.innerHTML = '<svg class="connector-svg" id="svg-layer"><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs></svg>';
-            document.getElementById('val-tp').innerText = '0 Units';
+            const divs = canvas.querySelectorAll('.block-obj, .entity-particle');
+            divs.forEach(d => d.remove());
+            const svgLayer = document.getElementById('svg-layer');
+            if (svgLayer) svgLayer.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
+            document.getElementById('val-tp').innerText = '0';
             document.getElementById('val-lt').innerText = '0.0s';
             document.getElementById('val-wip').innerText = '0';
             updateStats();
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            loadScenario();
-        });
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); document.getElementById('scenario-preset').value = 'mass'; loadScenario(); });
     </script>
 </body>
 </html>
