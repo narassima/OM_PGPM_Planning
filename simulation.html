@@ -3,127 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnyLogic-Lite: Manufacturing Simulation Suite</title>
+    <title>AnyLogic-Pro: Manufacturing Discrete Event Simulator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .anylogic-grid { display: grid; grid-template-columns: 280px 1fr 320px; height: calc(100vh - 60px); background: #f3f2ef; overflow: hidden; }
-        .pane-sidebar { background: #ffffff; border-right: 1px solid var(--border-color); padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-        .canvas-main { position: relative; background: #ffffff; overflow: auto; background-image: 
-            linear-gradient(#f0f0f0 1px, transparent 1px),
-            linear-gradient(90deg, #f0f0f0 1px, transparent 1px);
-            background-size: 20px 20px; }
-        .pane-stats { background: #ffffff; border-left: 1px solid var(--border-color); padding: 20px; overflow-y: auto; }
+        .pro-sim-grid { display: grid; grid-template-columns: 320px 1fr 340px; height: calc(100vh - 60px); background: #f3f2ef; overflow: hidden; }
+        .sidebar-pane { background: #ffffff; border-right: 1px solid var(--border-color); padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .canvas-pane { position: relative; background: #ffffff; overflow: auto; background-image: radial-gradient(#d1d9e6 1px, transparent 1px); background-size: 20px 20px; }
+        .stats-pane { background: #ffffff; border-left: 1px solid var(--border-color); padding: 20px; overflow-y: auto; }
         
-        .node-obj { width: 100px; height: 60px; background: #ffffff; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .node-obj.active { border-color: #057642; background: #ecfdf5; box-shadow: 0 0 10px rgba(5,118,66,0.2); }
-        .node-obj.selected { border-style: dashed; border-color: #915907; }
-        .node-q-count { position: absolute; top: -12px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; min-width: 18px; text-align: center; }
+        .block { width: 110px; height: 70px; background: #ffffff; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.1s; box-shadow: var(--shadow-sm); }
+        .block.seized { border-color: #d97706; background: #fffbeb; } /* Waiting for resource */
+        .block.active { border-color: #057642; background: #ecfdf5; box-shadow: 0 0 10px rgba(5,118,66,0.2); }
+        .block-q { position: absolute; top: -12px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; font-weight: 800; }
 
         .conn-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-        .entity-dot { width: 10px; height: 10px; border-radius: 50%; position: absolute; z-index: 20; transition: all 0.5s linear; }
+        .part { width: 12px; height: 12px; border-radius: 3px; position: absolute; z-index: 20; transition: all 0.5s linear; }
         
-        .kpi-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
-        .kpi-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-        .kpi-value { font-size: 1.1rem; font-weight: 800; color: #0a66c2; }
+        .kpi-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+        .kpi-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 700; }
+        .kpi-val { font-size: 1.2rem; font-weight: 800; color: #0a66c2; }
         
-        .util-bar-bg { height: 6px; background: #e2e8f0; border-radius: 3px; margin-top: 5px; overflow: hidden; }
-        .util-bar-fill { height: 100%; background: #0a66c2; width: 0%; transition: width 0.3s; }
+        .res-pool { background: #eef3f8; padding: 10px; border-radius: 6px; font-size: 0.75rem; margin-bottom: 15px; }
+        .res-count { font-weight: 800; color: #0a66c2; float: right; }
 
-        .btn-sm { padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; }
-        .speed-control { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; padding: 10px; background: #eef3f8; border-radius: 6px; }
+        .tab-btn { flex: 1; padding: 8px; font-size: 0.7rem; font-weight: 700; border: none; background: #eef3f8; cursor: pointer; }
+        .tab-btn.active { background: #0a66c2; color: white; }
     </style>
 </head>
 <body>
     <div id="app-container">
         <nav id="sidebar">
-            <div class="sidebar-header"><h2>AnyLogic-Lite</h2><p>Process Modeler Pro</p></div>
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Simulator Pro v3</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
-                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity</a></li>
-                <li><a href="integration.html"><i data-lucide="link-2"></i> Unified Planner</a></li>
-                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Simulator</a></li>
-                <li><a href="resources.html"><i data-lucide="link"></i> Resources</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
+                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
+                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
+                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
+                <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
+                <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
+                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Process Simulator</a></li>
             </ul>
         </nav>
         <main id="main-content">
             <header>
-                <div class="header-title"><h1>Manufacturing Model Builder</h1></div>
+                <div class="header-title"><h1>Rigorous Simulation Engine</h1></div>
                 <div class="header-actions">
-                    <select id="scenario-preset" class="form-control" style="width:200px;" onchange="loadScenario()">
-                        <option value="">-- Choose Template --</option>
-                        <option value="mass">Mass Production (Line)</option>
-                        <option value="job">Job Shop (Functional)</option>
-                        <option value="assembly">Assembly Line (Merge)</option>
-                    </select>
-                    <div class="speed-control">
-                        <span>Speed</span>
-                        <input type="range" id="sim-speed" min="1" max="10" value="2" style="width:80px;" onchange="updateSpeed()">
-                        <span id="speed-label">2x</span>
+                    <div style="display:flex; align-items:center; gap:10px; background:#eef3f8; padding:5px 15px; border-radius:20px;">
+                        <span style="font-size:0.75rem; font-weight:700;">Engine Speed</span>
+                        <input type="range" id="engine-speed" min="1" max="20" value="2" onchange="updateSpeed()">
+                        <span id="speed-val">2x</span>
                     </div>
-                    <button class="btn btn-primary" onclick="toggleSim()" id="btn-play"><i data-lucide="play"></i> Run</button>
-                    <button class="btn btn-secondary" onclick="resetCanvas()"><i data-lucide="rotate-ccw"></i> Reset</button>
+                    <button class="btn btn-primary" onclick="toggleSim()" id="play-btn"><i data-lucide="play"></i> Run Engine</button>
+                    <button class="btn btn-secondary" onclick="resetEngine()"><i data-lucide="rotate-ccw"></i> Reset</button>
                 </div>
             </header>
             
-            <div class="anylogic-grid">
-                <!-- LIBRARY -->
-                <div class="pane-sidebar">
-                    <h4 style="font-size:0.75rem; color:#666;">PALETTE</h4>
-                    <button class="tool-btn" onclick="addNode('source')"><i data-lucide="log-in"></i> Source</button>
-                    <button class="tool-btn" onclick="addNode('delay')"><i data-lucide="clock"></i> Delay / Machine</button>
-                    <button class="tool-btn" onclick="addNode('sink')"><i data-lucide="log-out"></i> Sink / Exit</button>
-                    <button class="tool-btn" onclick="setMode('connect')" id="btn-connect"><i data-lucide="share-2"></i> Connector</button>
+            <div class="pro-sim-grid">
+                <!-- PALETTE & INSPECTOR -->
+                <div class="sidebar-pane">
+                    <div style="display:flex; gap:2px;">
+                        <button class="tab-btn active" id="tab-palette" onclick="switchTab('palette')">PALETTE</button>
+                        <button class="tab-btn" id="tab-props" onclick="switchTab('props')">INSPECTOR</button>
+                    </div>
 
-                    <div id="inspector" style="margin-top:20px; display:none; border-top:1px solid #eee; padding-top:15px;">
-                        <h4 style="font-size:0.75rem; color:#0a66c2;">PROPERTIES</h4>
+                    <div id="palette-content">
+                        <h4 style="font-size:0.7rem; color:#666; margin-bottom:10px;">FLOW COMPONENTS</h4>
+                        <button class="tool-btn" onclick="addBlock('source')"><i data-lucide="plus-square"></i> Source (Create)</button>
+                        <button class="tool-btn" onclick="addBlock('service')"><i data-lucide="settings"></i> Service (Seize+Delay+Rel)</button>
+                        <button class="tool-btn" onclick="addBlock('sink')"><i data-lucide="log-out"></i> Sink (Dispose)</button>
+                        <button class="tool-btn" onclick="setMode('connect')" id="conn-btn"><i data-lucide="share-2"></i> Connection Tool</button>
+
+                        <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">RESOURCES</h4>
                         <div class="form-group">
-                            <label>Label</label>
-                            <input type="text" id="prop-label" class="form-control" oninput="saveProps()">
+                            <label>Operator Pool Size</label>
+                            <input type="number" id="inp-pool" class="form-control" value="5" onchange="updatePool()">
                         </div>
-                        <div class="form-group" id="group-delay">
-                            <label>Delay Time (s)</label>
-                            <input type="number" id="prop-delay" class="form-control" value="2" onchange="saveProps()">
+                    </div>
+
+                    <div id="props-content" style="display:none;">
+                        <h4 style="font-size:0.75rem; color:#0a66c2;" id="inspect-title">BLOCK PROPERTIES</h4>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="prop-name" class="form-control" oninput="applyProps()">
                         </div>
-                        <div class="form-group" id="group-arrival" style="display:none;">
-                            <label>Arrival Rate (s)</label>
-                            <input type="number" id="prop-arrival" class="form-control" value="4" onchange="saveProps()">
+                        
+                        <!-- SOURCE OPTIONS -->
+                        <div id="source-opts" style="display:none;">
+                            <div class="form-group">
+                                <label>Arrival Distribution</label>
+                                <select id="prop-dist" class="form-control" onchange="applyProps()">
+                                    <option value="fixed">Fixed Rate</option>
+                                    <option value="exp">Exponential (Poisson)</option>
+                                    <option value="uniform">Uniform Range</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Mean Arrival Time (s)</label>
+                                <input type="number" id="prop-mean" class="form-control" value="5" onchange="applyProps()">
+                            </div>
+                        </div>
+
+                        <!-- SERVICE OPTIONS -->
+                        <div id="service-opts" style="display:none;">
+                            <div class="form-group">
+                                <label>Processing Time (s)</label>
+                                <input type="number" id="prop-delay" class="form-control" value="3" onchange="applyProps()">
+                            </div>
+                            <div class="form-group">
+                                <label>Resource Requirement</label>
+                                <input type="number" id="prop-res" class="form-control" value="1" onchange="applyProps()">
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CANVAS -->
-                <div class="canvas-main" id="canvas">
+                <div class="canvas-pane" id="canvas">
                     <svg class="conn-svg" id="svg-layer">
-                        <defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>
+                        <defs>
+                            <marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
+                                <path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" />
+                            </marker>
+                        </defs>
                     </svg>
                 </div>
 
-                <!-- DASHBOARD -->
-                <div class="pane-stats">
-                    <h4 style="font-size:0.8rem; margin-bottom:15px; color:#0a66c2; border-bottom:1px solid #eee; padding-bottom:10px;">KPI DASHBOARD</h4>
-                    
-                    <div class="kpi-card">
-                        <div class="kpi-label">Batch Makespan</div>
-                        <div class="kpi-value" id="kpi-makespan">0:00</div>
-                    </div>
-                    
-                    <div class="kpi-card">
-                        <div class="kpi-label">Throughput</div>
-                        <div class="kpi-value" id="kpi-tp">0 Units</div>
+                <!-- ANALYTICS -->
+                <div class="stats-pane">
+                    <div class="res-pool">
+                        <span>OPERATOR POOL</span>
+                        <span class="res-count" id="pool-count">5 / 5</span>
                     </div>
 
-                    <div class="kpi-card">
-                        <div class="kpi-label">Avg. System Wait Time</div>
-                        <div class="kpi-value" id="kpi-wait" style="color:#cc1016;">0.0s</div>
+                    <div class="kpi-box">
+                        <div class="kpi-label">Service Level (Avg Flow Time)</div>
+                        <div class="kpi-val" id="kpi-flow">0.0s</div>
+                    </div>
+                    
+                    <div class="kpi-box">
+                        <div class="kpi-label">System WIP</div>
+                        <div class="kpi-val" id="kpi-wip">0 Units</div>
                     </div>
 
-                    <h4 style="font-size:0.75rem; margin:20px 0 10px;">RESOURCE UTILIZATION</h4>
-                    <div id="util-list">
-                        <!-- Machine bars here -->
+                    <h4 style="font-size:0.75rem; margin:20px 0 10px;">BOTTLE-NECK ANALYSIS</h4>
+                    <div id="bn-list">
+                        <!-- Utilization cards here -->
                     </div>
                 </div>
             </div>
@@ -131,81 +163,97 @@
     </div>
 
     <script>
-        let nodes = [];
-        let links = [];
+        let blocks = [];
+        let connections = [];
         let isRunning = false;
-        let mode = 'select';
-        let selected = null;
-        let connectSrc = null;
-        let speed = 2;
+        let activeMode = 'select';
+        let selectedBlock = null;
+        let connSrc = null;
+        let engineSpeed = 2;
+        let poolSize = 5;
+        let currentPool = 5;
         let startTime = 0;
-        let processedCount = 0;
-        let totalWaitTime = 0;
+        let processed = 0;
+        let totalFlowTime = 0;
 
         const canvas = document.getElementById('canvas');
         const svg = document.getElementById('svg-layer');
 
+        function switchTab(t) {
+            document.getElementById('palette-content').style.display = t === 'palette' ? 'block' : 'none';
+            document.getElementById('props-content').style.display = t === 'props' ? 'block' : 'none';
+            document.getElementById('tab-palette').classList.toggle('active', t === 'palette');
+            document.getElementById('tab-props').classList.toggle('active', t === 'props');
+        }
+
         function setMode(m) {
-            mode = m;
-            document.getElementById('btn-connect').classList.toggle('active', m === 'connect');
+            activeMode = m;
+            document.getElementById('conn-btn').classList.toggle('active', m === 'connect');
         }
 
-        function addNode(type, x=50, y=50, label) {
-            const id = 'n' + Date.now() + Math.floor(Math.random()*1000);
-            const node = {
+        function updatePool() {
+            poolSize = parseInt(document.getElementById('inp-pool').value);
+            currentPool = poolSize;
+            updatePoolDisplay();
+        }
+
+        function updatePoolDisplay() {
+            document.getElementById('pool-count').innerText = `${currentPool} / ${poolSize}`;
+        }
+
+        function addBlock(type, x=60, y=60) {
+            const id = 'b' + Date.now() + Math.floor(Math.random()*1000);
+            const b = {
                 id, type, x, y,
-                label: label || type.toUpperCase(),
-                delay: 2, arrival: 4,
-                queue: [], busy: false,
-                totalBusyTime: 0
+                name: type.toUpperCase() + '-' + blocks.length,
+                dist: 'fixed', mean: 5, delay: 3, resReq: 1,
+                queue: [], processing: false,
+                totalBusy: 0
             };
-            nodes.push(node);
-            drawNode(node);
-            return node;
+            blocks.push(b);
+            drawBlock(b);
+            return b;
         }
 
-        function drawNode(node) {
+        function drawBlock(b) {
             const el = document.createElement('div');
-            el.className = 'node-obj';
-            el.id = node.id;
-            el.style.left = node.x + 'px';
-            el.style.top = node.y + 'px';
-            el.innerHTML = `
-                <div class="node-q-count" id="q-${node.id}">0</div>
-                <div style="padding:0 5px; text-align:center;">${node.label}</div>
-            `;
+            el.className = 'block';
+            el.id = b.id;
+            el.style.left = b.x + 'px';
+            el.style.top = b.y + 'px';
+            el.innerHTML = `<div class="block-q" id="q-${b.id}">0</div><div style="text-align:center;">${b.name}</div>`;
             
             el.onclick = (e) => {
                 e.stopPropagation();
-                if (mode === 'connect') {
-                    if (!connectSrc) {
-                        connectSrc = node;
-                        el.style.borderColor = '#915907';
+                if (activeMode === 'connect') {
+                    if (!connSrc) {
+                        connSrc = b;
+                        el.style.borderColor = '#d97706';
                     } else {
-                        if (connectSrc.id !== node.id) {
-                            links.push({ from: connectSrc.id, to: node.id });
-                            renderLinks();
+                        if (connSrc.id !== b.id) {
+                            connections.push({ from: connSrc.id, to: b.id });
+                            renderConnections();
                         }
-                        document.querySelectorAll('.node-obj').forEach(n => n.style.borderColor = '');
-                        connectSrc = null;
+                        document.querySelectorAll('.block').forEach(x => x.style.borderColor = '');
+                        connSrc = null;
                         setMode('select');
                     }
                 } else {
-                    inspect(node);
+                    inspect(b);
                 }
             };
 
-            // Drag
+            // Simple Drag
             el.onmousedown = (e) => {
-                if (mode !== 'select') return;
+                if (activeMode !== 'select') return;
                 let sx = e.clientX, sy = e.clientY;
                 document.onmousemove = (m) => {
-                    node.x += m.clientX - sx;
-                    node.y += m.clientY - sy;
+                    b.x += m.clientX - sx;
+                    b.y += m.clientY - sy;
                     sx = m.clientX; sy = m.clientY;
-                    el.style.left = node.x + 'px';
-                    el.style.top = node.y + 'px';
-                    renderLinks();
+                    el.style.left = b.x + 'px';
+                    el.style.top = b.y + 'px';
+                    renderConnections();
                 };
                 document.onmouseup = () => document.onmousemove = null;
             };
@@ -213,213 +261,190 @@
             canvas.appendChild(el);
         }
 
-        function renderLinks() {
-            svg.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
-            links.forEach(link => {
-                const n1 = nodes.find(n => n.id === link.from);
-                const n2 = nodes.find(n => n.id === link.to);
-                if (!n1 || !n2) return;
+        function renderConnections() {
+            svg.innerHTML = '<defs><marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
+            connections.forEach(c => {
+                const b1 = blocks.find(x => x.id === c.from);
+                const b2 = blocks.find(x => x.id === c.to);
+                if (!b1 || !b2) return;
                 const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                l.setAttribute("x1", n1.x + 50); l.setAttribute("y1", n1.y + 30);
-                l.setAttribute("x2", n2.x + 50); l.setAttribute("y2", n2.y + 30);
+                l.setAttribute("x1", b1.x + 55); l.setAttribute("y1", b1.y + 35);
+                l.setAttribute("x2", b2.x + 55); l.setAttribute("y2", b2.y + 35);
                 l.setAttribute("stroke", "#0a66c2"); l.setAttribute("stroke-width", "2");
-                l.setAttribute("marker-end", "url(#arrow)");
+                l.setAttribute("marker-end", "url(#arr)");
                 svg.appendChild(l);
             });
         }
 
-        function inspect(node) {
-            selected = node;
-            document.querySelectorAll('.node-obj').forEach(n => n.classList.remove('selected'));
-            document.getElementById(node.id).classList.add('selected');
-            document.getElementById('inspector').style.display = 'block';
-            document.getElementById('prop-label').value = node.label;
-            document.getElementById('prop-delay').value = node.delay;
-            document.getElementById('prop-arrival').value = node.arrival;
-            document.getElementById('group-delay').style.display = node.type === 'delay' ? 'block' : 'none';
-            document.getElementById('group-arrival').style.display = node.type === 'source' ? 'block' : 'none';
+        function inspect(b) {
+            selectedBlock = b;
+            switchTab('props');
+            document.getElementById('prop-name').value = b.name;
+            document.getElementById('prop-dist').value = b.dist;
+            document.getElementById('prop-mean').value = b.mean;
+            document.getElementById('prop-delay').value = b.delay;
+            document.getElementById('prop-res').value = b.resReq;
+            
+            document.getElementById('source-opts').style.display = b.type === 'source' ? 'block' : 'none';
+            document.getElementById('service-opts').style.display = b.type === 'service' ? 'block' : 'none';
         }
 
-        function saveProps() {
-            if (!selected) return;
-            selected.label = document.getElementById('prop-label').value;
-            selected.delay = parseFloat(document.getElementById('prop-delay').value);
-            selected.arrival = parseFloat(document.getElementById('prop-arrival').value);
-            document.getElementById(selected.id).innerText = selected.label;
-            // Add back the queue div
-            const q = document.createElement('div');
-            q.className = 'node-q-count';
-            q.id = 'q-' + selected.id;
-            q.innerText = '0';
-            document.getElementById(selected.id).appendChild(q);
+        function applyProps() {
+            if (!selectedBlock) return;
+            selectedBlock.name = document.getElementById('prop-name').value;
+            selectedBlock.dist = document.getElementById('prop-dist').value;
+            selectedBlock.mean = parseFloat(document.getElementById('prop-mean').value);
+            selectedBlock.delay = parseFloat(document.getElementById('prop-delay').value);
+            selectedBlock.resReq = parseInt(document.getElementById('prop-res').value);
+            document.getElementById(selectedBlock.id).querySelector('div:last-child').innerText = selectedBlock.name;
         }
 
-        function loadScenario() {
-            resetCanvas();
-            const type = document.getElementById('scenario-preset').value;
-            if (type === 'mass') {
-                const s = addNode('source', 50, 150, 'Raw Material');
-                const m1 = addNode('delay', 200, 150, 'Station 1');
-                const m2 = addNode('delay', 350, 150, 'Station 2');
-                const e = addNode('sink', 550, 150, 'Warehouse');
-                links.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: e.id});
-            } else if (type === 'job') {
-                const s = addNode('source', 50, 50, 'Orders');
-                const m1 = addNode('delay', 200, 50, 'Milling');
-                const m2 = addNode('delay', 200, 250, 'Lathing');
-                const m3 = addNode('delay', 400, 150, 'Assembly');
-                const e = addNode('sink', 600, 150, 'Shipping');
-                links.push({from: s.id, to: m1.id}, {from: s.id, to: m2.id}, {from: m1.id, to: m3.id}, {from: m2.id, to: m3.id}, {from: m3.id, to: e.id});
-            } else if (type === 'assembly') {
-                const s1 = addNode('source', 50, 50, 'Component A');
-                const s2 = addNode('source', 50, 250, 'Component B');
-                const m1 = addNode('delay', 300, 150, 'Main Assembly');
-                const e = addNode('sink', 550, 150, 'Finished Product');
-                links.push({from: s1.id, to: m1.id}, {from: s2.id, to: m1.id}, {from: m1.id, to: e.id});
-            }
-            renderLinks();
-            updateUtilList();
+        function getRandomArrival(b) {
+            if (b.dist === 'fixed') return b.mean;
+            if (b.dist === 'exp') return -b.mean * Math.log(Math.random());
+            if (b.dist === 'uniform') return b.mean * (0.5 + Math.random());
+            return b.mean;
         }
 
-        function resetCanvas() {
-            stopSim();
-            nodes = []; links = []; canvas.innerHTML = '<svg class="conn-svg" id="svg-layer"><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs></svg>';
-            processedCount = 0; totalWaitTime = 0;
-            document.getElementById('kpi-tp').innerText = '0 Units';
-            document.getElementById('kpi-wait').innerText = '0.0s';
-            document.getElementById('kpi-makespan').innerText = '0:00';
-            updateUtilList();
-        }
-
-        let runTimer = null;
-        let intervals = [];
+        let timers = [];
+        let kpiInterval = null;
         function toggleSim() {
             if (isRunning) { stopSim(); return; }
             isRunning = true;
             startTime = Date.now();
-            document.getElementById('btn-play').innerHTML = '<i data-lucide="square"></i> Stop';
+            document.getElementById('play-btn').innerHTML = '<i data-lucide="square"></i> Stop Engine';
             
-            nodes.filter(n => n.type === 'source').forEach(src => {
-                const spawn = () => {
+            blocks.filter(b => b.type === 'source').forEach(src => {
+                const schedule = () => {
                     if (!isRunning) return;
                     spawnEntity(src);
-                    intervals.push(setTimeout(spawn, (src.arrival * 1000) / speed));
+                    timers.push(setTimeout(schedule, (getRandomArrival(src) * 1000) / engineSpeed));
                 };
-                spawn();
+                schedule();
             });
 
-            runTimer = setInterval(updateKPIs, 1000);
+            kpiInterval = setInterval(updateStats, 1000);
             lucide.createIcons();
         }
 
         function stopSim() {
             isRunning = false;
-            clearInterval(runTimer);
-            intervals.forEach(clearTimeout);
-            intervals = [];
-            document.getElementById('btn-play').innerHTML = '<i data-lucide="play"></i> Run';
+            timers.forEach(clearTimeout);
+            timers = [];
+            clearInterval(kpiInterval);
+            document.getElementById('play-btn').innerHTML = '<i data-lucide="play"></i> Run Engine';
             lucide.createIcons();
         }
 
         function spawnEntity(src) {
-            const ent = {
-                id: 'E' + Math.floor(Math.random()*1000),
-                el: document.createElement('div'),
-                spawnTime: Date.now()
-            };
-            ent.el.className = 'entity-dot';
+            const ent = { id: 'E'+Math.floor(Math.random()*1000), el: document.createElement('div'), entry: Date.now() };
+            ent.el.className = 'part';
             ent.el.style.background = '#0a66c2';
-            ent.el.style.left = (src.x + 45) + 'px';
-            ent.el.style.top = (src.y + 25) + 'px';
+            ent.el.style.left = (src.x + 50) + 'px';
+            ent.el.style.top = (src.y + 30) + 'px';
             canvas.appendChild(ent.el);
-            moveNext(ent, src.id);
+            move(ent, src.id);
         }
 
-        function moveNext(ent, currId) {
+        function move(ent, currId) {
             if (!isRunning) return;
-            const targetLinks = links.filter(l => l.from === currId);
-            if (targetLinks.length === 0) {
+            const link = connections.find(c => c.from === currId);
+            if (!link) {
                 ent.el.remove();
-                processedCount++;
-                totalWaitTime += (Date.now() - ent.spawnTime) / 1000;
+                processed++;
+                totalFlowTime += (Date.now() - ent.entry) / 1000;
                 return;
             }
-            // Branch randomly if multiple targets
-            const link = targetLinks[Math.floor(Math.random() * targetLinks.length)];
-            const target = nodes.find(n => n.id === link.to);
-            
-            // Move to target
-            ent.el.style.left = (target.x + 45) + 'px';
-            ent.el.style.top = (target.y + 25) + 'px';
+            const next = blocks.find(b => b.id === link.to);
+            ent.el.style.left = (next.x + 50) + 'px';
+            ent.el.style.top = (next.y + 30) + 'px';
 
-            if (target.type === 'sink') {
-                setTimeout(() => { ent.el.remove(); processedCount++; updateKPIs(); }, 500 / speed);
+            if (next.type === 'sink') {
+                setTimeout(() => { ent.el.remove(); processed++; updateStats(); }, 500 / engineSpeed);
                 return;
             }
 
-            target.queue.push(ent);
-            document.getElementById('q-' + target.id).innerText = target.queue.length;
+            next.queue.push(ent);
+            updateQ(next);
 
             const process = () => {
                 if (!isRunning) return;
-                if (!target.busy && target.queue[0] === ent) {
-                    target.busy = true;
-                    target.queue.shift();
-                    document.getElementById('q-' + target.id).innerText = target.queue.length;
-                    document.getElementById(target.id).classList.add('active');
-                    
-                    const pStart = Date.now();
-                    setTimeout(() => {
-                        target.busy = false;
-                        target.totalBusyTime += (target.delay);
-                        document.getElementById(target.id).classList.remove('active');
-                        moveNext(ent, target.id);
-                    }, (target.delay * 1000) / speed);
+                const bEl = document.getElementById(next.id);
+                if (!next.processing && next.queue[0] === ent) {
+                    if (currentPool >= next.resReq) {
+                        currentPool -= next.resReq;
+                        updatePoolDisplay();
+                        next.processing = true;
+                        next.queue.shift();
+                        updateQ(next);
+                        bEl.classList.remove('seized');
+                        bEl.classList.add('active');
+
+                        setTimeout(() => {
+                            next.processing = false;
+                            next.totalBusy += next.delay;
+                            currentPool += next.resReq;
+                            updatePoolDisplay();
+                            bEl.classList.remove('active');
+                            move(ent, next.id);
+                        }, (next.delay * 1000) / engineSpeed);
+                    } else {
+                        bEl.classList.add('seized'); // Visual feedback: Waiting for resource
+                        setTimeout(process, 200 / engineSpeed);
+                    }
                 } else {
-                    setTimeout(process, 100 / speed);
+                    setTimeout(process, 200 / engineSpeed);
                 }
             };
             process();
         }
 
-        function updateSpeed() {
-            speed = parseInt(document.getElementById('sim-speed').value);
-            document.getElementById('speed-label').innerText = speed + 'x';
-        }
-
-        function updateKPIs() {
+        function updateQ(b) { document.getElementById('q-' + b.id).innerText = b.queue.length; }
+        
+        function updateStats() {
             if (!isRunning) return;
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const m = Math.floor(elapsed / 60);
-            const s = (elapsed % 60).toString().padStart(2, '0');
-            document.getElementById('kpi-makespan').innerText = `${m}:${s}`;
-            document.getElementById('kpi-tp').innerText = processedCount + ' Units';
-            document.getElementById('kpi-wait').innerText = processedCount > 0 ? (totalWaitTime / processedCount).toFixed(1) + 's' : '0.0s';
+            document.getElementById('kpi-flow').innerText = processed > 0 ? (totalFlowTime / processed).toFixed(1) + 's' : '0.0s';
+            const wip = blocks.reduce((acc, b) => acc + b.queue.length + (b.processing ? 1 : 0), 0);
+            document.getElementById('kpi-wip').innerText = wip + ' Units';
             
-            updateUtilList();
-        }
-
-        function updateUtilList() {
-            const list = document.getElementById('util-list');
-            list.innerHTML = '';
-            nodes.filter(n => n.type === 'delay').forEach(n => {
-                const elapsed = (Date.now() - startTime) / 1000;
-                const util = elapsed > 0 ? Math.min(100, (n.totalBusyTime / elapsed) * 100) : 0;
-                list.innerHTML += `
-                    <div style="margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.7rem;">
-                            <span>${n.label}</span>
-                            <span>${util.toFixed(0)}%</span>
+            const elapsed = (Date.now() - startTime) / 1000;
+            const bnList = document.getElementById('bn-list');
+            bnList.innerHTML = '';
+            blocks.filter(b => b.type === 'service').forEach(b => {
+                const util = elapsed > 0 ? Math.min(100, (b.totalBusy / elapsed) * 100) : 0;
+                bnList.innerHTML += `
+                    <div style="margin-bottom:8px; font-size:0.7rem;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>${b.name}</span>
+                            <span>${util.toFixed(0)}% Util</span>
                         </div>
-                        <div class="util-bar-bg"><div class="util-bar-fill" style="width:${util}%"></div></div>
+                        <div style="height:4px; background:#eef3f8; border-radius:2px; margin-top:2px;">
+                            <div style="height:100%; background:#0a66c2; width:${util}%"></div>
+                        </div>
                     </div>
                 `;
             });
         }
 
+        function updateSpeed() {
+            engineSpeed = parseInt(document.getElementById('engine-speed').value);
+            document.getElementById('speed-val').innerText = engineSpeed + 'x';
+        }
+
+        function resetEngine() {
+            stopSim();
+            blocks = []; connections = []; processed = 0; totalFlowTime = 0;
+            canvas.innerHTML = '<svg class="conn-svg" id="svg-layer"><defs><marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs></svg>';
+            updatePool(); updateStats();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            loadScenario();
+            const s = addBlock('source', 50, 150);
+            const m = addBlock('service', 300, 150);
+            const k = addBlock('sink', 550, 150);
+            connections.push({from: s.id, to: m.id}, {from: m.id, to: k.id});
+            renderConnections();
         });
     </script>
 </body>
