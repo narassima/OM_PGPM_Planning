@@ -58,14 +58,21 @@
         </nav>
         <main id="main-content">
             <header>
-                <div class="header-title"><h1>Rigorous Simulation Engine</h1></div>
+                <div class="header-title"><h1>Simulator Pro: Process Modeler</h1></div>
                 <div class="header-actions">
+                    <select id="scenario-preset" class="form-control" style="width:180px; font-size:0.75rem;" onchange="loadScenario()">
+                        <option value="">-- Choose Template --</option>
+                        <option value="mass">Mass Production</option>
+                        <option value="job">Job Shop</option>
+                        <option value="assembly">Assembly Line</option>
+                        <option value="batch">Batch Processing</option>
+                    </select>
                     <div style="display:flex; align-items:center; gap:10px; background:#eef3f8; padding:5px 15px; border-radius:20px;">
-                        <span style="font-size:0.75rem; font-weight:700;">Engine Speed</span>
+                        <span style="font-size:0.75rem; font-weight:700;">Speed</span>
                         <input type="range" id="engine-speed" min="1" max="20" value="2" onchange="updateSpeed()">
                         <span id="speed-val">2x</span>
                     </div>
-                    <button class="btn btn-primary" onclick="toggleSim()" id="play-btn"><i data-lucide="play"></i> Run Engine</button>
+                    <button class="btn btn-primary" onclick="toggleSim()" id="play-btn"><i data-lucide="play"></i> Run</button>
                     <button class="btn btn-secondary" onclick="resetEngine()"><i data-lucide="rotate-ccw"></i> Reset</button>
                 </div>
             </header>
@@ -402,18 +409,24 @@
                 const k = addBlock('sink', 650, 200); k.name = "Outbound";
                 connections.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: m3.id}, {from: m3.id, to: k.id});
             } else if (type === 'job') {
-                const s = addBlock('source', 50, 100); s.name = "Arrivals"; s.mean = 4;
-                const m1 = addBlock('service', 250, 50); m1.name = "Drilling"; m1.delay = 4;
-                const m2 = addBlock('service', 250, 250); m2.name = "Grinding"; m2.delay = 3;
-                const m3 = addBlock('service', 450, 150); m3.name = "Quality Control"; m3.delay = 2;
+                const s = addBlock('source', 50, 150); s.name = "Arrivals"; s.mean = 5;
+                const d1 = addBlock('decide', 200, 150); d1.name = "Path Logic"; d1.percent = 50;
+                const m1 = addBlock('service', 350, 50); m1.name = "Drill-A"; m1.delay = 4;
+                const m2 = addBlock('service', 350, 250); m2.name = "Mill-B"; m2.delay = 6;
+                const m3 = addBlock('service', 500, 150); m3.name = "Inspect"; m3.delay = 2;
                 const k = addBlock('sink', 650, 150); k.name = "Exit";
-                connections.push({from: s.id, to: m1.id}, {from: s.id, to: m2.id}, {from: m1.id, to: m3.id}, {from: m2.id, to: m3.id}, {from: m3.id, to: k.id});
+                connections.push({from: s.id, to: d1.id}, {from: d1.id, to: m1.id}, {from: d1.id, to: m2.id}, {from: m1.id, to: m3.id}, {from: m2.id, to: m3.id}, {from: m3.id, to: k.id});
             } else if (type === 'assembly') {
-                const s1 = addBlock('source', 50, 80); s1.name = "Part A Entry";
-                const s2 = addBlock('source', 50, 220); s2.name = "Part B Entry";
-                const m1 = addBlock('service', 300, 150); m1.name = "Fusion Hub"; m1.delay = 5;
-                const k = addBlock('sink', 600, 150); k.name = "Final Product";
+                const s1 = addBlock('source', 50, 80); s1.name = "Comp-A";
+                const s2 = addBlock('source', 50, 220); s2.name = "Comp-B";
+                const m1 = addBlock('service', 300, 150); m1.name = "Joiner"; m1.delay = 4;
+                const k = addBlock('sink', 550, 150); k.name = "Finalize";
                 connections.push({from: s1.id, to: m1.id}, {from: s2.id, to: m1.id}, {from: m1.id, to: k.id});
+            } else if (type === 'batch') {
+                const s = addBlock('source', 50, 150); s.name = "Batch Entry"; s.mean = 10;
+                const m1 = addBlock('service', 300, 150); m1.name = "Batch Oven"; m1.delay = 12; m1.resReq = 2;
+                const k = addBlock('sink', 550, 150); k.name = "Shipment";
+                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: k.id});
             }
             renderConnections();
             updateStats();
