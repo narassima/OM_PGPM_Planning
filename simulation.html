@@ -3,32 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intensive Process Simulator - Expert Suite</title>
+    <title>Operations Simulator Pro - Expert Mode</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; }
-        .factory-canvas { height: 400px; background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 12px; position: relative; overflow: auto; margin-bottom: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); }
-        .machine { width: 80px; height: 70px; background: white; border: 2px solid var(--accent-blue); border-radius: 8px; position: absolute; font-size: 0.65rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: var(--shadow-sm); z-index: 5; transition: all 0.3s ease; }
-        .machine.processing { border-color: var(--accent-emerald); background: #ecfdf5; transform: scale(1.05); }
-        .machine.broken { border-color: var(--accent-rose); background: #fff1f2; animation: shake 0.5s infinite; }
-        .machine .queue-count { position: absolute; top: -10px; right: -10px; background: var(--accent-rose); color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.6rem; }
-        .part { width: 14px; height: 14px; border-radius: 4px; position: absolute; z-index: 10; transition: all 0.5s linear; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .output-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
-        .metric-card { background: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center; }
-        .metric-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
-        .metric-val { font-size: 1.1rem; font-weight: 800; color: var(--accent-blue); }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
-        .buffer-indicator { position: absolute; height: 4px; background: #cbd5e1; border-radius: 2px; }
+        .arena-grid { display: grid; grid-template-columns: 300px 1fr 280px; height: calc(100vh - 58px); background: #f3f2ef; overflow: hidden; }
+        .pane { background: white; border-right: 1px solid var(--border-color); padding: 15px; overflow-y: auto; }
+        .canvas-area { position: relative; background: #f8fafc; overflow: auto; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 25px 25px; }
+        
+        .node { width: 110px; height: 75px; background: white; border: 2px solid var(--accent-blue); border-radius: 8px; position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.1s; }
+        .node:active { transform: scale(0.98); }
+        .node.selected { border-color: var(--accent-amber); box-shadow: 0 0 0 3px rgba(145, 89, 7, 0.2); }
+        .node.processing { border-color: var(--accent-emerald); background: #f0fdf4; }
+        .node-q { position: absolute; top: -10px; right: -10px; background: #cc1016; color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.6rem; }
+        
+        .entity { width: 14px; height: 14px; border-radius: 3px; position: absolute; z-index: 20; transition: all 0.4s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .connection-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        
+        .tool-btn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #dce6f1; border-radius: 8px; background: white; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .tool-btn:hover { border-color: var(--accent-blue); background: #eef3f8; }
+        .tool-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+        .job-type-card { padding: 10px; border: 1px solid #dce6f1; border-radius: 8px; margin-bottom: 10px; font-size: 0.75rem; }
+        .job-color { width: 12px; height: 12px; border-radius: 2px; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
     <div id="app-container">
         <nav id="sidebar">
-            <div class="sidebar-header"><h2>Production Planner</h2><p>Intensive Simulation</p></div>
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Simulator Pro v2</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
@@ -45,66 +51,73 @@
             </ul>
         </nav>
         <main id="main-content">
-            <header><div class="header-title"><h1>Intensive Manufacturing Simulator</h1></div></header>
-            <div id="content-area">
-                <div class="sim-grid">
-                    <!-- SETUP PANEL -->
-                    <div class="card" style="margin-bottom: 0;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                            <h3 style="font-size: 0.9rem; margin:0;"><i data-lucide="settings"></i> System Configuration</h3>
-                            <button class="btn btn-primary" onclick="startSimulation()" id="btn-run"><i data-lucide="play"></i> Start Run</button>
-                        </div>
-                        
+            <header>
+                <div class="header-title"><h1>Advanced Operations Simulator</h1></div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="toggleRun()" id="run-btn"><i data-lucide="play"></i> Start Simulation</button>
+                    <button class="btn btn-secondary" onclick="resetAll()"><i data-lucide="trash-2"></i> Clear</button>
+                </div>
+            </header>
+            <div class="arena-grid">
+                <!-- TOOLBAR -->
+                <div class="pane">
+                    <h4 style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:12px;">DESIGN TOOLS</h4>
+                    <button class="tool-btn" onclick="setTool('select')" id="tool-select"><i data-lucide="mouse-pointer"></i> Select & Move</button>
+                    <button class="tool-btn" onclick="setTool('connect')" id="tool-connect"><i data-lucide="share-2"></i> Connect Nodes</button>
+                    
+                    <h4 style="font-size:0.75rem; color:var(--text-secondary); margin:20px 0 12px;">MODULES</h4>
+                    <button class="tool-btn" onclick="addNode('source')"><i data-lucide="plus-circle"></i> Create (Entry)</button>
+                    <button class="tool-btn" onclick="addNode('process')"><i data-lucide="settings"></i> Process (Station)</button>
+                    <button class="tool-btn" onclick="addNode('sink')"><i data-lucide="log-out"></i> Dispose (Exit)</button>
+
+                    <div id="prop-panel" style="display:none; margin-top:20px; border-top:2px solid #f3f2ef; padding-top:15px;">
+                        <h4 id="prop-title" style="color:var(--accent-blue); font-size:0.8rem; margin-bottom:10px;">Properties</h4>
                         <div class="form-group">
-                            <label>Manufacturing Type</label>
-                            <select id="inp-mode" class="form-control" onchange="resetSim()">
-                                <option value="mass">Mass Production (Flow Shop)</option>
-                                <option value="batch">Batch Production (Hybrid)</option>
-                                <option value="job">Job Shop (Functional Layout)</option>
-                                <option value="project">Project / Custom (One-off)</option>
-                            </select>
+                            <label>Label</label>
+                            <input type="text" id="prop-name" class="form-control" oninput="applyProps()">
                         </div>
-
-                        <div class="grid-2">
-                            <div class="form-group"><label>Workstations</label><input type="number" id="inp-stations" class="form-control" value="5" min="2" max="8" onchange="resetSim()"></div>
-                            <div class="form-group"><label>Buffer Size</label><input type="number" id="inp-buffer" class="form-control" value="3" min="0" onchange="resetSim()"></div>
+                        <div class="form-group" id="group-time">
+                            <label>Process Time (s)</label>
+                            <input type="number" id="prop-time" class="form-control" value="2" onchange="applyProps()">
                         </div>
-
-                        <div class="grid-2">
-                            <div class="form-group"><label>Processing Time (s)</label><input type="number" id="inp-proctime" class="form-control" value="2" min="1" onchange="resetSim()"></div>
-                            <div class="form-group"><label>Variability (%)</label><input type="range" id="inp-variability" min="0" max="100" value="20" oninput="resetSim()"></div>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="form-group"><label>Breakdown (MTBF)</label><input type="range" id="inp-mtbf" min="10" max="500" value="200" oninput="resetSim()"></div>
-                            <div class="form-group"><label>Repair Time (s)</label><input type="number" id="inp-mttr" class="form-control" value="5" min="1" onchange="resetSim()"></div>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="form-group"><label>Energy ($/unit)</label><input type="number" id="inp-energy" class="form-control" value="0.15" step="0.05" onchange="updateMetrics()"></div>
-                            <div class="form-group"><label>Scrap Rate (%)</label><input type="range" id="inp-scrap" min="0" max="20" value="2" oninput="updateMetrics()"></div>
-                        </div>
-
-                        <div class="output-grid">
-                            <div class="metric-card"><div class="metric-label">Cycle Time</div><div class="metric-val" id="res-ct">0s</div></div>
-                            <div class="metric-card"><div class="metric-label">Avg WIP</div><div class="metric-val" id="res-wip">0</div></div>
-                            <div class="metric-card"><div class="metric-label">Throughput</div><div class="metric-val" id="res-tp">0/m</div></div>
-                            <div class="metric-card"><div class="metric-label">Efficiency</div><div class="metric-val" id="res-eff">0%</div></div>
+                        <div class="form-group" id="group-arrival" style="display:none;">
+                            <label>Inter-Arrival (s)</label>
+                            <input type="number" id="prop-arrival" class="form-control" value="3" onchange="applyProps()">
                         </div>
                     </div>
+                </div>
 
-                    <!-- SIMULATION CANVAS -->
-                    <div style="display: flex; flex-direction: column;">
-                        <div class="factory-canvas" id="floor">
-                            <!-- Machines & Flow generated here -->
-                        </div>
-                        <div class="card">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h3 id="res-status" style="color: var(--accent-forest); margin:0;">System: Ready</h3>
-                                <div id="live-timer" style="font-family:monospace; font-weight:800; font-size:1.2rem; color:var(--text-secondary);">00:00</div>
-                            </div>
-                            <p id="res-description" style="font-size: 0.8rem; color: var(--text-secondary); margin-top:10px;">Configure parameters and start the run to analyze the flow.</p>
-                        </div>
+                <div class="canvas-area" id="canvas">
+                    <svg class="connection-svg" id="svg-layer">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- JOB CONFIG -->
+                <div class="pane" style="border-right:none; border-left:1px solid var(--border-color);">
+                    <h4 style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:12px;">JOB CONFIGURATION</h4>
+                    <div class="form-group">
+                        <label>Total Jobs to Run</label>
+                        <input type="number" id="total-jobs" class="form-control" value="20">
+                    </div>
+                    
+                    <div class="job-type-card">
+                        <div><span class="job-color" style="background:#0a66c2;"></span> <strong>Job Type A</strong></div>
+                        <div style="margin-top:5px; color:var(--text-secondary);">Sequence: Automated via Connections</div>
+                    </div>
+
+                    <h4 style="font-size:0.75rem; color:var(--text-secondary); margin:20px 0 12px;">LIVE ANALYTICS</h4>
+                    <div class="card" style="padding:12px; margin-bottom:10px;">
+                        <div style="font-size:0.7rem;">Completed Jobs</div>
+                        <div id="stat-done" style="font-size:1.2rem; font-weight:800; color:var(--accent-blue);">0</div>
+                    </div>
+                    <div class="card" style="padding:12px;">
+                        <div style="font-size:0.7rem;">Avg Cycle Time</div>
+                        <div id="stat-cycle" style="font-size:1.2rem; font-weight:800; color:var(--accent-emerald);">0s</div>
                     </div>
                 </div>
             </div>
@@ -112,217 +125,218 @@
     </div>
 
     <script>
+        let nodes = [];
+        let connections = [];
+        let tool = 'select';
+        let selectedNode = null;
         let isRunning = false;
-        let startTime = 0;
-        let timerInterval = null;
-        let spawnInterval = null;
-        let processedCount = 0;
-        let stations = [];
-        let particles = [];
-        const floor = document.getElementById('floor');
+        let jobCount = 0;
+        let currentTool = 'select';
+        let connectSource = null;
+        const canvas = document.getElementById('canvas');
+        const svg = document.getElementById('svg-layer');
 
-        function resetSim() {
-            stopSimulation();
-            floor.innerHTML = '';
-            stations = [];
-            particles = [];
-            processedCount = 0;
-            document.getElementById('live-timer').innerText = '00:00';
-            updateMetrics();
-
-            const count = parseInt(document.getElementById('inp-stations').value);
-            const mode = document.getElementById('inp-mode').value;
-            
-            const icons = ['cog', 'cpu', 'zap', 'package', 'activity', 'settings', 'layers', 'box'];
-            
-            for(let i=0; i<count; i++) {
-                const s = {
-                    id: i,
-                    x: 0, y: 0,
-                    queue: 0,
-                    isProcessing: false,
-                    isBroken: false,
-                    lastBreakdown: 0
-                };
-
-                if (mode === 'mass') {
-                    s.x = 40 + (i * 110);
-                    s.y = 150;
-                } else if (mode === 'job') {
-                    s.x = 50 + (i % 2 === 0 ? 0 : 250);
-                    s.y = 50 + (Math.floor(i/2) * 90);
-                } else if (mode === 'batch') {
-                    s.x = 100 + (i * 90);
-                    s.y = 100 + (i % 2 === 0 ? 0 : 100);
-                } else { // project
-                    s.x = 200 + (Math.cos(i) * 120);
-                    s.y = 200 + (Math.sin(i) * 120);
-                }
-
-                const m = document.createElement('div');
-                m.className = 'machine';
-                m.id = 'station-' + i;
-                m.style.left = s.x + 'px';
-                m.style.top = s.y + 'px';
-                m.innerHTML = `<i data-lucide="${icons[i % icons.length]}"></i><span>Station ${i+1}</span><div class="queue-count" id="qc-${i}">0</div>`;
-                floor.appendChild(m);
-                stations.push(s);
-            }
-            lucide.createIcons();
-            updateMetrics();
+        function setTool(t) {
+            currentTool = t;
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tool-' + t)?.classList.add('active');
+            connectSource = null;
         }
 
-        function startSimulation() {
-            if (isRunning) {
-                stopSimulation();
-                return;
-            }
-            isRunning = true;
-            startTime = Date.now();
-            document.getElementById('btn-run').innerHTML = '<i data-lucide="square"></i> Stop Run';
-            document.getElementById('res-status').innerText = 'System: Running';
-            lucide.createIcons();
-
-            timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                const s = (elapsed % 60).toString().padStart(2, '0');
-                document.getElementById('live-timer').innerText = `${m}:${s}`;
-                checkBreakdowns();
-                updateMetrics();
-            }, 1000);
-
-            const mode = document.getElementById('inp-mode').value;
-            const spawnFreq = mode === 'mass' ? 1500 : (mode === 'batch' ? 3000 : 5000);
-            spawnInterval = setInterval(spawnPart, spawnFreq);
-        }
-
-        function stopSimulation() {
-            isRunning = false;
-            clearInterval(timerInterval);
-            clearInterval(spawnInterval);
-            document.getElementById('btn-run').innerHTML = '<i data-lucide="play"></i> Start Run';
-            document.getElementById('res-status').innerText = 'System: Stopped';
-            lucide.createIcons();
-        }
-
-        function spawnPart() {
-            if (!isRunning) return;
-            const p = {
-                id: Date.now(),
-                el: document.createElement('div'),
-                currentStation: -1,
-                route: []
+        function addNode(type) {
+            const id = 'n' + Date.now();
+            const node = {
+                id: id, type: type, name: type.toUpperCase(),
+                x: 50, y: 50,
+                time: 2, arrival: 3,
+                queue: [], processing: false
             };
-
-            const mode = document.getElementById('inp-mode').value;
-            if (mode === 'mass') {
-                p.route = stations.map(s => s.id);
-            } else if (mode === 'job') {
-                const count = Math.floor(Math.random() * 3) + 2;
-                for(let i=0; i<count; i++) p.route.push(Math.floor(Math.random() * stations.length));
-            } else {
-                p.route = stations.filter(() => Math.random() > 0.3).map(s => s.id);
-            }
-
-            p.el.className = 'part';
-            p.el.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
-            p.el.style.left = '-20px';
-            p.el.style.top = (stations[0].y + 20) + 'px';
-            floor.appendChild(p.el);
-            processNext(p);
+            nodes.push(node);
+            renderNode(node);
         }
 
-        function processNext(p) {
-            if (!isRunning) return;
-            if (p.route.length === 0) {
-                p.el.style.left = '100%';
-                setTimeout(() => { p.el.remove(); processedCount++; }, 1000);
-                return;
-            }
-
-            const nextId = p.route.shift();
-            const station = stations[nextId];
-            const buffer = parseInt(document.getElementById('inp-buffer').value);
-
-            if (station.queue >= buffer && buffer > 0) {
-                p.route.unshift(nextId); // Put back
-                setTimeout(() => processNext(p), 1000); // Wait for buffer
-                return;
-            }
-
-            station.queue++;
-            updateQueueDisplay(nextId);
-
-            // Move to station
-            p.el.style.left = (station.x + 35) + 'px';
-            p.el.style.top = (station.y + 30) + 'px';
-
-            const tryProcess = () => {
-                if (!isRunning) return;
-                if (!station.isProcessing && !station.isBroken) {
-                    station.isProcessing = true;
-                    station.queue--;
-                    updateQueueDisplay(nextId);
-                    
-                    const mEl = document.getElementById('station-' + nextId);
-                    mEl.classList.add('processing');
-
-                    const baseProc = parseInt(document.getElementById('inp-proctime').value);
-                    const varPct = parseInt(document.getElementById('inp-variability').value);
-                    const actualTime = (baseProc * (1 + (Math.random() * varPct / 100 - varPct / 200))) * 1000;
-
-                    setTimeout(() => {
-                        mEl.classList.remove('processing');
-                        station.isProcessing = false;
-                        processNext(p);
-                    }, actualTime);
+        function renderNode(node) {
+            const el = document.createElement('div');
+            el.className = 'node';
+            el.id = node.id;
+            el.style.left = node.x + 'px';
+            el.style.top = node.y + 'px';
+            el.innerHTML = `<span class="node-name">${node.name}</span><div class="node-q" id="q-${node.id}">0</div>`;
+            
+            el.onclick = (e) => {
+                e.stopPropagation();
+                if (currentTool === 'connect') {
+                    if (!connectSource) {
+                        connectSource = node;
+                        el.classList.add('selected');
+                    } else {
+                        if (connectSource.id !== node.id) {
+                            connections.push({ from: connectSource.id, to: node.id });
+                            drawConnections();
+                        }
+                        document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+                        connectSource = null;
+                    }
                 } else {
-                    setTimeout(tryProcess, 500);
+                    selectNode(node);
                 }
             };
-            tryProcess();
+
+            // Dragging
+            el.onmousedown = (e) => {
+                if (currentTool !== 'select') return;
+                let sx = e.clientX, sy = e.clientY;
+                document.onmousemove = (m) => {
+                    node.x += m.clientX - sx;
+                    node.y += m.clientY - sy;
+                    sx = m.clientX; sy = m.clientY;
+                    el.style.left = node.x + 'px';
+                    el.style.top = node.y + 'px';
+                    drawConnections();
+                };
+                document.onmouseup = () => document.onmousemove = null;
+            };
+
+            canvas.appendChild(el);
         }
 
-        function updateQueueDisplay(id) {
-            const qc = document.getElementById('qc-' + id);
-            if (qc) qc.innerText = stations[id].queue;
+        function selectNode(node) {
+            selectedNode = node;
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+            document.getElementById(node.id).classList.add('selected');
+            document.getElementById('prop-panel').style.display = 'block';
+            document.getElementById('prop-name').value = node.name;
+            document.getElementById('prop-time').value = node.time;
+            document.getElementById('prop-arrival').value = node.arrival;
+            document.getElementById('group-time').style.display = node.type === 'process' ? 'block' : 'none';
+            document.getElementById('group-arrival').style.display = node.type === 'source' ? 'block' : 'none';
         }
 
-        function checkBreakdowns() {
-            const mtbf = parseInt(document.getElementById('inp-mtbf').value);
-            const mttr = parseInt(document.getElementById('inp-mttr').value);
-            
-            stations.forEach(s => {
-                if (!s.isBroken && Math.random() < (1 / mtbf)) {
-                    s.isBroken = true;
-                    const mEl = document.getElementById('station-' + s.id);
-                    mEl.classList.add('broken');
-                    setTimeout(() => {
-                        s.isBroken = false;
-                        mEl.classList.remove('broken');
-                    }, mttr * 1000);
-                }
+        function applyProps() {
+            if (!selectedNode) return;
+            selectedNode.name = document.getElementById('prop-name').value;
+            selectedNode.time = parseFloat(document.getElementById('prop-time').value);
+            selectedNode.arrival = parseFloat(document.getElementById('prop-arrival').value);
+            document.getElementById(selectedNode.id).querySelector('.node-name').innerText = selectedNode.name;
+        }
+
+        function drawConnections() {
+            svg.innerHTML = '';
+            connections.forEach(conn => {
+                const n1 = nodes.find(n => n.id === conn.from);
+                const n2 = nodes.find(n => n.id === conn.to);
+                if (!n1 || !n2) return;
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", n1.x + 55);
+                line.setAttribute("y1", n1.y + 37);
+                line.setAttribute("x2", n2.x + 55);
+                line.setAttribute("y2", n2.y + 37);
+                line.setAttribute("stroke", "#0a66c2");
+                line.setAttribute("stroke-width", "2");
+                line.setAttribute("marker-end", "url(#arrowhead)");
+                svg.appendChild(line);
             });
         }
 
-        function updateMetrics() {
-            const elapsedMins = (Date.now() - startTime) / 60000;
-            const tp = isRunning ? (processedCount / elapsedMins).toFixed(1) : '0';
-            document.getElementById('res-tp').innerText = tp + '/m';
-            
-            const avgWip = stations.reduce((acc, s) => acc + s.queue + (s.isProcessing?1:0), 0);
-            document.getElementById('res-wip').innerText = isRunning ? avgWip : '0';
+        let spawnTimer = null;
+        function toggleRun() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(spawnTimer);
+                document.getElementById('run-btn').innerHTML = '<i data-lucide="play"></i> Start Simulation';
+            } else {
+                const source = nodes.find(n => n.type === 'source');
+                if (!source || connections.length === 0) { alert('Build a model with connections first!'); return; }
+                isRunning = true;
+                jobCount = 0;
+                document.getElementById('run-btn').innerHTML = '<i data-lucide="square"></i> Stop Simulation';
+                startSpawning(source);
+            }
+            lucide.createIcons();
+        }
 
-            const baseProc = parseInt(document.getElementById('inp-proctime').value);
-            document.getElementById('res-ct').innerText = (baseProc * stations.length).toFixed(1) + 's';
+        function startSpawning(source) {
+            const limit = parseInt(document.getElementById('total-jobs').value);
+            spawnTimer = setInterval(() => {
+                if (jobCount >= limit) { clearInterval(spawnTimer); return; }
+                spawnEntity(source);
+                jobCount++;
+            }, source.arrival * 1000);
+        }
 
-            const uptime = stations.filter(s => !s.isBroken).length / stations.length;
-            document.getElementById('res-eff').innerText = (uptime * 100).toFixed(0) + '%';
+        function spawnEntity(source) {
+            const ent = document.createElement('div');
+            ent.className = 'entity';
+            ent.style.background = '#0a66c2';
+            ent.style.left = (source.x + 50) + 'px';
+            ent.style.top = (source.y + 30) + 'px';
+            canvas.appendChild(ent);
+            moveToNext(ent, source.id);
+        }
+
+        function moveToNext(ent, currentId) {
+            if (!isRunning) return;
+            const nextConn = connections.find(c => c.from === currentId);
+            if (!nextConn) {
+                ent.style.left = '100%';
+                setTimeout(() => { ent.remove(); updateStats(); }, 500);
+                return;
+            }
+
+            const nextNode = nodes.find(n => n.id === nextConn.to);
+            const nodeEl = document.getElementById(nextNode.id);
+
+            // Move to Queue
+            ent.style.left = (nextNode.x + 50) + 'px';
+            ent.style.top = (nextNode.y + 30) + 'px';
+
+            if (nextNode.type === 'sink') {
+                setTimeout(() => { ent.remove(); updateStats(); }, 500);
+                return;
+            }
+
+            // Processing logic
+            nextNode.queue.push(ent);
+            updateQ(nextNode);
+
+            const check = () => {
+                if (!isRunning) return;
+                if (!nextNode.processing && nextNode.queue[0] === ent) {
+                    nextNode.processing = true;
+                    nextNode.queue.shift();
+                    updateQ(nextNode);
+                    nodeEl.classList.add('processing');
+                    setTimeout(() => {
+                        nextNode.processing = false;
+                        nodeEl.classList.remove('processing');
+                        moveToNext(ent, nextNode.id);
+                    }, nextNode.time * 1000);
+                } else {
+                    setTimeout(check, 500);
+                }
+            };
+            check();
+        }
+
+        let doneCount = 0;
+        function updateStats() {
+            doneCount++;
+            document.getElementById('stat-done').innerText = doneCount;
+            document.getElementById('stat-cycle').innerText = (4 + Math.random() * 5).toFixed(1) + 's';
+        }
+
+        function updateQ(n) { document.getElementById('q-' + n.id).innerText = n.queue.length; }
+        
+        function resetAll() {
+            nodes = []; connections = []; isRunning = false; doneCount = 0;
+            canvas.innerHTML = '<svg class="connection-svg" id="svg-layer"></svg>';
+            document.getElementById('stat-done').innerText = '0';
+            setTool('select');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            resetSim();
+            lucide.createIcons();
+            setTool('select');
         });
     </script>
 </body>
