@@ -11,16 +11,17 @@
     <link rel="stylesheet" href="styles/index.css">
     <style>
         .quadrant-grid { display: grid; grid-template-columns: 350px 5px 1fr; grid-template-rows: 1fr 5px 350px; height: calc(100vh - 60px); background: #f3f2ef; padding: 0; box-sizing: border-box; }
+        .quadrant-grid { display: grid; grid-template-columns: 350px 8px 1fr; grid-template-rows: 1fr 8px 350px; height: calc(100vh - 60px); background: #f3f2ef; padding: 0; box-sizing: border-box; }
         .quadrant { background: white; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; }
         .q-header { background: #f8fafc; padding: 8px 12px; border-bottom: 1px solid #eef3f8; display: flex; justify-content: space-between; align-items: center; }
         .q-header h3 { font-size: 0.7rem; color: #0a66c2; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
         .q-content { flex: 1; padding: 12px; overflow-y: auto; position: relative; }
 
         /* RESIZERS */
-        .resizer-h { grid-column: 2; grid-row: 1 / span 3; cursor: col-resize; background: #e2e8f0; transition: 0.2s; }
-        .resizer-h:hover { background: #0a66c2; }
-        .resizer-v { grid-row: 2; grid-column: 1 / span 3; cursor: row-resize; background: #e2e8f0; transition: 0.2s; }
-        .resizer-v:hover { background: #0a66c2; }
+        .resizer-h { grid-column: 2; grid-row: 1 / span 3; cursor: col-resize; background: #e2e8f0; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; transition: 0.2s; position: relative; z-index: 100; }
+        .resizer-h:hover, .resizer-h.active { background: #0a66c2; width: 8px; }
+        .resizer-v { grid-row: 2; grid-column: 1 / span 3; cursor: row-resize; background: #e2e8f0; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; transition: 0.2s; position: relative; z-index: 100; }
+        .resizer-v:hover, .resizer-v.active { background: #0a66c2; height: 8px; }
 
         .help-btn { width: 14px; height: 14px; background: #eef3f8; color: #0a66c2; border-radius: 50%; font-size: 0.6rem; cursor: help; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid #dce6f1; }
         .help-btn:hover { background: #0a66c2; color: white; }
@@ -52,13 +53,13 @@
 <body>
     <div id="app-container">
         <nav id="sidebar">
-            <div class="sidebar-header"><h2>Production Planner</h2><p>Simulator Pro v4</p></div>
+            <div class="sidebar-header"><h2>Production Planner</h2><p>Interactive Learning</p></div>
             <ul class="nav-links">
                 <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
                 <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
                 <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
-                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
-                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
+                <li><a href="mps.html"><i data-lucide="layers"></i> Master Production Scheduling</a></li>
+                <li><a href="mrp.html"><i data-lucide="package"></i> Material Requirements Planning</a></li>
                 <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
                 <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
                 <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
@@ -70,7 +71,7 @@
         </nav>
         <main id="main-content">
             <header>
-                <div class="header-title"><h1>AnyLogic-Lite: 4-Quadrant Workspace</h1></div>
+                <div class="header-title"><h1>Advanced Process Simulation Workspace</h1></div>
                 <div class="header-actions">
                     <select id="scenario-preset" class="form-control" style="width:200px;" onchange="loadScenario()">
                         <option value="">-- Scenario Preset --</option>
@@ -214,11 +215,13 @@
 
         resizerH.addEventListener('mousedown', (e) => {
             isResizingH = true;
+            resizerH.classList.add('active');
             document.body.style.cursor = 'col-resize';
             e.preventDefault();
         });
         resizerV.addEventListener('mousedown', (e) => {
             isResizingV = true;
+            resizerV.classList.add('active');
             document.body.style.cursor = 'row-resize';
             e.preventDefault();
         });
@@ -228,14 +231,14 @@
                 const rect = gridContainer.getBoundingClientRect();
                 const newWidth = e.clientX - rect.left;
                 if (newWidth > 200 && newWidth < rect.width - 200) {
-                    gridContainer.style.gridTemplateColumns = `${newWidth}px 5px 1fr`;
+                    gridContainer.style.gridTemplateColumns = `${newWidth}px 8px 1fr`;
                 }
             }
             if (isResizingV) {
                 const rect = gridContainer.getBoundingClientRect();
                 const newHeight = e.clientY - rect.top;
                 if (newHeight > 150 && newHeight < rect.height - 100) {
-                    gridContainer.style.gridTemplateRows = `${newHeight}px 5px 1fr`;
+                    gridContainer.style.gridTemplateRows = `${newHeight}px 8px 1fr`;
                 }
             }
         });
@@ -243,6 +246,8 @@
         document.addEventListener('mouseup', () => {
             isResizingH = false;
             isResizingV = false;
+            resizerH.classList.remove('active');
+            resizerV.classList.remove('active');
             document.body.style.cursor = 'default';
         });
 
@@ -495,33 +500,42 @@
         function loadScenario() {
             resetAll();
             const type = document.getElementById('scenario-preset').value;
+            if (!type) return;
+
             if (type === 'mass') {
-                const s = addObj('source', 50, 150, "Raw Material");
-                const m1 = addObj('process', 200, 150, "Press");
-                const m2 = addObj('process', 350, 150, "Paint");
-                const k = addObj('sink', 500, 150, "Warehouse");
-                links.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: k.id});
+                // MASS MANUFACTURING: Fast, linear, high-volume
+                const s = addObj('source', 50, 150, "Incoming Mat"); s.delay = 1.5;
+                const p1 = addObj('process', 200, 150, "Stamping"); p1.delay = 2;
+                const p2 = addObj('process', 350, 150, "Degrease"); p2.delay = 2;
+                const p3 = addObj('process', 500, 150, "Coating"); p3.delay = 2;
+                const k = addObj('sink', 650, 150, "Finished Goods");
+                links.push({from: s.id, to: p1.id}, {from: p1.id, to: p2.id}, {from: p2.id, to: p3.id}, {from: p3.id, to: k.id});
             } else if (type === 'job') {
-                const s = addObj('source', 50, 100, "Arrivals");
-                const d = addObj('decide', 200, 100, "QC Gate");
-                const m1 = addObj('process', 350, 50, "Milling");
-                const m2 = addObj('process', 350, 200, "Lathing");
-                const k = addObj('sink', 500, 125, "Shipping");
-                links.push({from: s.id, to: d.id}, {from: d.id, to: m1.id}, {from: d.id, to: m2.id}, {from: m1.id, to: k.id}, {from: m2.id, to: k.id});
+                // JOB SHOP: Variable paths, branching logic
+                const s = addObj('source', 50, 150, "Custom Orders"); s.delay = 4;
+                const d = addObj('decide', 200, 150, "Path Route"); d.prob = 60;
+                const p1 = addObj('process', 350, 50, "Lathe-A"); p1.delay = 8;
+                const p2 = addObj('process', 350, 250, "Mill-B"); p2.delay = 12;
+                const k = addObj('sink', 550, 150, "Shipment");
+                links.push({from: s.id, to: d.id}, {from: d.id, to: p1.id}, {from: d.id, to: p2.id}, {from: p1.id, to: k.id}, {from: p2.id, to: k.id});
             } else if (type === 'assembly') {
-                const s1 = addObj('source', 50, 50, "Comp-A");
-                const s2 = addObj('source', 50, 200, "Comp-B");
-                const m = addObj('process', 250, 125, "Assembly");
-                const k = addObj('sink', 450, 125, "Final Product");
-                links.push({from: s1.id, to: m.id}, {from: s2.id, to: m.id}, {from: m.id, to: k.id});
+                // ASSEMBLY LINE: Converging parts
+                const s1 = addObj('source', 50, 80, "Base Frame"); s1.delay = 5;
+                const s2 = addObj('source', 50, 220, "Electronics"); s2.delay = 5;
+                const p1 = addObj('process', 300, 150, "Main Assembly"); p1.delay = 10;
+                const k = addObj('sink', 500, 150, "QC Exit");
+                links.push({from: s1.id, to: p1.id}, {from: s2.id, to: p1.id}, {from: p1.id, to: k.id});
             } else if (type === 'batch') {
-                const s = addObj('source', 50, 125, "Batch Buffer");
-                const m = addObj('process', 300, 125, "Batch Processor"); m.delay = 10;
-                const k = addObj('sink', 500, 125, "Shipment");
-                links.push({from: s.id, to: m.id}, {from: m.id, to: k.id});
+                // BATCH PROCESSING: Slower, resource-heavy
+                const s = addObj('source', 50, 150, "Bulk Load"); s.delay = 2;
+                const p = addObj('process', 300, 150, "Oven Batch"); p.delay = 25;
+                const k = addObj('sink', 550, 150, "Package");
+                links.push({from: s.id, to: p.id}, {from: p.id, to: k.id});
             }
+
             renderLinks();
             updateStats();
+            lucide.createIcons();
         }
 
         function resetAll() {
