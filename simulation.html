@@ -474,7 +474,20 @@
             updateStats();
         }
 
-        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); document.getElementById('scenario-preset').value = 'mass'; loadScenario(); });
+        document.addEventListener('DOMContentLoaded', () => { 
+            lucide.createIcons(); 
+            document.getElementById('scenario-preset').value = 'mass'; 
+            loadScenario(); 
+            if (typeof initExportDropdown === 'function') {
+                initExportDropdown(() => {
+                    const data = [["Block ID", "Type", "Name", "Delay", "Queue Length"]];
+                    blocks.forEach(b => {
+                        data.push([b.id, b.type, b.name, b.delay, b.queue.length]);
+                    });
+                    return data;
+                });
+            }
+        });
     </script>
 </body>
 </html>
