@@ -10,56 +10,39 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .pro-sim-grid { display: grid; grid-template-columns: 320px 1fr 340px; height: calc(100vh - 60px); background: #f3f2ef; overflow: hidden; }
+        .pro-layout { display: grid; grid-template-rows: auto 1fr 200px; height: 100vh; background: #f3f2ef; overflow: hidden; }
+        .main-workspace { display: grid; grid-template-columns: 300px 1fr; overflow: hidden; }
         .sidebar-pane { background: #ffffff; border-right: 1px solid var(--border-color); padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .canvas-pane { position: relative; background: #ffffff; overflow: auto; background-image: radial-gradient(#d1d9e6 1px, transparent 1px); background-size: 20px 20px; }
-        .stats-pane { background: #ffffff; border-left: 1px solid var(--border-color); padding: 20px; overflow-y: auto; }
+        .canvas-pane { position: relative; background: #ffffff; overflow: auto; background-image: radial-gradient(#d1d9e6 1px, transparent 1px); background-size: 20px 20px; flex-grow: 1; }
+        .bottom-pane { background: #ffffff; border-top: 1px solid var(--border-color); padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 20px; overflow-y: auto; }
         
-        .block { width: 110px; height: 70px; background: #ffffff; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.1s; box-shadow: var(--shadow-sm); }
-        .block.seized { border-color: #d97706; background: #fffbeb; } /* Waiting for resource */
+        .block { width: 110px; height: 65px; background: #ffffff; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.1s; box-shadow: var(--shadow-sm); }
+        .block.seized { border-color: #d97706; background: #fffbeb; }
         .block.active { border-color: #057642; background: #ecfdf5; box-shadow: 0 0 10px rgba(5,118,66,0.2); }
         .block-q { position: absolute; top: -12px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; font-weight: 800; }
 
         .conn-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
         .part { width: 12px; height: 12px; border-radius: 3px; position: absolute; z-index: 20; transition: all 0.5s linear; }
         
-        .kpi-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
-        .kpi-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 700; }
+        .kpi-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: center; }
+        .kpi-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
         .kpi-val { font-size: 1.2rem; font-weight: 800; color: #0a66c2; }
         
-        .res-pool { background: #eef3f8; padding: 10px; border-radius: 6px; font-size: 0.75rem; margin-bottom: 15px; }
-        .res-count { font-weight: 800; color: #0a66c2; float: right; }
-
         .help-trigger { width: 16px; height: 16px; background: #eef3f8; color: #0a66c2; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; cursor: help; margin-left: 5px; font-weight: 800; border: 1px solid #dce6f1; }
         .help-trigger:hover { background: #0a66c2; color: white; }
         
         #help-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; background: white; border-radius: 8px; box-shadow: var(--shadow-lg); z-index: 1000; padding: 20px; display: none; border: 1px solid var(--border-color); }
         .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; }
+        
+        .unit-select { font-size: 0.65rem; padding: 2px; border-radius: 4px; border: 1px solid #dce6f1; margin-left: 5px; }
     </style>
 </head>
 <body>
-    <div id="app-container">
-        <nav id="sidebar">
-            <div class="sidebar-header"><h2>Production Planner</h2><p>Simulator Pro v3</p></div>
-            <ul class="nav-links">
-                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
-                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity Planning</a></li>
-                <li><a href="app.html"><i data-lucide="calendar"></i> Aggregate Planning</a></li>
-                <li><a href="mps.html"><i data-lucide="layers"></i> Master Prod. Sched.</a></li>
-                <li><a href="mrp.html"><i data-lucide="package"></i> Material Req. Plan</a></li>
-                <li><a href="bom.html"><i data-lucide="git-merge"></i> Bill of Materials</a></li>
-                <li style="margin-top:24px;font-size:0.8rem;text-transform:uppercase;color:var(--text-secondary);letter-spacing:1px;padding-left:1rem;">Extras</li>
-                <li><a href="quiz.html"><i data-lucide="check-square"></i> Evaluation Engine</a></li>
-                <li><a href="tools.html"><i data-lucide="cpu"></i> Interactive Tools</a></li>
-                <li><a href="resources.html"><i data-lucide="link"></i> Resource Bank</a></li>
-                <li><a href="integration.html"><i data-lucide="link-2"></i> Production Planner</a></li>
-                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Process Simulator</a></li>
-            </ul>
-        </nav>
-        <main id="main-content">
-            <header>
-                <div class="header-title"><h1>Simulator Pro: Process Modeler</h1></div>
-                <div class="header-actions">
+    <div id="app-container" class="pro-layout">
+        <header style="grid-row: 1;">
+            <div style="display:flex; align-items:center; gap:20px; width:100%; padding: 0 20px;">
+                <div class="header-title"><h1>Simulator Pro</h1></div>
+                <div class="header-actions" style="flex-grow:1; justify-content:flex-end;">
                     <select id="scenario-preset" class="form-control" style="width:180px; font-size:0.75rem;" onchange="loadScenario()">
                         <option value="">-- Choose Template --</option>
                         <option value="mass">Mass Production</option>
@@ -75,121 +58,137 @@
                     <button class="btn btn-primary" onclick="toggleSim()" id="play-btn"><i data-lucide="play"></i> Run</button>
                     <button class="btn btn-secondary" onclick="resetEngine()"><i data-lucide="rotate-ccw"></i> Reset</button>
                 </div>
-            </header>
-            
-            <div class="pro-sim-grid">
-                <!-- PALETTE & INSPECTOR -->
-                <div class="sidebar-pane">
-                    <div style="display:flex; gap:2px;">
-                        <button class="tab-btn active" id="tab-palette" onclick="switchTab('palette')">PALETTE</button>
-                        <button class="tab-btn" id="tab-props" onclick="switchTab('props')">INSPECTOR</button>
+            </div>
+        </header>
+
+        <div class="main-workspace">
+            <div class="sidebar-pane">
+                <div style="display:flex; gap:2px;">
+                    <button class="tab-btn active" id="tab-palette" onclick="switchTab('palette')">PALETTE</button>
+                    <button class="tab-btn" id="tab-props" onclick="switchTab('props')">INSPECTOR</button>
+                </div>
+
+                <div id="palette-content">
+                    <h4 style="font-size:0.7rem; color:#666; margin-bottom:10px;">GLOBAL PARAMETERS</h4>
+                    <div class="form-group">
+                        <label>Target Batch Size <span class="help-trigger" onclick="showHelp('batch')">?</span></label>
+                        <input type="number" id="inp-batch-size" class="form-control" value="50">
                     </div>
-
-                    <div id="palette-content">
-                        <h4 style="font-size:0.7rem; color:#666; margin-bottom:10px;">GLOBAL PARAMETERS</h4>
-                        <div class="form-group">
-                            <label>Target Batch Size <span class="help-trigger" onclick="showHelp('batch')">?</span></label>
-                            <input type="number" id="inp-batch-size" class="form-control" value="50" onchange="updateStats()">
-                        </div>
-                        <div class="form-group">
-                            <label>Max Run Duration (s) <span class="help-trigger" onclick="showHelp('duration')">?</span></label>
-                            <input type="number" id="inp-max-time" class="form-control" value="300" onchange="updateStats()">
-                        </div>
-
-                        <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">FLOW COMPONENTS</h4>
-                        <button class="tool-btn" onclick="addBlock('source')"><i data-lucide="plus-square"></i> Source (Create) <span class="help-trigger" onclick="showHelp('source')">?</span></button>
-                        <button class="tool-btn" onclick="addBlock('service')"><i data-lucide="settings"></i> Service (Process) <span class="help-trigger" onclick="showHelp('service')">?</span></button>
-                        <button class="tool-btn" onclick="addBlock('decide')"><i data-lucide="split"></i> Decide (Branch) <span class="help-trigger" onclick="showHelp('decide')">?</span></button>
-                        <button class="tool-btn" onclick="addBlock('sink')"><i data-lucide="log-out"></i> Sink (Dispose) <span class="help-trigger" onclick="showHelp('sink')">?</span></button>
-                        <button class="tool-btn" onclick="setMode('connect')" id="conn-btn"><i data-lucide="share-2"></i> Connector</button>
-
-                        <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">RESOURCES</h4>
-                        <div class="form-group">
-                            <label>Operator Pool Size</label>
-                            <input type="number" id="inp-pool" class="form-control" value="5" onchange="updatePool()">
+                    <div class="form-group">
+                        <label>Max Run Length <span class="help-trigger" onclick="showHelp('duration')">?</span></label>
+                        <div style="display:flex; gap:5px;">
+                            <input type="number" id="inp-max-time" class="form-control" value="300">
+                            <select id="unit-max-time" class="unit-select">
+                                <option value="1">sec</option>
+                                <option value="60">min</option>
+                                <option value="3600">hr</option>
+                            </select>
                         </div>
                     </div>
 
-                    <div id="props-content" style="display:none;">
-                        <h4 style="font-size:0.75rem; color:#0a66c2;" id="inspect-title">BLOCK PROPERTIES</h4>
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" id="prop-name" class="form-control" oninput="applyProps()">
-                        </div>
-                        
-                        <!-- SOURCE OPTIONS -->
-                        <div id="source-opts" style="display:none;">
-                            <div class="form-group">
-                                <label>Arrival Distribution</label>
-                                <select id="prop-dist" class="form-control" onchange="applyProps()">
-                                    <option value="fixed">Fixed Rate</option>
-                                    <option value="exp">Exponential (Poisson)</option>
-                                    <option value="uniform">Uniform Range</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Mean Arrival Time (s)</label>
-                                <input type="number" id="prop-mean" class="form-control" value="5" onchange="applyProps()">
-                            </div>
-                        </div>
+                    <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">FLOW COMPONENTS</h4>
+                    <button class="tool-btn" onclick="addBlock('source')"><i data-lucide="plus-square"></i> Source <span class="help-trigger" onclick="showHelp('source')">?</span></button>
+                    <button class="tool-btn" onclick="addBlock('service')"><i data-lucide="settings"></i> Service <span class="help-trigger" onclick="showHelp('service')">?</span></button>
+                    <button class="tool-btn" onclick="addBlock('decide')"><i data-lucide="split"></i> Decide <span class="help-trigger" onclick="showHelp('decide')">?</span></button>
+                    <button class="tool-btn" onclick="addBlock('sink')"><i data-lucide="log-out"></i> Sink <span class="help-trigger" onclick="showHelp('sink')">?</span></button>
+                    <button class="tool-btn" onclick="setMode('connect')" id="conn-btn"><i data-lucide="share-2"></i> Connector</button>
 
-                        <!-- SERVICE OPTIONS -->
-                        <div id="service-opts" style="display:none;">
-                            <div class="form-group">
-                                <label>Processing Time (s)</label>
-                                <input type="number" id="prop-delay" class="form-control" value="3" onchange="applyProps()">
-                            </div>
-                            <div class="form-group">
-                                <label>Resource Requirement</label>
-                                <input type="number" id="prop-res" class="form-control" value="1" onchange="applyProps()">
-                            </div>
-                        </div>
-
-                        <!-- DECIDE OPTIONS -->
-                        <div id="decide-opts" style="display:none;">
-                            <div class="form-group">
-                                <label>Percent True (%)</label>
-                                <input type="number" id="prop-percent" class="form-control" value="50" onchange="applyProps()">
-                            </div>
-                            <p style="font-size:0.65rem; color:#666;">First connection = TRUE, Second = FALSE.</p>
-                        </div>
+                    <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">RESOURCES</h4>
+                    <div class="form-group">
+                        <label>Operator Pool Size</label>
+                        <input type="number" id="inp-pool" class="form-control" value="5" onchange="updatePool()">
                     </div>
                 </div>
 
-                <div class="canvas-pane" id="canvas">
-                    <svg class="conn-svg" id="svg-layer">
-                        <defs>
-                            <marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
-                                <path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" />
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-
-                <!-- ANALYTICS -->
-                <div class="stats-pane">
-                    <div class="res-pool">
-                        <span>OPERATOR POOL</span>
-                        <span class="res-count" id="pool-count">5 / 5</span>
-                    </div>
-
-                    <div class="kpi-box">
-                        <div class="kpi-label">Service Level (Avg Flow Time)</div>
-                        <div class="kpi-val" id="kpi-flow">0.0s</div>
+                <div id="props-content" style="display:none;">
+                    <h4 style="font-size:0.75rem; color:#0a66c2;" id="inspect-title">BLOCK PROPERTIES</h4>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="prop-name" class="form-control" oninput="applyProps()">
                     </div>
                     
-                    <div class="kpi-box">
-                        <div class="kpi-label">System WIP</div>
-                        <div class="kpi-val" id="kpi-wip">0 Units</div>
+                    <div id="source-opts" style="display:none;">
+                        <div class="form-group">
+                            <label>Arrival Distribution</label>
+                            <select id="prop-dist" class="form-control" onchange="applyProps()">
+                                <option value="fixed">Fixed</option>
+                                <option value="exp">Exponential</option>
+                                <option value="uniform">Uniform</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mean Arrival</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="prop-mean" class="form-control" value="5" onchange="applyProps()">
+                                <select id="unit-mean" class="unit-select" onchange="applyProps()">
+                                    <option value="1">sec</option>
+                                    <option value="60">min</option>
+                                    <option value="3600">hr</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <h4 style="font-size:0.75rem; margin:20px 0 10px;">BOTTLE-NECK ANALYSIS</h4>
-                    <div id="bn-list">
-                        <!-- Utilization cards here -->
+                    <div id="service-opts" style="display:none;">
+                        <div class="form-group">
+                            <label>Process Time</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="number" id="prop-delay" class="form-control" value="3" onchange="applyProps()">
+                                <select id="unit-delay" class="unit-select" onchange="applyProps()">
+                                    <option value="1">sec</option>
+                                    <option value="60">min</option>
+                                    <option value="3600">hr</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Resource Requirement</label>
+                            <input type="number" id="prop-res" class="form-control" value="1" onchange="applyProps()">
+                        </div>
+                    </div>
+
+                    <div id="decide-opts" style="display:none;">
+                        <div class="form-group">
+                            <label>Percent True (%)</label>
+                            <input type="number" id="prop-percent" class="form-control" value="50" onchange="applyProps()">
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+
+            <div class="canvas-pane" id="canvas">
+                <svg class="conn-svg" id="svg-layer">
+                    <defs>
+                        <marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
+                            <path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+
+        <div class="bottom-pane">
+            <div class="kpi-box" style="background:#eef3f8;">
+                <div class="kpi-label">Operator Status</div>
+                <div class="kpi-val" id="pool-count">5 / 5</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-label">Avg. Lead Time</div>
+                <div class="kpi-val" id="kpi-flow">0.0s</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-label">System WIP</div>
+                <div class="kpi-val" id="kpi-wip">0 Units</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-label">Throughput</div>
+                <div class="kpi-val" id="kpi-tp">0 Units</div>
+            </div>
+            <div class="kpi-box" style="overflow-y:auto; border:none; background:transparent;">
+                <div class="kpi-label">Station Utilization</div>
+                <div id="bn-list" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+            </div>
+        </div>
     </div>
 
     <!-- HELP MODAL -->
@@ -218,12 +217,12 @@
         const svg = document.getElementById('svg-layer');
 
         const helpData = {
-            batch: "Target Batch Size: Total number of entities to process before the simulation stops. Ideal for measuring the time to complete a fixed production order.",
-            duration: "Max Run Duration: The maximum clock time (simulated seconds) the engine will run. If the batch isn't finished by this time, the engine stops.",
-            source: "Source: Generates parts or orders based on a probability distribution. Exponential distribution is best for modeling random Poisson arrivals.",
-            service: "Service: Represents a machine or manual station. It Seizes an operator, Delays for the process time, and then Releases the operator.",
-            decide: "Decide: A probabilistic branch. Entities are routed to the 'True' path based on the percentage, and 'False' otherwise (e.g., Scrap/Rework).",
-            sink: "Sink: The end of the process. Entities are disposed here, and their total Lead Time is recorded for the KPI dashboard."
+            batch: "Total units to process in this run.",
+            duration: "Total operational time for the simulation window.",
+            source: "Entry point for entities. Supports stochastic arrival patterns.",
+            service: "Production station. Requires time and operators to process parts.",
+            decide: "Probabilistic branching. Used for quality checks or scrap routing.",
+            sink: "Exit point. Records the completion of the unit."
         };
 
         function showHelp(key) {
@@ -264,8 +263,8 @@
             const id = 'b' + Date.now() + Math.floor(Math.random()*1000);
             const b = {
                 id, type, x, y,
-                name: type.toUpperCase() + '-' + blocks.length,
-                dist: 'fixed', mean: 5, delay: 3, resReq: 1, percent: 50,
+                name: type.toUpperCase() + '-' + (blocks.length + 1),
+                dist: 'fixed', mean: 5, meanUnit: 1, delay: 3, delayUnit: 1, resReq: 1, percent: 50,
                 queue: [], processing: false,
                 totalBusy: 0
             };
@@ -302,7 +301,6 @@
                 }
             };
 
-            // Simple Drag
             el.onmousedown = (e) => {
                 if (activeMode !== 'select') return;
                 let sx = e.clientX, sy = e.clientY;
@@ -327,8 +325,8 @@
                 const b2 = blocks.find(x => x.id === c.to);
                 if (!b1 || !b2) return;
                 const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                l.setAttribute("x1", b1.x + 55); l.setAttribute("y1", b1.y + 35);
-                l.setAttribute("x2", b2.x + 55); l.setAttribute("y2", b2.y + 35);
+                l.setAttribute("x1", b1.x + 55); l.setAttribute("y1", b1.y + 32);
+                l.setAttribute("x2", b2.x + 55); l.setAttribute("y2", b2.y + 32);
                 l.setAttribute("stroke", "#0a66c2"); l.setAttribute("stroke-width", "2");
                 l.setAttribute("marker-end", "url(#arr)");
                 svg.appendChild(l);
@@ -341,7 +339,9 @@
             document.getElementById('prop-name').value = b.name;
             document.getElementById('prop-dist').value = b.dist;
             document.getElementById('prop-mean').value = b.mean;
+            document.getElementById('unit-mean').value = b.meanUnit || 1;
             document.getElementById('prop-delay').value = b.delay;
+            document.getElementById('unit-delay').value = b.delayUnit || 1;
             document.getElementById('prop-res').value = b.resReq;
             document.getElementById('prop-percent').value = b.percent || 50;
             
@@ -355,17 +355,20 @@
             selectedBlock.name = document.getElementById('prop-name').value;
             selectedBlock.dist = document.getElementById('prop-dist').value;
             selectedBlock.mean = parseFloat(document.getElementById('prop-mean').value);
+            selectedBlock.meanUnit = parseInt(document.getElementById('unit-mean').value);
             selectedBlock.delay = parseFloat(document.getElementById('prop-delay').value);
+            selectedBlock.delayUnit = parseInt(document.getElementById('unit-delay').value);
             selectedBlock.resReq = parseInt(document.getElementById('prop-res').value);
             selectedBlock.percent = parseFloat(document.getElementById('prop-percent').value);
             document.getElementById(selectedBlock.id).querySelector('div:last-child').innerText = selectedBlock.name;
         }
 
         function getRandomArrival(b) {
-            if (b.dist === 'fixed') return b.mean;
-            if (b.dist === 'exp') return -b.mean * Math.log(Math.random());
-            if (b.dist === 'uniform') return b.mean * (0.5 + Math.random());
-            return b.mean;
+            const val = b.mean * b.meanUnit;
+            if (b.dist === 'fixed') return val;
+            if (b.dist === 'exp') return -val * Math.log(Math.random() || 0.0001);
+            if (b.dist === 'uniform') return val * (0.5 + Math.random());
+            return val;
         }
 
         let timers = [];
@@ -374,7 +377,8 @@
             if (isRunning) { stopSim(); return; }
             isRunning = true;
             startTime = Date.now();
-            document.getElementById('play-btn').innerHTML = '<i data-lucide="square"></i> Stop Engine';
+            processed = 0; totalFlowTime = 0;
+            document.getElementById('play-btn').innerHTML = '<i data-lucide="square"></i> Stop';
             
             blocks.filter(b => b.type === 'source').forEach(src => {
                 const schedule = () => {
@@ -394,90 +398,49 @@
             timers.forEach(clearTimeout);
             timers = [];
             clearInterval(kpiInterval);
-            document.getElementById('play-btn').innerHTML = '<i data-lucide="play"></i> Run Engine';
+            document.getElementById('play-btn').innerHTML = '<i data-lucide="play"></i> Run';
             lucide.createIcons();
         }
 
-        function loadScenario() {
-            resetEngine();
-            const type = document.getElementById('scenario-preset').value;
-            if (type === 'mass') {
-                const s = addBlock('source', 50, 200); s.name = "Inbound"; s.mean = 2;
-                const m1 = addBlock('service', 200, 200); m1.name = "Station 1"; m1.delay = 1.5;
-                const m2 = addBlock('service', 350, 200); m2.name = "Station 2"; m2.delay = 1.5;
-                const m3 = addBlock('service', 500, 200); m3.name = "Station 3"; m3.delay = 1.5;
-                const k = addBlock('sink', 650, 200); k.name = "Outbound";
-                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: m3.id}, {from: m3.id, to: k.id});
-            } else if (type === 'job') {
-                const s = addBlock('source', 50, 150); s.name = "Arrivals"; s.mean = 5;
-                const d1 = addBlock('decide', 200, 150); d1.name = "Path Logic"; d1.percent = 50;
-                const m1 = addBlock('service', 350, 50); m1.name = "Drill-A"; m1.delay = 4;
-                const m2 = addBlock('service', 350, 250); m2.name = "Mill-B"; m2.delay = 6;
-                const m3 = addBlock('service', 500, 150); m3.name = "Inspect"; m3.delay = 2;
-                const k = addBlock('sink', 650, 150); k.name = "Exit";
-                connections.push({from: s.id, to: d1.id}, {from: d1.id, to: m1.id}, {from: d1.id, to: m2.id}, {from: m1.id, to: m3.id}, {from: m2.id, to: m3.id}, {from: m3.id, to: k.id});
-            } else if (type === 'assembly') {
-                const s1 = addBlock('source', 50, 80); s1.name = "Comp-A";
-                const s2 = addBlock('source', 50, 220); s2.name = "Comp-B";
-                const m1 = addBlock('service', 300, 150); m1.name = "Joiner"; m1.delay = 4;
-                const k = addBlock('sink', 550, 150); k.name = "Finalize";
-                connections.push({from: s1.id, to: m1.id}, {from: s2.id, to: m1.id}, {from: m1.id, to: k.id});
-            } else if (type === 'batch') {
-                const s = addBlock('source', 50, 150); s.name = "Batch Entry"; s.mean = 10;
-                const m1 = addBlock('service', 300, 150); m1.name = "Batch Oven"; m1.delay = 12; m1.resReq = 2;
-                const k = addBlock('sink', 550, 150); k.name = "Shipment";
-                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: k.id});
-            }
-            renderConnections();
-            updateStats();
-        }
-
         function spawnEntity(src) {
-            const batchLimit = parseInt(document.getElementById('inp-batch-size').value);
-            const timeLimit = parseInt(document.getElementById('inp-max-time').value);
-            const elapsed = (Date.now() - startTime) / 1000;
+            const bLimit = parseInt(document.getElementById('inp-batch-size').value);
+            const tLimit = parseFloat(document.getElementById('inp-max-time').value) * parseInt(document.getElementById('unit-max-time').value);
+            const elapsed = (Date.now() - startTime) / 1000 * engineSpeed;
 
-            if (processed >= batchLimit || (elapsed * engineSpeed) >= timeLimit) {
-                stopSim();
-                alert(`Simulation Complete: ${processed} units processed.`);
-                return;
-            }
+            if (processed >= bLimit || elapsed >= tLimit) { stopSim(); return; }
 
             const ent = { id: 'E'+Math.floor(Math.random()*1000), el: document.createElement('div'), entry: Date.now() };
             ent.el.className = 'part';
             ent.el.style.background = '#0a66c2';
             ent.el.style.left = (src.x + 50) + 'px';
-            ent.el.style.top = (src.y + 30) + 'px';
+            ent.el.style.top = (src.y + 25) + 'px';
             canvas.appendChild(ent.el);
             move(ent, src.id);
         }
 
         function move(ent, currId) {
             if (!isRunning) return;
-            
-            const currBlock = blocks.find(b => b.id === currId);
+            const b = blocks.find(x => x.id === currId);
             const outgoing = connections.filter(c => c.from === currId);
             
             if (outgoing.length === 0) {
                 ent.el.remove();
                 processed++;
-                totalFlowTime += (Date.now() - ent.entry) / 1000;
+                totalFlowTime += (Date.now() - ent.entry) / 1000 * engineSpeed;
                 return;
             }
 
             let link;
-            if (currBlock.type === 'decide') {
-                // If decide, use probability
-                const isTrue = Math.random() * 100 < currBlock.percent;
-                link = isTrue ? outgoing[0] : (outgoing[1] || outgoing[0]); // Fallback to first if only one connected
+            if (b.type === 'decide') {
+                const isTrue = Math.random() * 100 < b.percent;
+                link = isTrue ? outgoing[0] : (outgoing[1] || outgoing[0]);
             } else {
-                // Default: Pick first or random if multiple (though UI usually adds one)
                 link = outgoing[Math.floor(Math.random() * outgoing.length)];
             }
 
-            const next = blocks.find(b => b.id === link.to);
+            const next = blocks.find(n => n.id === link.to);
             ent.el.style.left = (next.x + 50) + 'px';
-            ent.el.style.top = (next.y + 30) + 'px';
+            ent.el.style.top = (next.y + 25) + 'px';
 
             if (next.type === 'sink') {
                 setTimeout(() => { ent.el.remove(); processed++; updateStats(); }, 500 / engineSpeed);
@@ -487,7 +450,7 @@
             next.queue.push(ent);
             updateQ(next);
 
-            const process = () => {
+            const p = () => {
                 if (!isRunning) return;
                 const bEl = document.getElementById(next.id);
                 if (!next.processing && next.queue[0] === ent) {
@@ -502,47 +465,37 @@
 
                         setTimeout(() => {
                             next.processing = false;
-                            next.totalBusy += next.delay;
+                            next.totalBusy += (next.delay * next.delayUnit);
                             currentPool += next.resReq;
                             updatePoolDisplay();
                             bEl.classList.remove('active');
                             move(ent, next.id);
-                        }, (next.delay * 1000) / engineSpeed);
+                        }, (next.delay * next.delayUnit * 1000) / engineSpeed);
                     } else {
-                        bEl.classList.add('seized'); // Visual feedback: Waiting for resource
-                        setTimeout(process, 200 / engineSpeed);
+                        bEl.classList.add('seized');
+                        setTimeout(p, 200 / engineSpeed);
                     }
                 } else {
-                    setTimeout(process, 200 / engineSpeed);
+                    setTimeout(p, 200 / engineSpeed);
                 }
             };
-            process();
+            p();
         }
 
         function updateQ(b) { document.getElementById('q-' + b.id).innerText = b.queue.length; }
         
         function updateStats() {
-            if (!isRunning) return;
             document.getElementById('kpi-flow').innerText = processed > 0 ? (totalFlowTime / processed).toFixed(1) + 's' : '0.0s';
             const wip = blocks.reduce((acc, b) => acc + b.queue.length + (b.processing ? 1 : 0), 0);
             document.getElementById('kpi-wip').innerText = wip + ' Units';
+            document.getElementById('kpi-tp').innerText = processed + ' Units';
             
-            const elapsed = (Date.now() - startTime) / 1000;
+            const elapsed = (Date.now() - startTime) / 1000 * engineSpeed;
             const bnList = document.getElementById('bn-list');
             bnList.innerHTML = '';
             blocks.filter(b => b.type === 'service').forEach(b => {
                 const util = elapsed > 0 ? Math.min(100, (b.totalBusy / elapsed) * 100) : 0;
-                bnList.innerHTML += `
-                    <div style="margin-bottom:8px; font-size:0.7rem;">
-                        <div style="display:flex; justify-content:space-between;">
-                            <span>${b.name}</span>
-                            <span>${util.toFixed(0)}% Util</span>
-                        </div>
-                        <div style="height:4px; background:#eef3f8; border-radius:2px; margin-top:2px;">
-                            <div style="height:100%; background:#0a66c2; width:${util}%"></div>
-                        </div>
-                    </div>
-                `;
+                bnList.innerHTML += `<div style="width:120px;"><div style="font-size:0.6rem;">${b.name}: ${util.toFixed(0)}%</div><div style="height:3px; background:#eee;"><div style="height:100%; background:#0a66c2; width:${util}%"></div></div></div>`;
             });
         }
 
@@ -551,20 +504,42 @@
             document.getElementById('speed-val').innerText = engineSpeed + 'x';
         }
 
+        function loadScenario() {
+            resetEngine();
+            const type = document.getElementById('scenario-preset').value;
+            if (type === 'mass') {
+                const s = addBlock('source', 50, 150); s.name = "Raw Mat"; s.mean = 2;
+                const m1 = addBlock('service', 220, 150); m1.name = "Press"; m1.delay = 1.8;
+                const m2 = addBlock('service', 390, 150); m2.name = "Paint"; m2.delay = 1.8;
+                const k = addBlock('sink', 560, 150); k.name = "Ship";
+                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: k.id});
+            } else if (type === 'job') {
+                const s = addBlock('source', 50, 150); s.name = "Order"; s.mean = 10;
+                const d1 = addBlock('decide', 200, 150); d1.name = "QC Pass?"; d1.percent = 80;
+                const m1 = addBlock('service', 350, 50); m1.name = "Assembly"; m1.delay = 8;
+                const m2 = addBlock('service', 350, 250); m2.name = "Rework"; m2.delay = 12;
+                const k = addBlock('sink', 550, 150); k.name = "Done";
+                connections.push({from: s.id, to: d1.id}, {from: d1.id, to: m1.id}, {from: d1.id, to: m2.id}, {from: m1.id, to: k.id}, {from: m2.id, to: k.id});
+            } else if (type === 'batch') {
+                const s = addBlock('source', 50, 150); s.name = "Buffer"; s.mean = 1;
+                const m1 = addBlock('service', 300, 150); m1.name = "Batch-Oven"; m1.delay = 30; m1.resReq = 3;
+                const k = addBlock('sink', 550, 150); k.name = "Exit";
+                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: k.id});
+            }
+            renderConnections();
+            updateStats();
+        }
+
         function resetEngine() {
             stopSim();
             blocks = []; connections = []; processed = 0; totalFlowTime = 0;
-            canvas.innerHTML = '<svg class="conn-svg" id="svg-layer"><defs><marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs></svg>';
+            canvas.innerHTML = '<svg class="conn-svg" id="svg-layer"><defs><marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto"><path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" /></marker></defs></svg>';
             updatePool(); updateStats();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            const s = addBlock('source', 50, 150);
-            const m = addBlock('service', 300, 150);
-            const k = addBlock('sink', 550, 150);
-            connections.push({from: s.id, to: m.id}, {from: m.id, to: k.id});
-            renderConnections();
+            loadScenario();
         });
     </script>
 </body>
