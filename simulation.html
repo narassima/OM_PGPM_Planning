@@ -3,296 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnyLogic-Pro: Manufacturing Discrete Event Simulator</title>
+    <title>AnyLogic-Pro: 4-Quadrant Discrete Simulator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
-        .pro-layout { display: grid; grid-template-rows: auto 1fr 200px; height: 100vh; background: #f3f2ef; overflow: hidden; }
-        .main-workspace { display: grid; grid-template-columns: 300px 1fr; overflow: hidden; }
-        .sidebar-pane { background: #ffffff; border-right: 1px solid var(--border-color); padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .canvas-pane { position: relative; background: #ffffff; overflow: auto; background-image: radial-gradient(#d1d9e6 1px, transparent 1px); background-size: 20px 20px; flex-grow: 1; }
-        .bottom-pane { background: #ffffff; border-top: 1px solid var(--border-color); padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 20px; overflow-y: auto; }
-        
-        .block { width: 110px; height: 65px; background: #ffffff; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.1s; box-shadow: var(--shadow-sm); }
-        .block.seized { border-color: #d97706; background: #fffbeb; }
-        .block.active { border-color: #057642; background: #ecfdf5; box-shadow: 0 0 10px rgba(5,118,66,0.2); }
-        .block-q { position: absolute; top: -12px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; font-weight: 800; }
+        .quadrant-grid { display: grid; grid-template-columns: 350px 1fr; grid-template-rows: 1fr 350px; height: calc(100vh - 60px); background: #f3f2ef; gap: 8px; padding: 8px; box-sizing: border-box; }
+        .quadrant { background: white; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-sm); }
+        .q-header { background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #eef3f8; display: flex; justify-content: space-between; align-items: center; }
+        .q-header h3 { font-size: 0.75rem; color: #0a66c2; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+        .q-content { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
 
-        .conn-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-        .part { width: 12px; height: 12px; border-radius: 3px; position: absolute; z-index: 20; transition: all 0.5s linear; }
+        /* Q2: Simulation Window */
+        .canvas-area { background: #ffffff; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; width: 100%; height: 100%; position: relative; overflow: auto; }
+        .block-obj { width: 100px; height: 60px; background: white; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-align: center; padding: 5px; box-shadow: var(--shadow-sm); }
+        .block-obj.active { border-color: #057642; background: #ecfdf5; }
+        .block-q-badge { position: absolute; top: -10px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; }
+        .connector-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        .entity-particle { width: 10px; height: 10px; border-radius: 50%; background: #0a66c2; position: absolute; z-index: 20; transition: all 0.5s linear; }
+
+        /* General UI components */
+        .form-group-sm { margin-bottom: 10px; }
+        .form-group-sm label { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 4px; font-weight: 600; }
+        .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-tool { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #dce6f1; border-radius: 6px; background: white; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        .btn-tool:hover { background: #f1f5f9; border-color: #0a66c2; }
+        .btn-tool.active { background: #0a66c2; color: white; }
+
+        .kpi-filter-bar { display: flex; gap: 10px; margin-bottom: 15px; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .filter-chip { padding: 4px 10px; background: white; border: 1px solid #cbd5e1; border-radius: 15px; font-size: 0.65rem; cursor: pointer; font-weight: 600; }
+        .filter-chip.active { background: #0a66c2; color: white; border-color: #0a66c2; }
         
-        .kpi-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: center; }
-        .kpi-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
-        .kpi-val { font-size: 1.2rem; font-weight: 800; color: #0a66c2; }
-        
-        .help-trigger { width: 16px; height: 16px; background: #eef3f8; color: #0a66c2; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; cursor: help; margin-left: 5px; font-weight: 800; border: 1px solid #dce6f1; }
-        .help-trigger:hover { background: #0a66c2; color: white; }
-        
-        #help-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; background: white; border-radius: 8px; box-shadow: var(--shadow-lg); z-index: 1000; padding: 20px; display: none; border: 1px solid var(--border-color); }
-        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; }
-        
-        .unit-select { font-size: 0.65rem; padding: 2px; border-radius: 4px; border: 1px solid #dce6f1; margin-left: 5px; }
+        .stat-card { border: 1px solid #eef3f8; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .stat-card:hover { background: #f8fafc; }
     </style>
 </head>
 <body>
-    <div id="app-container" class="pro-layout">
-        <header style="grid-row: 1;">
-            <div style="display:flex; align-items:center; gap:20px; width:100%; padding: 0 20px;">
-                <div class="header-title"><h1>Simulator Pro</h1></div>
-                <div class="header-actions" style="flex-grow:1; justify-content:flex-end;">
-                    <select id="scenario-preset" class="form-control" style="width:180px; font-size:0.75rem;" onchange="loadScenario()">
-                        <option value="">-- Choose Template --</option>
-                        <option value="mass">Mass Production</option>
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header"><h2>Planner</h2><p>Simulator Pro</p></div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i data-lucide="home"></i> Dashboard</a></li>
+                <li><a href="capacity.html"><i data-lucide="bar-chart-2"></i> Capacity</a></li>
+                <li><a href="integration.html"><i data-lucide="link-2"></i> Unified Planner</a></li>
+                <li><a href="simulation.html" class="active"><i data-lucide="play-circle"></i> Simulator</a></li>
+                <li><a href="resources.html"><i data-lucide="link"></i> Resources</a></li>
+            </ul>
+        </nav>
+        <main id="main-content">
+            <header>
+                <div class="header-title"><h1>AnyLogic-Lite: 4-Quadrant Workspace</h1></div>
+                <div class="header-actions">
+                    <select id="scenario-preset" class="form-control" style="width:200px;" onchange="loadScenario()">
+                        <option value="">-- Scenario Preset --</option>
+                        <option value="mass">Mass Manufacturing</option>
                         <option value="job">Job Shop</option>
                         <option value="assembly">Assembly Line</option>
                         <option value="batch">Batch Processing</option>
                     </select>
-                    <div style="display:flex; align-items:center; gap:10px; background:#eef3f8; padding:5px 15px; border-radius:20px;">
-                        <span style="font-size:0.75rem; font-weight:700;">Speed</span>
-                        <input type="range" id="engine-speed" min="1" max="20" value="2" onchange="updateSpeed()">
-                        <span id="speed-val">2x</span>
-                    </div>
-                    <button class="btn btn-primary" onclick="toggleSim()" id="play-btn"><i data-lucide="play"></i> Run</button>
-                    <button class="btn btn-secondary" onclick="resetEngine()"><i data-lucide="rotate-ccw"></i> Reset</button>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <div class="main-workspace">
-            <div class="sidebar-pane">
-                <div style="display:flex; gap:2px;">
-                    <button class="tab-btn active" id="tab-palette" onclick="switchTab('palette')">PALETTE</button>
-                    <button class="tab-btn" id="tab-props" onclick="switchTab('props')">INSPECTOR</button>
+            <div class="quadrant-grid">
+                <!-- Q1: INPUT CONFIGURATION -->
+                <div class="quadrant" style="grid-column: 1; grid-row: 1;">
+                    <div class="q-header"><h3>1. Configuration</h3><i data-lucide="edit-3" size="14"></i></div>
+                    <div class="q-content">
+                        <div class="form-group-sm">
+                            <label>Batch Target</label>
+                            <input type="number" id="inp-batch" class="form-control" value="20">
+                        </div>
+                        <div class="form-group-sm">
+                            <label>Simulation Duration (s)</label>
+                            <input type="number" id="inp-time" class="form-control" value="300">
+                        </div>
+                        <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
+                        <div id="inspector" style="display:none;">
+                            <h4 style="font-size:0.7rem; color:#0a66c2; margin-bottom:10px;">ELEMENT INSPECTOR</h4>
+                            <div class="form-group-sm"><label>Name</label><input type="text" id="prop-name" class="form-control" oninput="applyProps()"></div>
+                            <div class="form-group-sm" id="prop-delay-grp"><label>Processing Time (s)</label><input type="number" id="prop-delay" class="form-control" onchange="applyProps()"></div>
+                            <div class="form-group-sm" id="prop-prob-grp"><label>Percent True (%)</label><input type="number" id="prop-prob" class="form-control" onchange="applyProps()"></div>
+                        </div>
+                        <div id="inspector-none" style="font-size:0.7rem; color:#999; text-align:center; padding:20px;">Select an element to edit properties</div>
+                    </div>
                 </div>
 
-                <div id="palette-content">
-                    <h4 style="font-size:0.7rem; color:#666; margin-bottom:10px;">GLOBAL PARAMETERS</h4>
-                    <div class="form-group">
-                        <label>Target Batch Size <span class="help-trigger" onclick="showHelp('batch')">?</span></label>
-                        <input type="number" id="inp-batch-size" class="form-control" value="50">
-                    </div>
-                    <div class="form-group">
-                        <label>Max Run Length <span class="help-trigger" onclick="showHelp('duration')">?</span></label>
-                        <div style="display:flex; gap:5px;">
-                            <input type="number" id="inp-max-time" class="form-control" value="300">
-                            <select id="unit-max-time" class="unit-select">
-                                <option value="1">sec</option>
-                                <option value="60">min</option>
-                                <option value="3600">hr</option>
-                            </select>
+                <!-- Q2: SIMULATION WINDOW -->
+                <div class="quadrant" style="grid-column: 2; grid-row: 1;">
+                    <div class="q-header"><h3>2. Simulation Window</h3><span id="sim-status" style="font-size:0.6rem; color:#666;">IDLE</span></div>
+                    <div class="q-content" style="padding:0;">
+                        <div class="canvas-area" id="canvas">
+                            <svg class="connector-svg" id="svg-layer">
+                                <defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>
+                            </svg>
                         </div>
                     </div>
+                </div>
 
-                    <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">FLOW COMPONENTS</h4>
-                    <button class="tool-btn" onclick="addBlock('source')"><i data-lucide="plus-square"></i> Source <span class="help-trigger" onclick="showHelp('source')">?</span></button>
-                    <button class="tool-btn" onclick="addBlock('service')"><i data-lucide="settings"></i> Service <span class="help-trigger" onclick="showHelp('service')">?</span></button>
-                    <button class="tool-btn" onclick="addBlock('decide')"><i data-lucide="split"></i> Decide <span class="help-trigger" onclick="showHelp('decide')">?</span></button>
-                    <button class="tool-btn" onclick="addBlock('sink')"><i data-lucide="log-out"></i> Sink <span class="help-trigger" onclick="showHelp('sink')">?</span></button>
-                    <button class="tool-btn" onclick="setMode('connect')" id="conn-btn"><i data-lucide="share-2"></i> Connector</button>
-
-                    <h4 style="font-size:0.7rem; color:#666; margin:20px 0 10px;">RESOURCES</h4>
-                    <div class="form-group">
-                        <label>Operator Pool Size</label>
-                        <input type="number" id="inp-pool" class="form-control" value="5" onchange="updatePool()">
+                <!-- Q3: COMMANDS & PALETTE -->
+                <div class="quadrant" style="grid-column: 1; grid-row: 2;">
+                    <div class="q-header"><h3>3. Commands & Tools</h3><i data-lucide="terminal" size="14"></i></div>
+                    <div class="q-content">
+                        <div style="display:flex; gap:10px; margin-bottom:15px;">
+                            <button class="btn btn-primary" style="flex:1;" id="btn-run" onclick="toggleRun()"><i data-lucide="play" size="14"></i> Run</button>
+                            <button class="btn btn-secondary" style="flex:1;" onclick="resetAll()"><i data-lucide="rotate-ccw" size="14"></i> Clear</button>
+                        </div>
+                        <div class="form-group-sm">
+                            <label>Engine Speed: <span id="speed-txt">2x</span></label>
+                            <input type="range" id="inp-speed" min="1" max="20" value="2" onchange="updateSpeed()">
+                        </div>
+                        <h4 style="font-size:0.7rem; color:#666; margin:15px 0 10px;">PALETTE</h4>
+                        <div class="tool-grid">
+                            <button class="btn-tool" onclick="addObj('source')"><i data-lucide="plus-circle"></i> Source</button>
+                            <button class="btn-tool" onclick="addObj('process')"><i data-lucide="settings"></i> Process</button>
+                            <button class="btn-tool" onclick="addObj('decide')"><i data-lucide="split"></i> Decide</button>
+                            <button class="btn-tool" onclick="addObj('sink')"><i data-lucide="log-out"></i> Sink</button>
+                            <button class="btn-tool" style="grid-column: span 2;" id="btn-conn" onclick="setMode('connect')"><i data-lucide="share-2"></i> Connector Tool</button>
+                        </div>
                     </div>
                 </div>
 
-                <div id="props-content" style="display:none;">
-                    <h4 style="font-size:0.75rem; color:#0a66c2;" id="inspect-title">BLOCK PROPERTIES</h4>
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="prop-name" class="form-control" oninput="applyProps()">
-                    </div>
-                    
-                    <div id="source-opts" style="display:none;">
-                        <div class="form-group">
-                            <label>Arrival Distribution</label>
-                            <select id="prop-dist" class="form-control" onchange="applyProps()">
-                                <option value="fixed">Fixed</option>
-                                <option value="exp">Exponential</option>
-                                <option value="uniform">Uniform</option>
-                            </select>
+                <!-- Q4: OUTPUT ANALYTICS -->
+                <div class="quadrant" style="grid-column: 2; grid-row: 2;">
+                    <div class="q-header"><h3>4. Output Analytics</h3><i data-lucide="pie-chart" size="14"></i></div>
+                    <div class="q-content">
+                        <div class="kpi-filter-bar">
+                            <span class="filter-chip active" onclick="setFilter('all', this)">Overview</span>
+                            <span class="filter-chip" onclick="setFilter('machine', this)">Machines</span>
+                            <span class="filter-chip" onclick="setFilter('entity', this)">Entities</span>
                         </div>
-                        <div class="form-group">
-                            <label>Mean Arrival</label>
-                            <div style="display:flex; gap:5px;">
-                                <input type="number" id="prop-mean" class="form-control" value="5" onchange="applyProps()">
-                                <select id="unit-mean" class="unit-select" onchange="applyProps()">
-                                    <option value="1">sec</option>
-                                    <option value="60">min</option>
-                                    <option value="3600">hr</option>
-                                </select>
+                        <div id="stats-panel">
+                            <div id="stats-all">
+                                <div class="stat-card"><span>Total Throughput</span> <strong id="val-tp">0 Units</strong></div>
+                                <div class="stat-card"><span>Avg. Lead Time</span> <strong id="val-lt">0.0s</strong></div>
+                                <div class="stat-card"><span>Current WIP</span> <strong id="val-wip">0</strong></div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div id="service-opts" style="display:none;">
-                        <div class="form-group">
-                            <label>Process Time</label>
-                            <div style="display:flex; gap:5px;">
-                                <input type="number" id="prop-delay" class="form-control" value="3" onchange="applyProps()">
-                                <select id="unit-delay" class="unit-select" onchange="applyProps()">
-                                    <option value="1">sec</option>
-                                    <option value="60">min</option>
-                                    <option value="3600">hr</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Resource Requirement</label>
-                            <input type="number" id="prop-res" class="form-control" value="1" onchange="applyProps()">
-                        </div>
-                    </div>
-
-                    <div id="decide-opts" style="display:none;">
-                        <div class="form-group">
-                            <label>Percent True (%)</label>
-                            <input type="number" id="prop-percent" class="form-control" value="50" onchange="applyProps()">
+                            <div id="stats-detail" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="canvas-pane" id="canvas">
-                <svg class="conn-svg" id="svg-layer">
-                    <defs>
-                        <marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
-                            <path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" />
-                        </marker>
-                    </defs>
-                </svg>
-            </div>
-        </div>
-
-        <div class="bottom-pane">
-            <div class="kpi-box" style="background:#eef3f8;">
-                <div class="kpi-label">Operator Status</div>
-                <div class="kpi-val" id="pool-count">5 / 5</div>
-            </div>
-            <div class="kpi-box">
-                <div class="kpi-label">Avg. Lead Time</div>
-                <div class="kpi-val" id="kpi-flow">0.0s</div>
-            </div>
-            <div class="kpi-box">
-                <div class="kpi-label">System WIP</div>
-                <div class="kpi-val" id="kpi-wip">0 Units</div>
-            </div>
-            <div class="kpi-box">
-                <div class="kpi-label">Throughput</div>
-                <div class="kpi-val" id="kpi-tp">0 Units</div>
-            </div>
-            <div class="kpi-box" style="overflow-y:auto; border:none; background:transparent;">
-                <div class="kpi-label">Station Utilization</div>
-                <div id="bn-list" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- HELP MODAL -->
-    <div class="modal-backdrop" id="backdrop" onclick="closeHelp()"></div>
-    <div id="help-modal">
-        <h3 id="help-title" style="color:#0a66c2; margin-bottom:10px;">Variable Guide</h3>
-        <p id="help-text" style="font-size:0.85rem; line-height:1.5; color:var(--text-secondary);"></p>
-        <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="closeHelp()">Close Guide</button>
+        </main>
     </div>
 
     <script>
         let blocks = [];
-        let connections = [];
+        let links = [];
         let isRunning = false;
-        let activeMode = 'select';
-        let selectedBlock = null;
+        let mode = 'select';
+        let selected = null;
         let connSrc = null;
-        let engineSpeed = 2;
-        let poolSize = 5;
-        let currentPool = 5;
-        let startTime = 0;
+        let speed = 2;
         let processed = 0;
-        let totalFlowTime = 0;
+        let totalTime = 0;
+        let startTime = 0;
+        let filter = 'all';
 
         const canvas = document.getElementById('canvas');
         const svg = document.getElementById('svg-layer');
 
-        const helpData = {
-            batch: "Total units to process in this run.",
-            duration: "Total operational time for the simulation window.",
-            source: "Entry point for entities. Supports stochastic arrival patterns.",
-            service: "Production station. Requires time and operators to process parts.",
-            decide: "Probabilistic branching. Used for quality checks or scrap routing.",
-            sink: "Exit point. Records the completion of the unit."
-        };
-
-        function showHelp(key) {
-            document.getElementById('help-title').innerText = key.toUpperCase() + " GUIDE";
-            document.getElementById('help-text').innerText = helpData[key] || "No guide available.";
-            document.getElementById('help-modal').style.display = 'block';
-            document.getElementById('backdrop').style.display = 'block';
-        }
-
-        function closeHelp() {
-            document.getElementById('help-modal').style.display = 'none';
-            document.getElementById('backdrop').style.display = 'none';
-        }
-
-        function switchTab(t) {
-            document.getElementById('palette-content').style.display = t === 'palette' ? 'block' : 'none';
-            document.getElementById('props-content').style.display = t === 'props' ? 'block' : 'none';
-            document.getElementById('tab-palette').classList.toggle('active', t === 'palette');
-            document.getElementById('tab-props').classList.toggle('active', t === 'props');
-        }
-
         function setMode(m) {
-            activeMode = m;
-            document.getElementById('conn-btn').classList.toggle('active', m === 'connect');
+            mode = m;
+            document.getElementById('btn-conn').classList.toggle('active', m === 'connect');
         }
 
-        function updatePool() {
-            poolSize = parseInt(document.getElementById('inp-pool').value);
-            currentPool = poolSize;
-            updatePoolDisplay();
+        function setFilter(f, el) {
+            filter = f;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('stats-all').style.display = f === 'all' ? 'block' : 'none';
+            document.getElementById('stats-detail').style.display = f === 'all' ? 'none' : 'block';
+            updateStats();
         }
 
-        function updatePoolDisplay() {
-            document.getElementById('pool-count').innerText = `${currentPool} / ${poolSize}`;
-        }
-
-        function addBlock(type, x=60, y=60) {
+        function addObj(type, x=50, y=50, name) {
             const id = 'b' + Date.now() + Math.floor(Math.random()*1000);
             const b = {
                 id, type, x, y,
-                name: type.toUpperCase() + '-' + (blocks.length + 1),
-                dist: 'fixed', mean: 5, meanUnit: 1, delay: 3, delayUnit: 1, resReq: 1, percent: 50,
-                queue: [], processing: false,
+                name: name || type.toUpperCase() + '-' + (blocks.length+1),
+                delay: 2, prob: 50,
+                queue: [], busy: false,
                 totalBusy: 0
             };
             blocks.push(b);
-            drawBlock(b);
+            drawObj(b);
             return b;
         }
 
-        function drawBlock(b) {
+        function drawObj(b) {
             const el = document.createElement('div');
-            el.className = 'block';
+            el.className = 'block-obj';
             el.id = b.id;
             el.style.left = b.x + 'px';
             el.style.top = b.y + 'px';
-            el.innerHTML = `<div class="block-q" id="q-${b.id}">0</div><div style="text-align:center;">${b.name}</div>`;
+            el.innerHTML = `<div class="block-q-badge" id="q-${b.id}">0</div><div style="font-size:0.65rem;">${b.name}</div>`;
             
             el.onclick = (e) => {
                 e.stopPropagation();
-                if (activeMode === 'connect') {
+                if (mode === 'connect') {
                     if (!connSrc) {
                         connSrc = b;
                         el.style.borderColor = '#d97706';
                     } else {
                         if (connSrc.id !== b.id) {
-                            connections.push({ from: connSrc.id, to: b.id });
-                            renderConnections();
+                            links.push({ from: connSrc.id, to: b.id });
+                            renderLinks();
                         }
-                        document.querySelectorAll('.block').forEach(x => x.style.borderColor = '');
+                        document.querySelectorAll('.block-obj').forEach(x => x.style.borderColor = '');
                         connSrc = null;
                         setMode('select');
                     }
@@ -302,15 +221,13 @@
             };
 
             el.onmousedown = (e) => {
-                if (activeMode !== 'select') return;
+                if (mode !== 'select') return;
                 let sx = e.clientX, sy = e.clientY;
                 document.onmousemove = (m) => {
-                    b.x += m.clientX - sx;
-                    b.y += m.clientY - sy;
+                    b.x += m.clientX - sx; b.y += m.clientY - sy;
                     sx = m.clientX; sy = m.clientY;
-                    el.style.left = b.x + 'px';
-                    el.style.top = b.y + 'px';
-                    renderConnections();
+                    el.style.left = b.x + 'px'; el.style.top = b.y + 'px';
+                    renderLinks();
                 };
                 document.onmouseup = () => document.onmousemove = null;
             };
@@ -318,102 +235,84 @@
             canvas.appendChild(el);
         }
 
-        function renderConnections() {
-            svg.innerHTML = '<defs><marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto"><path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" /></marker></defs>';
-            connections.forEach(c => {
-                const b1 = blocks.find(x => x.id === c.from);
-                const b2 = blocks.find(x => x.id === c.to);
+        function renderLinks() {
+            svg.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs>';
+            links.forEach(l => {
+                const b1 = blocks.find(x => x.id === l.from);
+                const b2 = blocks.find(x => x.id === l.to);
                 if (!b1 || !b2) return;
-                const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                l.setAttribute("x1", b1.x + 55); l.setAttribute("y1", b1.y + 32);
-                l.setAttribute("x2", b2.x + 55); l.setAttribute("y2", b2.y + 32);
-                l.setAttribute("stroke", "#0a66c2"); l.setAttribute("stroke-width", "2");
-                l.setAttribute("marker-end", "url(#arr)");
-                svg.appendChild(l);
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", b1.x + 50); line.setAttribute("y1", b1.y + 30);
+                line.setAttribute("x2", b2.x + 50); line.setAttribute("y2", b2.y + 30);
+                line.setAttribute("stroke", "#0a66c2"); line.setAttribute("stroke-width", "2");
+                line.setAttribute("marker-end", "url(#arrow)");
+                svg.appendChild(line);
             });
         }
 
         function inspect(b) {
-            selectedBlock = b;
-            switchTab('props');
+            selected = b;
+            document.querySelectorAll('.block-obj').forEach(x => x.classList.remove('active'));
+            document.getElementById(b.id).classList.add('active');
+            document.getElementById('inspector').style.display = 'block';
+            document.getElementById('inspector-none').style.display = 'none';
             document.getElementById('prop-name').value = b.name;
-            document.getElementById('prop-dist').value = b.dist;
-            document.getElementById('prop-mean').value = b.mean;
-            document.getElementById('unit-mean').value = b.meanUnit || 1;
             document.getElementById('prop-delay').value = b.delay;
-            document.getElementById('unit-delay').value = b.delayUnit || 1;
-            document.getElementById('prop-res').value = b.resReq;
-            document.getElementById('prop-percent').value = b.percent || 50;
-            
-            document.getElementById('source-opts').style.display = b.type === 'source' ? 'block' : 'none';
-            document.getElementById('service-opts').style.display = b.type === 'service' ? 'block' : 'none';
-            document.getElementById('decide-opts').style.display = b.type === 'decide' ? 'block' : 'none';
+            document.getElementById('prop-prob').value = b.prob;
+            document.getElementById('prop-delay-grp').style.display = (b.type === 'process' || b.type === 'source') ? 'block' : 'none';
+            document.getElementById('prop-prob-grp').style.display = b.type === 'decide' ? 'block' : 'none';
         }
 
         function applyProps() {
-            if (!selectedBlock) return;
-            selectedBlock.name = document.getElementById('prop-name').value;
-            selectedBlock.dist = document.getElementById('prop-dist').value;
-            selectedBlock.mean = parseFloat(document.getElementById('prop-mean').value);
-            selectedBlock.meanUnit = parseInt(document.getElementById('unit-mean').value);
-            selectedBlock.delay = parseFloat(document.getElementById('prop-delay').value);
-            selectedBlock.delayUnit = parseInt(document.getElementById('unit-delay').value);
-            selectedBlock.resReq = parseInt(document.getElementById('prop-res').value);
-            selectedBlock.percent = parseFloat(document.getElementById('prop-percent').value);
-            document.getElementById(selectedBlock.id).querySelector('div:last-child').innerText = selectedBlock.name;
+            if (!selected) return;
+            selected.name = document.getElementById('prop-name').value;
+            selected.delay = parseFloat(document.getElementById('prop-delay').value);
+            selected.prob = parseFloat(document.getElementById('prop-prob').value);
+            document.getElementById(selected.id).querySelector('div:last-child').innerText = selected.name;
         }
 
-        function getRandomArrival(b) {
-            const val = b.mean * b.meanUnit;
-            if (b.dist === 'fixed') return val;
-            if (b.dist === 'exp') return -val * Math.log(Math.random() || 0.0001);
-            if (b.dist === 'uniform') return val * (0.5 + Math.random());
-            return val;
-        }
-
-        let timers = [];
-        let kpiInterval = null;
-        function toggleSim() {
+        let runTimer = null;
+        let intervals = [];
+        function toggleRun() {
             if (isRunning) { stopSim(); return; }
             isRunning = true;
             startTime = Date.now();
-            processed = 0; totalFlowTime = 0;
-            document.getElementById('play-btn').innerHTML = '<i data-lucide="square"></i> Stop';
+            processed = 0; totalTime = 0;
+            document.getElementById('btn-run').innerHTML = '<i data-lucide="square"></i> Stop';
+            document.getElementById('sim-status').innerText = 'RUNNING';
             
             blocks.filter(b => b.type === 'source').forEach(src => {
                 const schedule = () => {
                     if (!isRunning) return;
                     spawnEntity(src);
-                    timers.push(setTimeout(schedule, (getRandomArrival(src) * 1000) / engineSpeed));
+                    intervals.push(setTimeout(schedule, (src.delay * 1000) / speed));
                 };
                 schedule();
             });
 
-            kpiInterval = setInterval(updateStats, 1000);
+            runTimer = setInterval(updateStats, 1000);
             lucide.createIcons();
         }
 
         function stopSim() {
             isRunning = false;
-            timers.forEach(clearTimeout);
-            timers = [];
-            clearInterval(kpiInterval);
-            document.getElementById('play-btn').innerHTML = '<i data-lucide="play"></i> Run';
+            clearInterval(runTimer);
+            intervals.forEach(clearTimeout); intervals = [];
+            document.getElementById('btn-run').innerHTML = '<i data-lucide="play"></i> Run';
+            document.getElementById('sim-status').innerText = 'IDLE';
             lucide.createIcons();
         }
 
         function spawnEntity(src) {
-            const bLimit = parseInt(document.getElementById('inp-batch-size').value);
-            const tLimit = parseFloat(document.getElementById('inp-max-time').value) * parseInt(document.getElementById('unit-max-time').value);
-            const elapsed = (Date.now() - startTime) / 1000 * engineSpeed;
+            const batchLimit = parseInt(document.getElementById('inp-batch').value);
+            const timeLimit = parseInt(document.getElementById('inp-time').value);
+            const elapsed = (Date.now() - startTime) / 1000 * speed;
 
-            if (processed >= bLimit || elapsed >= tLimit) { stopSim(); return; }
+            if (processed >= batchLimit || elapsed >= timeLimit) { stopSim(); return; }
 
             const ent = { id: 'E'+Math.floor(Math.random()*1000), el: document.createElement('div'), entry: Date.now() };
-            ent.el.className = 'part';
-            ent.el.style.background = '#0a66c2';
-            ent.el.style.left = (src.x + 50) + 'px';
-            ent.el.style.top = (src.y + 25) + 'px';
+            ent.el.className = 'entity-particle';
+            ent.el.style.left = (src.x + 45) + 'px'; ent.el.style.top = (src.y + 25) + 'px';
             canvas.appendChild(ent.el);
             move(ent, src.id);
         }
@@ -421,120 +320,119 @@
         function move(ent, currId) {
             if (!isRunning) return;
             const b = blocks.find(x => x.id === currId);
-            const outgoing = connections.filter(c => c.from === currId);
+            const outgoing = links.filter(l => l.from === currId);
             
             if (outgoing.length === 0) {
-                ent.el.remove();
-                processed++;
-                totalFlowTime += (Date.now() - ent.entry) / 1000 * engineSpeed;
+                ent.el.remove(); processed++;
+                totalTime += (Date.now() - ent.entry) / 1000 * speed;
                 return;
             }
 
             let link;
             if (b.type === 'decide') {
-                const isTrue = Math.random() * 100 < b.percent;
+                const isTrue = Math.random() * 100 < b.prob;
                 link = isTrue ? outgoing[0] : (outgoing[1] || outgoing[0]);
             } else {
                 link = outgoing[Math.floor(Math.random() * outgoing.length)];
             }
 
             const next = blocks.find(n => n.id === link.to);
-            ent.el.style.left = (next.x + 50) + 'px';
-            ent.el.style.top = (next.y + 25) + 'px';
+            ent.el.style.left = (next.x + 45) + 'px'; ent.el.style.top = (next.y + 25) + 'px';
 
             if (next.type === 'sink') {
-                setTimeout(() => { ent.el.remove(); processed++; updateStats(); }, 500 / engineSpeed);
+                setTimeout(() => { ent.el.remove(); processed++; updateStats(); }, 500 / speed);
                 return;
             }
 
             next.queue.push(ent);
-            updateQ(next);
+            document.getElementById('q-' + next.id).innerText = next.queue.length;
 
-            const p = () => {
+            const process = () => {
                 if (!isRunning) return;
                 const bEl = document.getElementById(next.id);
-                if (!next.processing && next.queue[0] === ent) {
-                    if (currentPool >= next.resReq) {
-                        currentPool -= next.resReq;
-                        updatePoolDisplay();
-                        next.processing = true;
-                        next.queue.shift();
-                        updateQ(next);
-                        bEl.classList.remove('seized');
-                        bEl.classList.add('active');
-
-                        setTimeout(() => {
-                            next.processing = false;
-                            next.totalBusy += (next.delay * next.delayUnit);
-                            currentPool += next.resReq;
-                            updatePoolDisplay();
-                            bEl.classList.remove('active');
-                            move(ent, next.id);
-                        }, (next.delay * next.delayUnit * 1000) / engineSpeed);
-                    } else {
-                        bEl.classList.add('seized');
-                        setTimeout(p, 200 / engineSpeed);
-                    }
+                if (!next.busy && next.queue[0] === ent) {
+                    next.busy = true;
+                    next.queue.shift();
+                    document.getElementById('q-' + next.id).innerText = next.queue.length;
+                    bEl.classList.add('active');
+                    setTimeout(() => {
+                        next.busy = false; next.totalBusy += next.delay;
+                        bEl.classList.remove('active');
+                        move(ent, next.id);
+                    }, (next.delay * 1000) / speed);
                 } else {
-                    setTimeout(p, 200 / engineSpeed);
+                    setTimeout(process, 100);
                 }
             };
-            p();
+            process();
         }
 
-        function updateQ(b) { document.getElementById('q-' + b.id).innerText = b.queue.length; }
-        
         function updateStats() {
-            document.getElementById('kpi-flow').innerText = processed > 0 ? (totalFlowTime / processed).toFixed(1) + 's' : '0.0s';
-            const wip = blocks.reduce((acc, b) => acc + b.queue.length + (b.processing ? 1 : 0), 0);
-            document.getElementById('kpi-wip').innerText = wip + ' Units';
-            document.getElementById('kpi-tp').innerText = processed + ' Units';
-            
-            const elapsed = (Date.now() - startTime) / 1000 * engineSpeed;
-            const bnList = document.getElementById('bn-list');
-            bnList.innerHTML = '';
-            blocks.filter(b => b.type === 'service').forEach(b => {
-                const util = elapsed > 0 ? Math.min(100, (b.totalBusy / elapsed) * 100) : 0;
-                bnList.innerHTML += `<div style="width:120px;"><div style="font-size:0.6rem;">${b.name}: ${util.toFixed(0)}%</div><div style="height:3px; background:#eee;"><div style="height:100%; background:#0a66c2; width:${util}%"></div></div></div>`;
-            });
+            document.getElementById('val-tp').innerText = processed + ' Units';
+            document.getElementById('val-lt').innerText = processed > 0 ? (totalTime / processed).toFixed(1) + 's' : '0.0s';
+            const wip = blocks.reduce((acc, b) => acc + b.queue.length + (b.busy ? 1 : 0), 0);
+            document.getElementById('val-wip').innerText = wip;
+
+            if (filter !== 'all') {
+                const detail = document.getElementById('stats-detail');
+                detail.innerHTML = '';
+                if (filter === 'machine') {
+                    const elapsed = (Date.now() - startTime) / 1000 * speed;
+                    blocks.filter(b => b.type === 'process').forEach(b => {
+                        const util = elapsed > 0 ? Math.min(100, (b.totalBusy / elapsed) * 100) : 0;
+                        detail.innerHTML += `<div class="stat-card"><span>${b.name}</span> <strong>${util.toFixed(1)}% Util</strong></div>`;
+                    });
+                } else if (filter === 'entity') {
+                    detail.innerHTML += `<div class="stat-card"><span>Total Entities Created</span> <strong>${processed + wip}</strong></div>`;
+                    detail.innerHTML += `<div class="stat-card"><span>Avg. Lead Time</span> <strong>${(totalTime / Math.max(1, processed)).toFixed(1)}s</strong></div>`;
+                }
+            }
         }
 
         function updateSpeed() {
-            engineSpeed = parseInt(document.getElementById('engine-speed').value);
-            document.getElementById('speed-val').innerText = engineSpeed + 'x';
+            speed = parseInt(document.getElementById('inp-speed').value);
+            document.getElementById('speed-txt').innerText = speed + 'x';
         }
 
         function loadScenario() {
-            resetEngine();
+            resetAll();
             const type = document.getElementById('scenario-preset').value;
             if (type === 'mass') {
-                const s = addBlock('source', 50, 150); s.name = "Raw Mat"; s.mean = 2;
-                const m1 = addBlock('service', 220, 150); m1.name = "Press"; m1.delay = 1.8;
-                const m2 = addBlock('service', 390, 150); m2.name = "Paint"; m2.delay = 1.8;
-                const k = addBlock('sink', 560, 150); k.name = "Ship";
-                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: k.id});
+                const s = addObj('source', 50, 150, "Raw Material");
+                const m1 = addObj('process', 200, 150, "Press");
+                const m2 = addObj('process', 350, 150, "Paint");
+                const k = addObj('sink', 500, 150, "Warehouse");
+                links.push({from: s.id, to: m1.id}, {from: m1.id, to: m2.id}, {from: m2.id, to: k.id});
             } else if (type === 'job') {
-                const s = addBlock('source', 50, 150); s.name = "Order"; s.mean = 10;
-                const d1 = addBlock('decide', 200, 150); d1.name = "QC Pass?"; d1.percent = 80;
-                const m1 = addBlock('service', 350, 50); m1.name = "Assembly"; m1.delay = 8;
-                const m2 = addBlock('service', 350, 250); m2.name = "Rework"; m2.delay = 12;
-                const k = addBlock('sink', 550, 150); k.name = "Done";
-                connections.push({from: s.id, to: d1.id}, {from: d1.id, to: m1.id}, {from: d1.id, to: m2.id}, {from: m1.id, to: k.id}, {from: m2.id, to: k.id});
+                const s = addObj('source', 50, 100, "Arrivals");
+                const d = addObj('decide', 200, 100, "QC Gate");
+                const m1 = addObj('process', 350, 50, "Milling");
+                const m2 = addObj('process', 350, 200, "Lathing");
+                const k = addObj('sink', 500, 125, "Shipping");
+                links.push({from: s.id, to: d.id}, {from: d.id, to: m1.id}, {from: d.id, to: m2.id}, {from: m1.id, to: k.id}, {from: m2.id, to: k.id});
+            } else if (type === 'assembly') {
+                const s1 = addObj('source', 50, 50, "Comp-A");
+                const s2 = addObj('source', 50, 200, "Comp-B");
+                const m = addObj('process', 250, 125, "Assembly");
+                const k = addObj('sink', 450, 125, "Final Product");
+                links.push({from: s1.id, to: m.id}, {from: s2.id, to: m.id}, {from: m.id, to: k.id});
             } else if (type === 'batch') {
-                const s = addBlock('source', 50, 150); s.name = "Buffer"; s.mean = 1;
-                const m1 = addBlock('service', 300, 150); m1.name = "Batch-Oven"; m1.delay = 30; m1.resReq = 3;
-                const k = addBlock('sink', 550, 150); k.name = "Exit";
-                connections.push({from: s.id, to: m1.id}, {from: m1.id, to: k.id});
+                const s = addObj('source', 50, 125, "Batch Buffer");
+                const m = addObj('process', 300, 125, "Batch Processor"); m.delay = 10;
+                const k = addObj('sink', 500, 125, "Shipment");
+                links.push({from: s.id, to: m.id}, {from: m.id, to: k.id});
             }
-            renderConnections();
+            renderLinks();
             updateStats();
         }
 
-        function resetEngine() {
-            stopSim();
-            blocks = []; connections = []; processed = 0; totalFlowTime = 0;
-            canvas.innerHTML = '<svg class="conn-svg" id="svg-layer"><defs><marker id="arr" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto"><path d="M0,0 L0,10 L12,5 Z" fill="#0a66c2" /></marker></defs></svg>';
-            updatePool(); updateStats();
+        function resetAll() {
+            stopSim(); blocks = []; links = []; processed = 0; totalTime = 0;
+            canvas.innerHTML = '<svg class="connector-svg" id="svg-layer"><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a66c2"/></marker></defs></svg>';
+            document.getElementById('val-tp').innerText = '0 Units';
+            document.getElementById('val-lt').innerText = '0.0s';
+            document.getElementById('val-wip').innerText = '0';
+            updateStats();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
