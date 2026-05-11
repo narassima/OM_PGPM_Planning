@@ -25,10 +25,19 @@
         .help-btn:hover { background: #0a66c2; color: white; }
 
         .canvas-area { background: #ffffff; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; width: 100%; height: 100%; position: relative; overflow: auto; }
-        .block-obj { width: 100px; height: 60px; background: white; border: 2px solid #0a66c2; border-radius: 4px; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-align: center; padding: 5px; box-shadow: var(--shadow-sm); }
+        .block-obj { width: 100px; height: 60px; background: white; border: 2px solid #0a66c2; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-align: center; padding: 5px; box-shadow: var(--shadow-sm); transition: transform 0.2s; }
+        .block-obj:hover { transform: scale(1.05); }
         .block-obj.active { border-color: #057642; background: #ecfdf5; box-shadow: 0 0 8px rgba(5,118,66,0.3); }
         .block-obj.conn-src { border-color: #d97706; background: #fffbeb; }
-        .block-q-badge { position: absolute; top: -10px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; }
+        
+        /* Shape variations */
+        .shape-rectangle { border-radius: 4px; }
+        .shape-diamond { width: 80px; height: 80px; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+        .shape-source { width: 90px; clip-path: polygon(0% 20%, 70% 20%, 70% 0%, 100% 50%, 70% 100%, 70% 80%, 0% 80%); }
+        .shape-sink { width: 90px; clip-path: polygon(30% 0%, 30% 20%, 100% 20%, 100% 80%, 30% 80%, 30% 100%, 0% 50%); }
+
+        .block-q-badge { position: absolute; top: -10px; right: -8px; background: #cc1016; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.6rem; z-index: 15; }
+        .shape-diamond .block-q-badge { top: 0; right: 0; }
         .connector-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
         .entity-particle { width: 10px; height: 10px; border-radius: 50%; background: #0a66c2; position: absolute; z-index: 20; transition: all 0.5s linear; }
 
@@ -258,10 +267,15 @@
         function drawObj(b) {
             const el = document.createElement('div');
             el.className = 'block-obj';
+            if (b.type === 'decide') el.classList.add('shape-diamond');
+            else if (b.type === 'source') el.classList.add('shape-source');
+            else if (b.type === 'sink') el.classList.add('shape-sink');
+            else el.classList.add('shape-rectangle');
+
             el.id = b.id;
             el.style.left = b.x + 'px';
             el.style.top = b.y + 'px';
-            el.innerHTML = `<div class="block-q-badge" id="q-${b.id}">0</div><div style="font-size:0.65rem;">${b.name}</div>`;
+            el.innerHTML = `<div class="block-q-badge" id="q-${b.id}">0</div><div style="font-size:0.65rem; ${b.type==='decide'?'padding:10px;':''}">${b.name}</div>`;
             
             el.onclick = (e) => {
                 e.stopPropagation();
@@ -305,9 +319,20 @@
                 const b1 = blocks.find(x => x.id === l.from);
                 const b2 = blocks.find(x => x.id === l.to);
                 if (!b1 || !b2) return;
+                
+                // Calculate center points based on shape
+                const getCenter = (b) => {
+                    if (b.type === 'decide') return { x: b.x + 40, y: b.y + 40 };
+                    if (b.type === 'source' || b.type === 'sink') return { x: b.x + 45, y: b.y + 30 };
+                    return { x: b.x + 50, y: b.y + 30 };
+                };
+                
+                const c1 = getCenter(b1);
+                const c2 = getCenter(b2);
+
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                line.setAttribute("x1", b1.x + 50); line.setAttribute("y1", b1.y + 30);
-                line.setAttribute("x2", b2.x + 50); line.setAttribute("y2", b2.y + 30);
+                line.setAttribute("x1", c1.x); line.setAttribute("y1", c1.y);
+                line.setAttribute("x2", c2.x); line.setAttribute("y2", c2.y);
                 line.setAttribute("stroke", "#0a66c2"); line.setAttribute("stroke-width", "2");
                 line.setAttribute("marker-end", "url(#arrow)");
                 svgLayer.appendChild(line);
@@ -387,7 +412,10 @@
 
             const ent = { id: 'E'+Math.floor(Math.random()*1000), el: document.createElement('div'), entry: Date.now() };
             ent.el.className = 'entity-particle';
-            ent.el.style.left = (src.x + 45) + 'px'; ent.el.style.top = (src.y + 25) + 'px';
+            
+            // Source center
+            ent.el.style.left = (src.x + 40) + 'px'; ent.el.style.top = (src.y + 25) + 'px';
+            
             canvas.appendChild(ent.el);
             move(ent, src.id);
         }
@@ -409,7 +437,14 @@
                 link = outgoing[Math.floor(Math.random() * outgoing.length)];
             }
             const next = blocks.find(n => n.id === link.to);
-            ent.el.style.left = (next.x + 45) + 'px'; ent.el.style.top = (next.y + 25) + 'px';
+            
+            // Adjust entity landing spot based on next block shape
+            let nx = next.x + 45, ny = next.y + 25;
+            if (next.type === 'decide') { nx = next.x + 35; ny = next.y + 35; }
+            else if (next.type === 'sink') { nx = next.x + 40; ny = next.y + 25; }
+            
+            ent.el.style.left = nx + 'px'; ent.el.style.top = ny + 'px';
+            
             if (next.type === 'sink') {
                 setTimeout(() => { ent.el.remove(); processed++; updateStats(); }, 500 / speed);
                 return;
