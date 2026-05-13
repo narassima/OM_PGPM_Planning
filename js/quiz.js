@@ -255,11 +255,12 @@ function submitAnswer(wasAuto = false) {
     container.style.pointerEvents = 'none';
     
     document.getElementById('btn-submit-answer').style.display = 'none';
-    document.getElementById('btn-next-question').style.display = 'block';
-    document.getElementById('btn-next-question').innerText = (currentQIndex < currentQuiz.length - 1) ? 'Next Question' : 'View Results';
     
     if (wasAuto) {
-        alert("Time is up! Moving to next section.");
+        setTimeout(() => { nextQuestion(); }, 800);
+    } else {
+        document.getElementById('btn-next-question').style.display = 'block';
+        document.getElementById('btn-next-question').innerText = (currentQIndex < currentQuiz.length - 1) ? 'Next Question' : 'View Results';
     }
 }
 

@@ -142,7 +142,7 @@
                                 <input type="number" id="quiz-count" class="form-control" value="5" min="1" max="20">
                             </div>
                         </div>
-                        <button class="btn btn-primary" id="btn-start-quiz" style="width: 100%;"><i data-lucide="play"></i> Start Certified Evaluation</button>
+                        <button class="btn btn-primary" id="btn-start-quiz" style="width: 100%;"><i data-lucide="play"></i> Start Evaluation</button>
                     </div>
 
                     <div id="quiz-active" class="card" style="display: none; position: relative; overflow: hidden;">
@@ -184,32 +184,9 @@
                         <div style="font-size: 4rem; font-weight: bold; color: var(--accent-blue); margin-bottom: 8px;" id="result-score">80%</div>
                         <p style="color: var(--text-secondary); margin-bottom: 24px;" id="result-text">You answered 4 out of 5 questions correctly.</p>
                         
-                        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 32px;">
-                            <button class="btn btn-primary" id="btn-restart-quiz"><i data-lucide="rotate-ccw"></i> Retake Quiz</button>
-                            <button class="btn btn-secondary" style="background: var(--accent-forest); color: white; border: none;" id="btn-download-cert"><i data-lucide="download"></i> Download Certified Result</button>
-                        </div>
-
-                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 24px;">
-                        
-                        <div style="text-align: left;">
-                            <h4 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"><i data-lucide="list"></i> Performance History (Session)</h4>
-                            <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
-                                <table id="admin-log-table" style="font-size: 0.8rem; margin: 0;">
-                                    <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 10;">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Reg No</th>
-                                            <th>Score</th>
-                                            <th>Topic</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="admin-log-tbody">
-                                        <!-- Log entries -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <button class="btn btn-secondary" style="margin-top: 12px; font-size: 0.7rem; padding: 6px 12px;" onclick="exportAdminLog()"><i data-lucide="file-spreadsheet"></i> Export Admin Log (CSV)</button>
+                        <div style="display: flex; gap: 12px; justify-content: center;">
+                            <button class="btn btn-primary" id="btn-restart-quiz"><i data-lucide="rotate-ccw"></i> Retake Evaluation</button>
+                            <button class="btn btn-secondary" style="background: var(--accent-forest); color: white; border: none;" id="btn-download-cert"><i data-lucide="download"></i> Download Certificate</button>
                         </div>
                     </div>
 
