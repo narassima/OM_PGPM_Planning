@@ -285,6 +285,23 @@
                         el.classList.add('conn-src');
                     } else {
                         if (connSrc.id !== b.id) {
+                            // Check constraints
+                            const outgoing = links.filter(l => l.from === connSrc.id);
+                            if (connSrc.type === 'process' && outgoing.length >= 1) {
+                                alert("Standard Process blocks can only have one output path. Use a 'Decide' module for branching.");
+                                document.querySelectorAll('.block-obj').forEach(x => x.classList.remove('conn-src'));
+                                connSrc = null;
+                                setMode('select');
+                                return;
+                            }
+                            if (connSrc.type === 'sink') {
+                                alert("Sink blocks cannot have outgoing connections.");
+                                document.querySelectorAll('.block-obj').forEach(x => x.classList.remove('conn-src'));
+                                connSrc = null;
+                                setMode('select');
+                                return;
+                            }
+                            
                             links.push({ from: connSrc.id, to: b.id });
                             renderLinks();
                         }
@@ -429,13 +446,22 @@
                 totalTime += (Date.now() - ent.entry) / 1000 * speed;
                 return;
             }
+            
             let link;
             if (b.type === 'decide') {
-                const isTrue = Math.random() * 100 < b.prob;
-                link = isTrue ? outgoing[0] : (outgoing[1] || outgoing[0]);
+                if (outgoing.length === 2) {
+                    // Classic True/False logic
+                    const isTrue = Math.random() * 100 < b.prob;
+                    link = isTrue ? outgoing[0] : outgoing[1];
+                } else {
+                    // Multi-path random distribution
+                    link = outgoing[Math.floor(Math.random() * outgoing.length)];
+                }
             } else {
-                link = outgoing[Math.floor(Math.random() * outgoing.length)];
+                // Processes/Sources only have 1 output (enforced by UI)
+                link = outgoing[0];
             }
+            
             const next = blocks.find(n => n.id === link.to);
             
             // Adjust entity landing spot based on next block shape

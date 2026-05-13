@@ -96,9 +96,14 @@ let currentQuiz = [];
 let currentQIndex = 0;
 let score = 0;
 let selectedOption = null;
+let quizTimer = null;
+let timeLeft = 0;
+let studentInfo = { name: '', reg: '' };
+let answersLogged = []; // Track actual answers for final review
 
 document.addEventListener('DOMContentLoaded', () => {
     setupListeners();
+    refreshAdminLog();
 });
 
 function setupListeners() {
@@ -109,9 +114,19 @@ function setupListeners() {
         document.getElementById('quiz-results').style.display = 'none';
         document.getElementById('quiz-setup').style.display = 'block';
     });
+    document.getElementById('btn-download-cert').addEventListener('click', generateCertificate);
 }
 
 function startQuiz() {
+    const name = document.getElementById('student-name').value.trim();
+    const reg = document.getElementById('student-reg').value.trim();
+
+    if (!name || !reg) {
+        alert("Please enter both Name and Registration Number to start the certified evaluation.");
+        return;
+    }
+
+    studentInfo = { name, reg };
     const topic = document.getElementById('quiz-topic').value;
     const type = document.getElementById('quiz-type').value;
     const diff = document.getElementById('quiz-diff').value;
@@ -125,17 +140,17 @@ function startQuiz() {
         return tMatch && pMatch && dMatch;
     });
 
-    // Shuffle and slice
     pool = pool.sort(() => 0.5 - Math.random());
     currentQuiz = pool.slice(0, Math.min(count, pool.length));
 
     if (currentQuiz.length === 0) {
-        alert("No questions found for these specific criteria. Try selecting 'All Topics' or 'Mixed' difficulty.");
+        alert("No questions found. Try broader criteria.");
         return;
     }
 
     currentQIndex = 0;
     score = 0;
+    answersLogged = [];
 
     document.getElementById('quiz-setup').style.display = 'none';
     document.getElementById('quiz-active').style.display = 'block';
@@ -163,10 +178,47 @@ function loadQuestion() {
         container.appendChild(btn);
     });
 
+    // Reset UI
     document.getElementById('quiz-explanation').classList.remove('active');
     document.getElementById('btn-submit-answer').style.display = 'block';
     document.getElementById('btn-submit-answer').disabled = true;
     document.getElementById('btn-next-question').style.display = 'none';
+
+    // Start Timer
+    startTimer(q.type === 'problem' ? 60 : 30);
+}
+
+function startTimer(seconds) {
+    if (quizTimer) clearInterval(quizTimer);
+    timeLeft = seconds;
+    const totalTime = seconds;
+    const bar = document.getElementById('timer-bar');
+    const text = document.getElementById('time-left');
+    
+    updateTimerUI(totalTime);
+    
+    quizTimer = setInterval(() => {
+        timeLeft--;
+        updateTimerUI(totalTime);
+        if (timeLeft <= 0) {
+            clearInterval(quizTimer);
+            handleTimeUp();
+        }
+    }, 1000);
+}
+
+function updateTimerUI(total) {
+    const bar = document.getElementById('timer-bar');
+    const text = document.getElementById('time-left');
+    text.innerText = timeLeft;
+    const pct = (timeLeft / total) * 100;
+    bar.style.width = pct + '%';
+    bar.style.background = timeLeft < 10 ? '#ef4444' : '#0a66c2';
+}
+
+function handleTimeUp() {
+    // Force submit with whatever is selected or nothing
+    submitAnswer(true);
 }
 
 function selectOption(btn, idx) {
@@ -177,39 +229,45 @@ function selectOption(btn, idx) {
     document.getElementById('btn-submit-answer').disabled = false;
 }
 
-function submitAnswer() {
-    if (selectedOption === null) return;
+function submitAnswer(wasAuto = false) {
+    if (quizTimer) clearInterval(quizTimer);
     
     const q = currentQuiz[currentQIndex];
-    const options = document.querySelectorAll('.quiz-option');
+    const isCorrect = (selectedOption === q.correct);
     
-    if (selectedOption === q.correct) {
-        options[selectedOption].classList.add('correct');
-        score++;
-    } else {
-        options[selectedOption].classList.add('incorrect');
-        options[q.correct].classList.add('correct'); // Show correct one
-    }
+    if (isCorrect) score++;
     
-    // Disable all
-    options.forEach(o => o.onclick = null);
+    // Log for final review
+    answersLogged.push({
+        question: q.question,
+        selected: selectedOption !== null ? q.options[selectedOption] : "No Answer",
+        correct: q.options[q.correct],
+        isCorrect: isCorrect,
+        explanation: q.explanation
+    });
+
+    // Provide visual feedback (but don't show correct answer yet as per user request if preferred)
+    // Actually user said "The correct answer need not be shown to students after every question"
+    // So we just show "Answer Submitted"
     
-    // Show explanation
-    document.getElementById('explanation-text').innerText = q.explanation;
-    document.getElementById('quiz-explanation').classList.add('active');
+    const container = document.getElementById('options-container');
+    container.style.opacity = '0.6';
+    container.style.pointerEvents = 'none';
     
     document.getElementById('btn-submit-answer').style.display = 'none';
+    document.getElementById('btn-next-question').style.display = 'block';
+    document.getElementById('btn-next-question').innerText = (currentQIndex < currentQuiz.length - 1) ? 'Next Question' : 'View Results';
     
-    if (currentQIndex < currentQuiz.length - 1) {
-        document.getElementById('btn-next-question').style.display = 'block';
-        document.getElementById('btn-next-question').innerText = 'Next Question';
-    } else {
-        document.getElementById('btn-next-question').style.display = 'block';
-        document.getElementById('btn-next-question').innerText = 'Finish Quiz';
+    if (wasAuto) {
+        alert("Time is up! Moving to next section.");
     }
 }
 
 function nextQuestion() {
+    const container = document.getElementById('options-container');
+    container.style.opacity = '1';
+    container.style.pointerEvents = 'auto';
+    
     currentQIndex++;
     if (currentQIndex < currentQuiz.length) {
         loadQuestion();
@@ -222,7 +280,184 @@ function showResults() {
     document.getElementById('quiz-active').style.display = 'none';
     document.getElementById('quiz-results').style.display = 'block';
     
+    document.getElementById('result-student-info').innerText = `${studentInfo.name} | ${studentInfo.reg}`;
+    
     const pct = Math.round((score / currentQuiz.length) * 100);
     document.getElementById('result-score').innerText = `${pct}%`;
     document.getElementById('result-text').innerText = `You answered ${score} out of ${currentQuiz.length} questions correctly.`;
+    
+    saveToAdminLog(pct);
+    refreshAdminLog();
+}
+
+function saveToAdminLog(pct) {
+    const logs = JSON.parse(localStorage.getItem('om_quiz_logs') || '[]');
+    const topic = document.getElementById('quiz-topic').value;
+    logs.push({
+        name: studentInfo.name,
+        reg: studentInfo.reg,
+        score: pct + '%',
+        topic: topic,
+        date: new Date().toLocaleString()
+    });
+    localStorage.setItem('om_quiz_logs', JSON.stringify(logs));
+}
+
+function refreshAdminLog() {
+    const logs = JSON.parse(localStorage.getItem('om_quiz_logs') || '[]').reverse();
+    const tbody = document.getElementById('admin-log-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    logs.slice(0, 50).forEach(log => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${log.name}</td>
+            <td>${log.reg}</td>
+            <td style="font-weight:700; color:#0a66c2;">${log.score}</td>
+            <td>${log.topic}</td>
+            <td>${log.date}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function exportAdminLog() {
+    const logs = JSON.parse(localStorage.getItem('om_quiz_logs') || '[]');
+    if (logs.length === 0) return;
+    
+    let csv = "Name,RegNo,Score,Topic,Date\n";
+    logs.forEach(log => {
+        csv += `${log.name},${log.reg},${log.score},${log.topic},${log.date}\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Admin_Quiz_Log_${new Date().toLocaleDateString()}.csv`;
+    a.click();
+}
+
+function generateCertificate() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'mm', 'a4'); // Back to Landscape
+    
+    const pct = Math.round((score / currentQuiz.length) * 100);
+    const date = new Date().toLocaleDateString();
+    
+    const topic = document.getElementById('quiz-topic').selectedOptions[0].text;
+    const type = document.getElementById('quiz-type').selectedOptions[0].text;
+    const diff = document.getElementById('quiz-diff').selectedOptions[0].text;
+    const count = currentQuiz.length;
+
+    // Watermark - BIGGER and Tiled
+    doc.setTextColor(242, 242, 242);
+    doc.setFontSize(80); // Increased from 50
+    for(let i=0; i<3; i++) {
+        doc.text(studentInfo.reg, 148, 60 + (i*60), { align: 'center', angle: 25 });
+    }
+
+    // Border
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(1);
+    doc.rect(10, 10, 277, 190);
+
+    // Title
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(28);
+    doc.setFont("helvetica", "bold");
+    doc.text("EXAMINATION CERTIFICATE", 148, 30, { align: 'center' });
+    
+    doc.setLineWidth(0.5);
+    doc.line(80, 35, 216, 35);
+
+    // Main Details
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "normal");
+    let y = 60;
+    const lineSpacing = 15;
+
+    const addField = (label, value) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(`${label}:`, 40, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(`${value}`, 110, y);
+        y += lineSpacing;
+    };
+
+    addField("Candidate Name", studentInfo.name.toUpperCase());
+    addField("Registration ID", studentInfo.reg);
+    
+    doc.line(40, y-10, 257, y-10);
+    y += 5;
+
+    addField("Quiz Topic", topic);
+    addField("Question Type", type);
+    addField("Difficulty Level", diff);
+    addField("Questions Attempted", count);
+    
+    doc.line(40, y-10, 257, y-10);
+    y += 10;
+
+    // Marks Section
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINAL EVALUATION MARKS", 148, y, { align: 'center' });
+    y += 18;
+    
+    doc.setFontSize(48);
+    doc.setTextColor(10, 102, 194);
+    doc.text(`${pct}%`, 148, y, { align: 'center' });
+    
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    y += 15;
+    doc.text(`You answered ${score} out of ${count} questions correctly.`, 148, y, { align: 'center' });
+
+    // Footer
+    const vCode = btoa(`${studentInfo.reg}-${pct}-${date}`).substring(0, 16).toUpperCase();
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`System Verification ID: ${vCode}`, 148, 185, { align: 'center' });
+    doc.text(`Exam Date: ${date} | Generated by OpsPlanner Workspace`, 15, 195);
+
+    doc.save(`Evaluation_${studentInfo.reg}.pdf`);
+}
+
+function saveToAdminLog(pct) {
+    const topic = document.getElementById('quiz-topic').value;
+    const dateStr = new Date().toLocaleString();
+    
+    // 1. Local Storage (Backup)
+    const logs = JSON.parse(localStorage.getItem('om_quiz_logs') || '[]');
+    logs.push({
+        name: studentInfo.name,
+        reg: studentInfo.reg,
+        score: pct + '%',
+        topic: topic,
+        date: dateStr
+    });
+    localStorage.setItem('om_quiz_logs', JSON.stringify(logs));
+
+    // 2. Google Sheets Integration (Real-time Centralized Storage)
+    // Replace the URL below with your Google Apps Script Web App URL
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbylmvv5q8Wiqdvo_j4GK0CyS9OhbAjqCKQqzu5chAz50VeuoPLZRkcMwvGR92FHsb_-0g/exec";
+    
+    if (GOOGLE_SHEET_URL !== "https://script.google.com/macros/s/AKfycbylmvv5q8Wiqdvo_j4GK0CyS9OhbAjqCKQqzu5chAz50VeuoPLZRkcMwvGR92FHsb_-0g/exec") {
+        fetch(GOOGLE_SHEET_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Important for cross-domain Google Script
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: studentInfo.name,
+                reg: studentInfo.reg,
+                score: pct + '%',
+                topic: topic,
+                date: dateStr
+            })
+        }).then(() => console.log("Marks synced to central server."))
+          .catch(err => console.error("Sync error:", err));
+    }
 }

@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles/index.css">
     <style>
@@ -91,9 +92,21 @@
                 <div class="module-container">
                     
                     <div id="quiz-setup" class="card">
-                        <div class="card-title"><i data-lucide="settings"></i> Configure Quiz</div>
-                        <p style="margin-bottom: 24px; color: var(--text-secondary);">Select the topics, difficulty, and number of questions to generate a custom quiz.</p>
+                        <div class="card-title"><i data-lucide="settings"></i> Student Information & Quiz Setup</div>
+                        <p style="margin-bottom: 24px; color: var(--text-secondary);">Please enter your details and select quiz parameters.</p>
                         
+                        <div class="grid-2" style="margin-bottom: 24px;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="student-name" class="form-control" placeholder="Enter your name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Registration Number</label>
+                                <input type="text" id="student-reg" class="form-control" placeholder="Enter Reg No" required onpaste="return false;" oncopy="return false;">
+                                <small style="color: var(--text-secondary); font-size: 0.7rem;">Copy-paste disabled for security.</small>
+                            </div>
+                        </div>
+
                         <div class="grid-2" style="margin-bottom: 16px;">
                             <div class="form-group">
                                 <label>Topic</label>
@@ -129,13 +142,20 @@
                                 <input type="number" id="quiz-count" class="form-control" value="5" min="1" max="20">
                             </div>
                         </div>
-                        <button class="btn btn-primary" id="btn-start-quiz" style="width: 100%;"><i data-lucide="play"></i> Start Quiz</button>
+                        <button class="btn btn-primary" id="btn-start-quiz" style="width: 100%;"><i data-lucide="play"></i> Start Certified Evaluation</button>
                     </div>
 
-                    <div id="quiz-active" class="card" style="display: none;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div id="quiz-active" class="card" style="display: none; position: relative; overflow: hidden;">
+                        <div id="timer-bar" style="position: absolute; top: 0; left: 0; height: 4px; background: var(--accent-blue); width: 100%; transition: width 1s linear;"></div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; margin-top: 8px;">
                             <div class="card-title" style="margin-bottom: 0;"><i data-lucide="help-circle"></i> Question <span id="q-current">1</span> of <span id="q-total">5</span></div>
-                            <div style="font-weight: 600; color: var(--text-secondary);" id="q-topic-badge">Topic</div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <div id="timer-text" style="font-weight: 700; color: var(--accent-red); background: #fee2e2; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="clock" style="width: 14px; height: 14px;"></i> <span id="time-left">30</span>s
+                                </div>
+                                <div style="font-weight: 600; color: var(--text-secondary);" id="q-topic-badge">Topic</div>
+                            </div>
                         </div>
                         
                         <div id="question-text" style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 24px; font-weight: 500;">
@@ -158,11 +178,39 @@
 
                     <div id="quiz-results" class="card" style="display: none; text-align: center;">
                         <div class="card-title" style="justify-content: center;"><i data-lucide="award" style="width: 32px; height: 32px; color: var(--accent-forest);"></i></div>
-                        <h2 style="margin-bottom: 16px;">Quiz Completed!</h2>
-                        <div style="font-size: 4rem; font-weight: bold; color: var(--accent-blue); margin-bottom: 8px;" id="result-score">80%</div>
-                        <p style="color: var(--text-secondary); margin-bottom: 32px;" id="result-text">You answered 4 out of 5 questions correctly.</p>
+                        <h2 style="margin-bottom: 8px;">Evaluation Complete!</h2>
+                        <div id="result-student-info" style="font-weight: 600; color: var(--text-secondary); margin-bottom: 16px;">Student Name | Reg No</div>
                         
-                        <button class="btn btn-primary" id="btn-restart-quiz"><i data-lucide="rotate-ccw"></i> Try Another Quiz</button>
+                        <div style="font-size: 4rem; font-weight: bold; color: var(--accent-blue); margin-bottom: 8px;" id="result-score">80%</div>
+                        <p style="color: var(--text-secondary); margin-bottom: 24px;" id="result-text">You answered 4 out of 5 questions correctly.</p>
+                        
+                        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 32px;">
+                            <button class="btn btn-primary" id="btn-restart-quiz"><i data-lucide="rotate-ccw"></i> Retake Quiz</button>
+                            <button class="btn btn-secondary" style="background: var(--accent-forest); color: white; border: none;" id="btn-download-cert"><i data-lucide="download"></i> Download Certified Result</button>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 24px;">
+                        
+                        <div style="text-align: left;">
+                            <h4 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"><i data-lucide="list"></i> Performance History (Session)</h4>
+                            <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                                <table id="admin-log-table" style="font-size: 0.8rem; margin: 0;">
+                                    <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 10;">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Reg No</th>
+                                            <th>Score</th>
+                                            <th>Topic</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-log-tbody">
+                                        <!-- Log entries -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-top: 12px; font-size: 0.7rem; padding: 6px 12px;" onclick="exportAdminLog()"><i data-lucide="file-spreadsheet"></i> Export Admin Log (CSV)</button>
+                        </div>
                     </div>
 
                 </div>
